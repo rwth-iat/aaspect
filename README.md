@@ -1,6 +1,6 @@
-# aaspect
+# AASpect
 
-**aaspect** is a tool for analyzing corpora of Asset Administration Shells (AAS).
+**AASpect** is a tool for analyzing corpora of Asset Administration Shells (AAS).
 It is built on [neo4aas](https://github.com/rwth-iat/neo4aas), which maps AAS data into a
 Neo4j graph and checks it against the metamodel constraints.
 
