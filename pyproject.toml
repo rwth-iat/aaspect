@@ -9,14 +9,30 @@ description = "Analysis tool for corpora of Asset Administration Shells, based o
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
-dependencies = []
+dependencies = [
+  "fastapi",
+  "jinja2",
+  "jsonschema-rs>=0.58.6", # Earliest version tested against the official AAS schemas.
+  "lxml",
+  "python-multipart", # FastAPI needs it to parse file uploads.
+  "uvicorn",
+]
+
+[project.scripts]
+aaspect = "aaspect.main:main"
 
 [dependency-groups]
 dev = [
   "coverage", # Measures test coverage and enforces minimum coverage in CI.
-  "pyright",  # Static type checker for Python.
-  "ruff",     # Formatter, linter, and import sorter.
+  "httpx2>=2.13.1",        # Required by Starlette's TestClient.
+  "pyright",               # Static type checker for Python.
+  "ruff",                  # Formatter, linter, and import sorter.
+  "types-lxml>=2026.2.16", # Type stubs for lxml, which ships none.
 ]
+
+[tool.hatch.build.targets.sdist]
+# Hatch ignores .git/info/exclude, so locally excluded files would otherwise be packed.
+only-include = ["src", "tests", "README.md", "LICENSE"]
 
 [tool.coverage.run]
 branch = true              # Track branch coverage, not just line coverage.

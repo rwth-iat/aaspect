@@ -38,3 +38,6 @@ htmlcov/
 .idea/
 *.swp
 .DS_Store
+
+# Pinned third-party files the tests download
+.cache/

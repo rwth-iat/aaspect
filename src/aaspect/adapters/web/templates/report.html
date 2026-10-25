@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Report – AASpect{% endblock %}
+{% block content %}
+<h1>Report</h1>
+{% set uploaded = report.files | length %}
+<p>{{ uploaded }} uploaded file{{ "s" if uploaded != 1 }} · AASpect {{ report.aaspect_version }} ·
+  <a href="/reports/{{ key }}/report.json">Download JSON</a></p>
+
+{% for section in report.sections %}
+<section>
+  <h2>{{ section.title }} <span class="status status-{{ section.status.value }}">{{ section.status.value }}</span></h2>
+  {% if section.reason %}<p class="reason">{{ section.reason }}</p>{% endif %}
+
+  {% for block in section.blocks %}
+  {% if block is table %}
+  <h3>{{ block.title }}</h3>
+  {% if block.rows %}
+  <table>
+    <thead><tr>{% for column in block.columns %}<th>{{ column }}</th>{% endfor %}</tr></thead>
+    <tbody>
+      {% for row in block.rows[:max_rows] %}
+      <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if block.rows | length > max_rows %}
+  <p class="more">{{ block.rows | length - max_rows }} more rows in the JSON download.</p>
+  {% endif %}
+  {% else %}
+  <p class="empty">No rows.</p>
+  {% endif %}
+
+  {% elif block is finding %}
+  <article class="finding severity-{{ block.severity.value }}">
+    <h3><span class="severity">{{ block.severity.value }}</span> <code>{{ block.rule_id }}</code>
+      · {{ block.locations | length }} location{{ "s" if block.locations | length != 1 }}</h3>
+    <p class="message">{{ block.message }}</p>
+    {% if block.locations %}
+    <ul class="locations">
+      {% for location in block.locations[:max_locations] %}
+      <li>{{ location.file or "–" }}{% if location.identifiable_id %} · {{ location.identifiable_id }}{% endif %}{% if location.element_path %} · <code>{{ location.element_path }}</code>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% if block.locations | length > max_locations %}
+    <p class="more">{{ block.locations | length - max_locations }} more locations in the JSON download.</p>
+    {% endif %}
+    {% endif %}
+  </article>
+  {% endif %}
+  {% endfor %}
+</section>
+{% endfor %}
+{% endblock %}
