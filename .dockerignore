@@ -1,0 +1,8 @@
+# Allowlist: the image needs the package and its lock file, nothing else.
+*
+!pyproject.toml
+!uv.lock
+!README.md
+!LICENSE
+!src/
+**/__pycache__
