@@ -1,0 +1,51 @@
+"""A report: corpus metadata plus one section per analysis."""
+
+from dataclasses import dataclass
+from enum import StrEnum
+
+from aaspect.domain.blocks import Block
+
+
+class ShownError(Exception):
+    """A failure whose message is written for the report. Reports are public, so the text
+    of any other error, which may name hosts or addresses, stays in the server log."""
+
+
+class SectionStatus(StrEnum):
+    WAITING = "waiting"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    SKIPPED = "skipped"
+    NOT_CONFIGURED = "not_configured"
+
+
+@dataclass(frozen=True, slots=True)
+class Section:
+    """The result of one analysis. A failed section carries the reason instead of blocks,
+    so one failing analysis does not take the rest of the report down. `names_every_file`
+    promises that each error finding locates every uploaded file it affects; only then
+    does a file without listed errors pass."""
+
+    key: str
+    title: str
+    status: SectionStatus
+    blocks: tuple[Block, ...] = ()
+    reason: str | None = None
+    names_every_file: bool = False
+
+    def __post_init__(self) -> None:
+        if self.status is SectionStatus.FAILED and not self.reason:
+            raise ValueError("a failed section needs a reason")
+
+
+@dataclass(frozen=True, slots=True)
+class Report:
+    aaspect_version: str
+    files: tuple[str, ...]
+    sections: tuple[Section, ...]
+
+    @property
+    def finished(self) -> bool:
+        unfinished = (SectionStatus.WAITING, SectionStatus.RUNNING)
+        return all(section.status not in unfinished for section in self.sections)

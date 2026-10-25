@@ -1,0 +1,83 @@
+{% set failing = summary.failing | length %}
+{# One colour per analysis, the same in tiles, pills and cards. #}
+{% set hue = namespace(of={}) %}
+{% for tally in summary.sections %}{% set _ = hue.of.update({tally.title: loop.index0 % 6 + 1}) %}{% endfor %}
+<section class="panel summary" id="summary" aria-label="Summary">
+  <div class="verdict">
+    <div class="ring {{ "ring-pending" if not (report.finished and summary.complete) else ("ring-pass" if summary.clean else "ring-fail") }}">
+      <span class="ring-number">{{ summary.passing }}</span><span class="ring-of">of {{ summary.files }} {{ "without listed errors" if summary.unlisted else "pass" }}</span>
+    </div>
+    <div>
+      <h2>{% if failing %}{{ failing }} file{{ "s" if failing != 1 }} with errors{% elif summary.unplaced %}Errors found{% elif report.finished and summary.complete %}No errors found{% else %}No errors found so far{% endif %}</h2>
+      {% if summary.unlisted %}
+      <p class="meta">{{ summary.passing }} of {{ summary.files }} uploaded file{{ "s" if summary.files != 1 }} have no listed errors. {{ summary.unlisted | join(" and ") }} name{{ "s" if summary.unlisted | length == 1 }} only one file per error, so other files holding the same content may be affected too.</p>
+      {% else %}
+      <p class="meta">{{ summary.passing }} of {{ summary.files }} uploaded file{{ "s" if summary.files != 1 }} passed every analysis that ran.</p>
+      {% endif %}
+      {% if summary.unplaced %}<p class="unplaced">{{ summary.unplaced }} error finding{{ "s" if summary.unplaced != 1 }} name{{ "s" if summary.unplaced == 1 }} no file and count against the whole corpus; see the analyses below.</p>{% endif %}
+      {% if not report.finished %}
+      <p class="hint">Preliminary: not every analysis has finished.</p>
+      {% elif not summary.complete %}
+      <p class="hint">Not every analysis completed, so files without errors here may still have some.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="scorecard" title="Counts of findings: one finding groups every place where one rule fails">
+    {% for tally in summary.sections %}
+    <a class="score hue-{{ hue.of[tally.title] }}" href="#section-{{ tally.key }}">
+      <span class="score-title"><span class="dot status-{{ tally.status.value }}" aria-hidden="true"></span>{{ tally.title }}</span>
+      {% if tally.status.value == "completed" %}
+      <span class="chips">
+        <span class="chip chip-error{{ " zero" if not tally.errors }}">{{ tally.errors }} error{{ "s" if tally.errors != 1 }}</span>
+        <span class="chip chip-warning{{ " zero" if not tally.warnings }}">{{ tally.warnings }} warning{{ "s" if tally.warnings != 1 }}</span>
+        <span class="chip chip-info{{ " zero" if not tally.notes }}">{{ tally.notes }} note{{ "s" if tally.notes != 1 }}</span>
+      </span>
+      {% else %}
+      <span class="status status-{{ tally.status.value }}">{{ tally.status.value | replace("_", " ") }}</span>
+      {% endif %}
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if summary.failing %}
+  <h3>Files with errors <span class="hint">error locations per analysis · click a file to see what is wrong in it</span></h3>
+  <div class="table-wrap">
+  <table class="files">
+    <thead><tr><th>File</th><th>Errors by analysis</th><th class="number">Errors</th><th class="number">Warnings</th></tr></thead>
+    <tbody data-collapse>
+      {% for issues in summary.failing[:max_rows] %}
+      <tr>
+        <td class="file"><a href="/reports/{{ key }}/files/{{ issues.index }}">{{ issues.file }}</a></td>
+        <td><span class="pills">{% for title, count in issues.errors %}<span class="pill hue-{{ hue.of.get(title, 6) }}">{{ title }} <b>{{ count }}</b></span>{% endfor %}</span></td>
+        <td class="number">{{ issues.total }}</td>
+        <td class="number">{{ issues.warnings or "–" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% if failing > max_rows %}<p class="more">{{ failing - max_rows }} more files in the JSON download.</p>{% endif %}
+  {% endif %}
+
+  {% if summary.top_rules %}
+  <h3>Most frequent problems</h3>
+  <ul class="top-rules">
+    {% for rule in summary.top_rules %}
+    <li>
+      <details class="top-card hue-{{ hue.of.get(rule.section, 6) }} severity-{{ rule.severity.value }}">
+        <summary>
+          <span class="top-section">{{ rule.section }}</span>
+          <span class="top-head"><span class="sev">{{ rule.severity.value }}</span> <code>{{ rule.rule_id }}</code></span>
+          <span class="top-message">{{ rule.message }}</span>
+          <span class="top-where"><span><b>{{ rule.places }}</b> location{{ "s" if rule.places != 1 }}</span><span><b>{{ rule.files }}</b> file{{ "s" if rule.files != 1 }}</span></span>
+        </summary>
+        <p class="top-full">{{ rule.message }}</p>
+        <a class="top-jump" href="#section-{{ (summary.sections | selectattr("title", "equalto", rule.section) | first).key }}">Go to {{ rule.section }}</a>
+      </details>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <p class="hint">Counted from the listed locations; the JSON download has every one.</p>
+</section>

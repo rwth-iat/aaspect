@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Files – AASpect{% endblock %}
+{% block head %}<script src="/static/tables.js" defer></script>{% endblock %}
+{% block layout %}dashboard{% endblock %}
+{% block content %}
+{% set hue = namespace(of={}) %}
+{% for tally in summary.sections %}{% set _ = hue.of.update({tally.title: loop.index0 % 6 + 1}) %}{% endfor %}
+<aside class="sidebar">
+  {% include "nav_files.html" %}
+  <a class="download" href="/reports/{{ key }}">Back to the report</a>
+</aside>
+
+<div class="content">
+<header class="report-head">
+  <h1>Files</h1>
+  <p class="meta">{{ report.files | length }} uploaded file{{ "s" if report.files | length != 1 }} · {{ summary.failing | length }} with errors · {{ summary.passing }} without</p>
+</header>
+<section class="panel">
+  <form class="file-filter" method="get" action="/reports/{{ key }}/files">
+    <span class="seg" role="group" aria-label="Which files">
+      {% for value, label in (("all", "All"), ("errors", "With errors"), ("clean", "Without errors")) %}
+      <label class="{{ "on" if show == value }}"><input type="radio" name="show" value="{{ value }}"{{ " checked" if show == value }}>{{ label }}</label>
+      {% endfor %}
+    </span>
+    <input type="search" name="q" value="{{ query }}" placeholder="Filter by name" aria-label="Filter by name" maxlength="300">
+    <button type="submit">Filter</button>
+    {% if query or show != "all" %}<a href="/reports/{{ key }}/files">Reset</a>{% endif %}
+  </form>
+  <p class="hint">{{ rows | length }} file{{ "s" if rows | length != 1 }} shown{% if query %} matching “{{ query }}”{% endif %}, the most errors first.</p>
+  {% if rows %}
+  <div class="table-wrap">
+  <table class="files">
+    <thead><tr><th>File</th><th>Errors by analysis</th><th class="number">Errors</th><th class="number">Warnings</th></tr></thead>
+    <tbody data-collapse="50">
+      {% for index, file, issues in rows %}
+      <tr>
+        <td class="file"><a href="/reports/{{ key }}/files/{{ index }}">{{ file }}</a></td>
+        <td>{% if issues %}<span class="pills">{% for title, count in issues.errors %}<span class="pill hue-{{ hue.of.get(title, 6) }}">{{ title }} <b>{{ count }}</b></span>{% endfor %}</span>{% else %}<span class="ok-text">no errors</span>{% endif %}</td>
+        <td class="number">{{ issues.total if issues else "–" }}</td>
+        <td class="number">{{ (issues.warnings or "–") if issues else "–" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p class="empty">No file matches.</p>
+  {% endif %}
+</section>
+</div>
+{% endblock %}
