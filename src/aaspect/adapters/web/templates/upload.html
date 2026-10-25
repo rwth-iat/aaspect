@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}<script src="/static/upload.js" defer></script>{% endblock %}
+{% block content %}
+<h1>Analyze AAS files</h1>
+<form method="post" action="/analyses" enctype="multipart/form-data"
+      data-max-files="{{ max_files }}" data-max-bytes="{{ max_upload_bytes }}">
+  <label for="files">AASX, JSON or XML files</label>
+  <input id="files" type="file" name="files" multiple accept=".aasx,.json,.xml">
+
+  <label for="folder">… or a folder</label>
+  {# No name: the script moves the selected files into "files"; nothing is sent from here. #}
+  <input id="folder" type="file" webkitdirectory multiple>
+  <noscript><p class="hint">Choosing a folder needs JavaScript.</p></noscript>
+  <p class="hint">Up to {{ max_files }} files and {{ max_upload_mb }} MB in total. From a
+    folder, only .aasx, .json and .xml files are taken, in path order, until a limit is reached.</p>
+  <p id="selection" class="selection" aria-live="polite"></p>
+
+  <label for="version">Metamodel version</label>
+  <select id="version" name="version">
+    {% for value, label in versions %}
+    <option value="{{ value }}">{{ label }}</option>
+    {% endfor %}
+  </select>
+  <p class="hint">XML files always use the version of their namespace.</p>
+
+  {% if templates %}
+  <label for="templates">Own submodel templates (optional)</label>
+  <input id="templates" type="file" name="templates" multiple accept=".aasx,.json,.xml">
+  <p class="hint">AAS files holding submodel templates, up to {{ max_template_files }} files
+    and {{ max_template_mb }} MB. A submodel is checked against your template where its
+    semanticId names one, before the IDTA templates.</p>
+  {% endif %}
+
+  <button type="submit">Analyze</button>
+</form>
+{% endblock %}
