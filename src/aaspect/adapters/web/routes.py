@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 from urllib.parse import urlencode
 
@@ -31,6 +32,7 @@ _MAX_QUERY = 300
 _BUSY = "AASpect is busy with other analyses. Please try again in a moment."
 # Long enough for the first state of any analysis; reading the uploads comes after it.
 _START_TIMEOUT_SECONDS = 10
+_TOO_SLOW = "The upload took too long to arrive. Please try again."
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +43,8 @@ class WebLimits:
     max_stored_reports: int
     # None where uploaded templates are not checked, i.e. without a graph database.
     templates: TemplateLimits | None = None
+    # A client sending its upload slowly holds an analysis slot all the while.
+    upload_time_limit_seconds: float = 300
 
 
 class Pages:
@@ -85,6 +89,7 @@ class _Handlers:
         self._pages = pages
         self._max_files = limits.max_files
         self._template_limits = limits.templates
+        self._upload_seconds = limits.upload_time_limit_seconds
         self._store = ReportStore(limits.max_stored_reports)
         self._analyses = Analyses(analyze, self._store, limits.max_concurrent_analyses)
 
@@ -98,13 +103,16 @@ class _Handlers:
             return self._pages.error(503, _BUSY)
         handed_over = False
         try:
-            submission = await read_form(request, self._max_files, self._template_limits)
+            async with asyncio.timeout(self._upload_seconds):
+                submission = await read_form(request, self._max_files, self._template_limits)
             key, started = self._analyses.start(
                 submission.uploads, submission.version, submission.templates
             )
             handed_over = True
         except UploadRejected as rejected:
             return self._pages.error(rejected.status, rejected.message)
+        except TimeoutError:
+            return self._pages.error(408, _TOO_SLOW)
         finally:
             # Also on an oversized streamed body or a cancelled upload, which escape as
             # other errors: a slot kept here would be lost until restart.

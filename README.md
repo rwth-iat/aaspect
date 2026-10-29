@@ -166,6 +166,7 @@ part: 1 MB).
 | `AASPECT_MAX_UPLOAD_BYTES` | `536870912` (512 MB) | Total size of one upload request. Checked while the data arrives. |
 | `AASPECT_MAX_FILES` | `2000` | Files per upload. A chosen folder is cut to this many files in the browser. |
 | `AASPECT_MAX_CONCURRENT_ANALYSES` | `2` | Analyses running at once. Further uploads get "busy, try again" before anything is read, so at most this many uploads are held in memory. |
+| `AASPECT_UPLOAD_TIME_LIMIT_SECONDS` | `300` (5 min) | Time for one upload to arrive completely; a slower one is refused. It holds an analysis slot while it arrives, so without a limit a few stalled connections would keep everyone else out. 512 MB in 5 minutes needs about 14 Mbit/s. |
 | `AASPECT_MAX_STORED_REPORTS` | `20` | Reports kept in memory; the oldest is dropped first. |
 | `AASPECT_MAX_DOCUMENT_BYTES` | `1073741824` (1 GB) | All documents of one analysis to analyze together, including parts unpacked from AASX packages. Documents beyond it are reported as not read. |
 | `AASPECT_ANALYSIS_TIME_LIMIT_SECONDS` | `600` (10 min) | Time for one analysis, all steps together. Documents not validated or imported by then are reported as not checked or not imported, and constraints not checked or analytics not computed by then are listed as such; a database query still running 5 seconds later is cancelled. Importing about 900 MB of dense XML into the graph took about 5 minutes on its own, so this may need to be raised for uploads near the size limit. |
@@ -217,8 +218,12 @@ plugin (see `compose.yaml`), and drops it afterward.
 ### Exposing the server
 
 Before binding to another interface, set `AASPECT_ALLOWED_HOSTS` to the server's public
-name and put a reverse proxy in front: AASpect does not time out uploads that arrive
-very slowly, and it has no user accounts. A report's link is its only protection.
+name and put a reverse proxy in front that serves HTTPS, buffers each upload before
+passing it on, and limits requests per client. AASpect has no user accounts: a report's
+link is its only protection, so it must never travel over plain HTTP. Without buffering,
+a few slow uploads still keep everyone else out for up to
+`AASPECT_UPLOAD_TIME_LIMIT_SECONDS`; without a per-client limit, one client can keep every
+analysis slot busy.
 
 ---
 

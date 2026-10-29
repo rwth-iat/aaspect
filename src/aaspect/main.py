@@ -72,6 +72,7 @@ def build_app(
         max_files=settings.max_files,
         max_concurrent_analyses=settings.max_concurrent_analyses,
         max_stored_reports=settings.max_stored_reports,
+        upload_time_limit_seconds=settings.upload_time_limit_seconds,
         templates=(
             TemplateLimits(settings.max_template_files, settings.max_template_bytes)
             if graph_store

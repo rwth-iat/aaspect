@@ -1,3 +1,4 @@
+import asyncio
 import json
 import threading
 import unittest
@@ -5,6 +6,7 @@ from collections.abc import Iterator, Sequence
 from dataclasses import replace
 
 from fastapi.testclient import TestClient
+from starlette.types import ASGIApp, Message
 
 from aaspect.adapters.report_json.writer import JsonReportWriter
 from aaspect.adapters.web.app import create_app
@@ -50,6 +52,35 @@ class FakeAnalyze:
 
 def _files(*names: str, content: bytes = b"{}") -> list[tuple[str, tuple[str, bytes]]]:
     return [("files", (name, content)) for name in names]
+
+
+async def _stalled_upload(app: ASGIApp) -> int:
+    """Status of an upload whose body stops arriving after its first bytes."""
+    scope = {
+        "type": "http",
+        "method": "POST",
+        "path": "/analyses",
+        "headers": [
+            (b"host", b"testserver"),
+            (b"content-type", b"multipart/form-data; boundary=b"),
+        ],
+        "query_string": b"",
+    }
+    chunks = [{"type": "http.request", "body": b"--b\r\n", "more_body": True}]
+    statuses: list[int] = []
+
+    async def receive() -> Message:
+        if chunks:
+            return chunks.pop()
+        await asyncio.Event().wait()
+        raise AssertionError("unreachable")
+
+    async def send(message: Message) -> None:
+        if message["type"] == "http.response.start":
+            statuses.append(message["status"])
+
+    await asyncio.wait_for(app(scope, receive, send), 10)
+    return statuses[0]
 
 
 class TestRoutes(unittest.TestCase):
@@ -255,6 +286,14 @@ class TestRoutes(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 413)
         self.assertEqual(self._upload(_files("a.json")).status_code, 303)
+
+    def test_slow_upload_times_out_and_releases_its_slot(self) -> None:
+        # TestClient sends a body only once it is complete, so the stall is driven directly.
+        limits = replace(LIMITS, upload_time_limit_seconds=0.2)
+        app = create_app(self.analyze, JsonReportWriter(), limits, HOSTS)
+        self.assertEqual(asyncio.run(_stalled_upload(app)), 408)
+        upload = TestClient(app).post("/analyses", files=_files("a.json"), follow_redirects=False)
+        self.assertEqual(upload.status_code, 303)
 
     def test_slot_is_released_after_rejection_and_success(self) -> None:
         for _ in range(3):

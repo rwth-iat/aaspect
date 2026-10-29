@@ -33,6 +33,7 @@ class Settings:
     validation_workers: int = 8
     validation_timeout_seconds: int = 30
     analysis_time_limit_seconds: int = 600
+    upload_time_limit_seconds: int = 300
     worker_memory_bytes: int = 2048 * _MIB
     # Where third-party files, the official schemas and the IDTA submodel templates, are
     # downloaded from: GitHub's raw file server, or a mirror with the same paths.
