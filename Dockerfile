@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.12-slim AS build
+FROM python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159 AS build
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
@@ -13,7 +13,7 @@ COPY src ./src
 # Not editable: the runtime image gets the virtual environment only, no source tree.
 RUN uv sync --locked --no-dev --no-editable
 
-FROM python:3.12-slim
+FROM python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
 RUN useradd --system --uid 10001 --no-create-home aaspect
 COPY --from=build /app/.venv /app/.venv
 # All interfaces inside the container only; who can reach it is decided by the port
