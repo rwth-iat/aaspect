@@ -14,6 +14,9 @@ _HEADERS = {
     ),
     "x-content-type-options": "nosniff",
     "referrer-policy": "no-referrer",
+    # A report's link is its only protection, so it must never travel over plain HTTP.
+    # Browsers ignore this header on plain HTTP, so a local server is unaffected.
+    "strict-transport-security": "max-age=31536000",
 }
 # Reports show what was uploaded: no copy may stay in a browser or proxy cache after the
 # report has expired on the server.

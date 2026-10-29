@@ -164,6 +164,8 @@ def main() -> None:
             build_app(settings, resources, schemas, download),
             host=settings.host,
             port=settings.port,
+            # The server name and version would tell a scanner which exploits to try.
+            server_header=False,
         )
 
 

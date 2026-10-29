@@ -99,6 +99,7 @@ class TestRoutes(unittest.TestCase):
         policy = response.headers["content-security-policy"]
         self.assertIn("script-src 'self'", policy)
         self.assertEqual(response.headers["x-content-type-options"], "nosniff")
+        self.assertIn("max-age=", response.headers["strict-transport-security"])
 
     def test_upload_redirects_to_report_and_download(self) -> None:
         response = self._upload(_files("a.json", "a.json", "dir/b.xml"), "3.1")
