@@ -14,13 +14,21 @@ COPY src ./src
 RUN uv sync --locked --no-dev --no-editable
 
 FROM python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
+# WeasyPrint lays out the PDF report with Pango; DejaVu stands in for the page's
+# system-ui and monospace fonts.
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
 RUN useradd --system --uid 10001 --no-create-home aaspect
 COPY --from=build /app/.venv /app/.venv
 # All interfaces inside the container only; who can reach it is decided by the port
-# mapping (see compose.yaml).
+# mapping (see compose.yaml). Fontconfig keeps its cache in /tmp, the only writable
+# place in the read-only container.
 ENV PATH=/app/.venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    XDG_CACHE_HOME=/tmp/cache \
     AASPECT_HOST=0.0.0.0
 USER aaspect
 EXPOSE 8000

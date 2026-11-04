@@ -11,6 +11,11 @@ class ShownError(Exception):
     of any other error, which may name hosts or addresses, stays in the server log."""
 
 
+class TryAgainLater(ShownError):
+    """A refusal for now, such as every slot being busy; unlike a failure, asking again
+    may succeed, so it is not worth remembering."""
+
+
 class SectionStatus(StrEnum):
     WAITING = "waiting"
     RUNNING = "running"

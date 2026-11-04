@@ -17,6 +17,7 @@ dependencies = [
   "neo4aas",
   "python-multipart", # FastAPI needs it to parse file uploads.
   "uvicorn",
+  "weasyprint>=70.0", # Lays out the report page as PDF; needs the Pango system library.
 ]
 
 [project.scripts]
