@@ -5,6 +5,7 @@
 {% block layout %}dashboard{% endblock %}
 {% block content %}
 {% import "blocks.html" as blocks with context %}
+{% if export is not defined %}
 <aside class="sidebar">
   <p class="sidebar-title">Report</p>
   <ul>
@@ -14,8 +15,16 @@
     {% endfor %}
   </ul>
   {% include "nav_files.html" %}
-  <a class="download" href="/reports/{{ key }}/report.json">Download JSON</a>
+  {% for extension in downloads %}
+  {% if report.finished %}
+  <a class="download" href="/reports/{{ key }}/report.{{ extension }}">Download {{ extension | upper }}</a>
+  {% else %}
+  {# Not a link: nothing to click until the report stops changing. #}
+  <span class="download disabled" aria-disabled="true" title="Offered once the analysis has finished">Download {{ extension | upper }}</span>
+  {% endif %}
+  {% endfor %}
 </aside>
+{% endif %}
 
 <div id="report" class="content" data-key="{{ key }}" data-state="{{ state }}" data-finished="{{ "true" if report.finished else "false" }}">
 <header class="report-head">
@@ -24,6 +33,9 @@
   <p class="meta">{{ uploaded }} uploaded file{{ "s" if uploaded != 1 }} · {{ report.sections | selectattr("status.value", "equalto", "completed") | list | length }}/{{ report.sections | length }} steps completed{% set off = report.sections | selectattr("status.value", "equalto", "not_configured") | list | length %}{% if off %} · {{ off }} not configured{% endif %} · AASpect {{ report.aaspect_version }}</p>
 </header>
 {% if not report.finished %}
+<p class="hint print-only">The analysis had not finished when this was printed.</p>
+{% endif %}
+{% if not report.finished and export is not defined %}
 <p class="running">● The analysis is still running. This page updates when a step finishes.</p>
 <noscript><p class="hint">Without JavaScript, reload the page to see progress.</p></noscript>
 {% endif %}
@@ -42,7 +54,7 @@
   </div>
   {% set groups = section.blocks | finding_groups %}
   {% if groups %}
-  <h3>Findings <span class="hint">{{ groups | length }} rule{{ "s" if groups | length != 1 }}, click to open</span></h3>
+  <h3>Findings <span class="hint">{{ groups | length }} rule{{ "s" if groups | length != 1 }}<span class="screen-only">, click to open</span></span></h3>
   {% for group in groups %}
   {{ blocks.group(group, max_rows, max_locations) }}
   {% endfor %}

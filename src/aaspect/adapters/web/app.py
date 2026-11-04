@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from importlib.resources import files
 
 import jinja2
@@ -19,12 +19,16 @@ _TOO_LARGE = "The upload is larger than the allowed total size."
 
 
 def create_app(
-    analyze: Analyze, writer: ReportWriter, limits: WebLimits, allowed_hosts: Sequence[str]
+    analyze: Analyze,
+    writers: Mapping[str, ReportWriter],
+    limits: WebLimits,
+    allowed_hosts: Sequence[str],
 ) -> FastAPI:
+    """`writers` offers the report for download, keyed by file extension."""
     package = files("aaspect.adapters.web")
-    pages = Pages(template_environment(str(package.joinpath("templates"))), limits)
+    pages = Pages(template_environment(str(package.joinpath("templates")), tuple(writers)), limits)
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-    app.include_router(router(analyze, writer, pages, limits))
+    app.include_router(router(analyze, writers, pages, limits))
     app.mount("/static", StaticFiles(directory=str(package.joinpath("static"))), name="static")
     app.add_middleware(
         BodySizeLimit,
@@ -38,7 +42,8 @@ def create_app(
     return app
 
 
-def template_environment(directory: str) -> jinja2.Environment:
+def template_environment(directory: str, downloads: Sequence[str] = ()) -> jinja2.Environment:
+    """`downloads` names the file extensions the report page offers for download."""
     # Autoescape everywhere: report text comes from uploaded files. StrictUndefined makes a
     # misspelt field fail the render tests instead of rendering as empty.
     environment = jinja2.Environment(
@@ -46,6 +51,7 @@ def template_environment(directory: str) -> jinja2.Environment:
         autoescape=True,
         undefined=jinja2.StrictUndefined,
     )
+    environment.globals["downloads"] = tuple(downloads)
     environment.tests["finding"] = lambda block: isinstance(block, Finding)
     environment.tests["table"] = lambda block: isinstance(block, Table)
     environment.filters["finding_groups"] = finding_groups

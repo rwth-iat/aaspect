@@ -1,3 +1,4 @@
+import json
 import threading
 import time
 import unittest
@@ -12,6 +13,7 @@ from aaspect.domain.corpus import Upload
 from aaspect.domain.report import Report
 from aaspect.domain.version_selection import VersionChoice
 from tests.adapters.web.reports import full_report, running_report
+from tests.adapters.web.test_downloads import CountingWriter
 from tests.adapters.web.test_routes import HOSTS, LIMITS, _files
 
 
@@ -41,7 +43,9 @@ class TestRunningAnalysis(unittest.TestCase):
             progress(full_report())
             return full_report()
 
-        self.client = TestClient(create_app(stepwise, JsonReportWriter(), LIMITS, HOSTS))
+        self.counting = CountingWriter()
+        writers = {"json": JsonReportWriter(), "txt": self.counting}
+        self.client = TestClient(create_app(stepwise, writers, LIMITS, HOSTS))
 
     def tearDown(self) -> None:
         self.release.set()
@@ -56,8 +60,16 @@ class TestRunningAnalysis(unittest.TestCase):
 
         self.assertIn("The analysis is still running", page.text)
         self.assertEqual(status, {"state": "running", "finished": False})
+        self.assertIn('<span class="download disabled" aria-disabled="true"', page.text)
+        self.assertNotIn("/report.json", page.text)
+        self.assertEqual(self.client.get(location + "/report.txt").status_code, 409)
+        self.assertEqual(self.counting.calls, 0)
         self.release.set()
         self.assertTrue(_finished_status(self.client, location)["finished"])
+        self.assertIn(
+            'href="' + location.split("testserver")[-1] + '/report.json"',
+            self.client.get(location).text,
+        )
 
     def test_slot_is_held_until_the_analysis_ends(self) -> None:
         self.client.post("/analyses", files=_files("a.json"), follow_redirects=False)
@@ -75,10 +87,13 @@ class TestRunningAnalysis(unittest.TestCase):
             progress(running_report())
             raise RuntimeError("boom")
 
-        client = TestClient(create_app(crash, JsonReportWriter(), LIMITS, HOSTS))
+        client = TestClient(create_app(crash, {"json": JsonReportWriter()}, LIMITS, HOSTS))
         location = str(client.post("/analyses", files=_files("a.json")).url)
         status = _finished_status(client, location)
         self.assertEqual(status, {"state": "failed", "finished": True})
+        download = client.get(location + "/report.json")
+        self.assertEqual(download.status_code, 200)
+        self.assertEqual(json.loads(download.content)["sections"][0]["status"], "failed")
 
 
 if __name__ == "__main__":

@@ -7,8 +7,9 @@ services:
       # change, together with AASPECT_ALLOWED_HOSTS.
       - "127.0.0.1:8000:8000"
     environment:
-      # Each worker may use up to AASPECT_WORKER_MEMORY_BYTES (2 GB); 4 workers fit the
-      # memory limit below even when every one of them hits it.
+      # Each worker may use up to AASPECT_WORKER_MEMORY_BYTES (2 GB), one PDF export up to
+      # AASPECT_PDF_MEMORY_BYTES (2 GB), /tmp up to 1.1 GB and kept downloads 256 MB: all
+      # of them together, plus the server itself, fit the memory limit below.
       AASPECT_VALIDATION_WORKERS: "4"
       AASPECT_NEO4J_URI: bolt://dozerdb:7687
       AASPECT_NEO4J_USER: neo4j
@@ -16,7 +17,7 @@ services:
     depends_on:
       dozerdb:
         condition: service_healthy
-    mem_limit: 10g
+    mem_limit: 13g
     pids_limit: 256
     read_only: true
     tmpfs:

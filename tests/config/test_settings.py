@@ -18,6 +18,11 @@ class TestLoadSettings(unittest.TestCase):
         self.assertEqual(settings.neo4j_password, "s3cret-pw")
         self.assertNotIn("s3cret-pw", repr(settings))
 
+    def test_pdf_exports_can_be_turned_off(self) -> None:
+        self.assertEqual(load_settings({"AASPECT_PDF_EXPORTS": "0"}).pdf_exports, 0)
+        with self.assertRaises(ValueError):
+            load_settings({"AASPECT_PDF_EXPORTS": "-1"})
+
     def test_invalid_numbers(self) -> None:
         for raw in ("ten", "1.5", "0", "-3", ""):
             with self.subTest(raw=raw), self.assertRaises(ValueError):

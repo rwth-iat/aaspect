@@ -41,6 +41,44 @@ class TestReportStore(unittest.TestCase):
         self.assertIsNone(store.get(keys[0]))
         self.assertIsNotNone(store.get(keys[2]))
 
+    def test_files_are_kept_for_finished_reports_and_go_with_them(self) -> None:
+        store = ReportStore(capacity=1)
+        running, finished = store.reserve(), store.reserve()
+        store.put(running, running_report())
+        store.put(finished, full_report())
+        store.keep_file(running, running_report(), "pdf", b"old")
+        report = store.get(finished)
+        assert report is not None
+        store.keep_file(finished, report, "pdf", b"pdf")
+        store.keep_failure(finished, report, "bad", "failed")
+        self.assertIsNone(store.file(running, "pdf"))
+        self.assertEqual(store.file(finished, "pdf"), b"pdf")
+        self.assertEqual(store.file(finished, "bad"), "failed")
+        store.put(store.reserve(), full_report())
+        self.assertIsNone(store.file(finished, "pdf"))
+        self.assertIsNone(store.file(finished, "bad"))
+
+    def test_a_file_is_kept_only_for_the_report_it_was_made_from(self) -> None:
+        store = ReportStore(capacity=2)
+        key = store.reserve()
+        store.put(key, full_report())
+        store.keep_file(key, full_report(), "pdf", b"pdf")
+        self.assertIsNone(store.file(key, "pdf"))
+
+    def test_files_stay_within_their_budget_oldest_dropped_first(self) -> None:
+        store = ReportStore(capacity=5, file_bytes=10)
+        keys = [store.reserve() for _ in range(3)]
+        for key in keys:
+            store.put(key, full_report())
+        reports = [store.get(key) for key in keys]
+        for key, report in zip(keys, reports, strict=True):
+            assert report is not None
+            store.keep_file(key, report, "pdf", b"12345")
+        assert reports[0] is not None
+        store.keep_file(keys[0], reports[0], "json", b"x" * 11)
+        self.assertEqual([store.file(key, "pdf") for key in keys], [None, b"12345", b"12345"])
+        self.assertIsNone(store.file(keys[0], "json"))
+
     def test_running_reports_are_never_dropped(self) -> None:
         store = ReportStore(capacity=1)
         running = store.reserve()

@@ -22,6 +22,7 @@ from aaspect.adapters.neo4aas.notifications import UnusedSchemaNotifications
 from aaspect.adapters.neo4aas.parser import Neo4aasEnvironmentParser
 from aaspect.adapters.neo4aas.store import DozerDbStore
 from aaspect.adapters.report_json.writer import JsonReportWriter
+from aaspect.adapters.report_pdf.writer import PdfReportWriter
 from aaspect.adapters.schema.isolated import IsolatedSchemaValidator
 from aaspect.adapters.schema.validator import (
     OfficialSchemas,
@@ -31,12 +32,14 @@ from aaspect.adapters.schema.validator import (
 from aaspect.adapters.templates.idta import IdtaTemplates
 from aaspect.adapters.web.access_log import MaskReportKeys
 from aaspect.adapters.web.app import create_app
+from aaspect.adapters.web.printable import PrintableReport
 from aaspect.adapters.web.routes import WebLimits
 from aaspect.adapters.web.uploads import TemplateLimits
 from aaspect.app.analyze_corpus import AnalyzeCorpus
 from aaspect.config.settings import Settings, load_settings
 from aaspect.domain.metamodel import MetamodelVersion
 from aaspect.ports.download import Download
+from aaspect.ports.report_writer import ReportWriter
 
 logger = logging.getLogger(__name__)
 _FIRST_PAUSE_SECONDS = 30
@@ -80,7 +83,20 @@ def build_app(
         ),
     )
     allowed_hosts = [host.strip() for host in settings.allowed_hosts.split(",") if host.strip()]
-    return create_app(analyze.run, JsonReportWriter(), limits, allowed_hosts)
+    return create_app(analyze.run, _writers(settings), limits, allowed_hosts)
+
+
+def _writers(settings: Settings) -> dict[str, ReportWriter]:
+    """The download formats, keyed by file extension."""
+    writers: dict[str, ReportWriter] = {"json": JsonReportWriter()}
+    if settings.pdf_exports:
+        writers["pdf"] = PdfReportWriter(
+            PrintableReport(),
+            concurrent=settings.pdf_exports,
+            timeout_seconds=settings.pdf_timeout_seconds,
+            memory_bytes=settings.pdf_memory_bytes,
+        )
+    return writers
 
 
 def _validator(

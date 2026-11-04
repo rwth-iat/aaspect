@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import Mapping
 from dataclasses import dataclass
 from urllib.parse import urlencode
 
@@ -17,14 +18,16 @@ from aaspect.adapters.web.uploads import (
 )
 from aaspect.adapters.web.views import FileLinks, file_rows
 from aaspect.domain.per_file import file_sections
-from aaspect.domain.report import Report
+from aaspect.domain.report import Report, ShownError, TryAgainLater
 from aaspect.domain.summary import summarize
 from aaspect.ports.report_writer import ReportWriter
 
 # Pages show this much; the JSON download always has everything.
-_MAX_ROWS = 200
-_MAX_LOCATIONS = 20
+MAX_ROWS = 200
+MAX_LOCATIONS = 20
 _EXPIRED = "This report does not exist or has expired."
+_NO_FORMAT = "This report is not offered in that format."
+_NOT_READY = "Downloads are offered once the analysis has finished."
 _NO_FILE = "This report has no such file."
 _SHOW = ("all", "errors", "clean")
 # Names are capped on upload too; a longer query cannot match anything.
@@ -67,8 +70,10 @@ class Pages:
         return self.render("error.html", status, status_code=status, message=message)
 
 
-def router(analyze: Analyze, writer: ReportWriter, pages: Pages, limits: WebLimits) -> APIRouter:
-    handlers = _Handlers(analyze, writer, pages, limits)
+def router(
+    analyze: Analyze, writers: Mapping[str, ReportWriter], pages: Pages, limits: WebLimits
+) -> APIRouter:
+    handlers = _Handlers(analyze, writers, pages, limits)
     routes = APIRouter()
     routes.add_api_route("/", handlers.upload_form, methods=["GET"])
     routes.add_api_route("/analyses", handlers.start_analysis, methods=["POST"])
@@ -76,16 +81,20 @@ def router(analyze: Analyze, writer: ReportWriter, pages: Pages, limits: WebLimi
     routes.add_api_route("/reports/{key}/files", handlers.list_files, methods=["GET"])
     routes.add_api_route("/reports/{key}/files/{index}", handlers.show_file, methods=["GET"])
     routes.add_api_route("/reports/{key}/goto", handlers.go_to_file, methods=["GET"])
-    routes.add_api_route("/reports/{key}/report.json", handlers.download, methods=["GET"])
+    routes.add_api_route("/reports/{key}/report.{extension}", handlers.download, methods=["GET"])
     routes.add_api_route("/reports/{key}/status", handlers.status, methods=["GET"])
     return routes
 
 
 class _Handlers:
     def __init__(
-        self, analyze: Analyze, writer: ReportWriter, pages: Pages, limits: WebLimits
+        self,
+        analyze: Analyze,
+        writers: Mapping[str, ReportWriter],
+        pages: Pages,
+        limits: WebLimits,
     ) -> None:
-        self._writer = writer
+        self._writers = writers
         self._pages = pages
         self._max_files = limits.max_files
         self._template_limits = limits.templates
@@ -131,8 +140,8 @@ class _Handlers:
             "report.html",
             summary=summarize(report),
             state=_state(report),
-            max_rows=_MAX_ROWS,
-            max_locations=_MAX_LOCATIONS,
+            max_rows=MAX_ROWS,
+            max_locations=MAX_LOCATIONS,
         )
 
     def list_files(self, key: str, show: str = "all", q: str = "") -> Response:
@@ -184,8 +193,8 @@ class _Handlers:
             index=index,
             file=report.files[index],
             sections=file_sections(report, report.files[index]),
-            max_rows=_MAX_ROWS,
-            max_locations=_MAX_LOCATIONS,
+            max_rows=MAX_ROWS,
+            max_locations=MAX_LOCATIONS,
         )
 
     def status(self, key: str) -> Response:
@@ -195,14 +204,33 @@ class _Handlers:
             return JSONResponse({"error": _EXPIRED}, status_code=404)
         return JSONResponse({"state": _state(report), "finished": report.finished})
 
-    def download(self, key: str) -> Response:
+    def download(self, key: str, extension: str) -> Response:
+        """The report in the format its file extension names, e.g. `report.pdf`. Only a
+        finished report is offered: it no longer changes, so it is made once and kept."""
         report = self._store.get(key)
         if report is None:
             return self._pages.error(404, _EXPIRED)
+        writer = self._writers.get(extension)
+        if writer is None:
+            return self._pages.error(404, _NO_FORMAT)
+        if not report.finished:
+            return self._pages.error(409, _NOT_READY)
+        content = self._store.file(key, extension)
+        if content is None:
+            try:
+                content = writer.write(report)
+            except TryAgainLater as refusal:
+                return self._pages.error(503, str(refusal))
+            except ShownError as error:
+                self._store.keep_failure(key, report, extension, str(error))
+                return self._pages.error(500, str(error))
+            self._store.keep_file(key, report, extension, content)
+        if isinstance(content, str):
+            return self._pages.error(500, content)
         return Response(
-            self._writer.write(report),
-            media_type=self._writer.media_type,
-            headers={"content-disposition": 'attachment; filename="aaspect-report.json"'},
+            content,
+            media_type=writer.media_type,
+            headers={"content-disposition": f'attachment; filename="aaspect-report.{extension}"'},
         )
 
 

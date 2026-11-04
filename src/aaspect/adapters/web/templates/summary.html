@@ -41,14 +41,14 @@
   </div>
 
   {% if summary.failing %}
-  <h3>Files with errors <span class="hint">error locations per analysis · click a file to see what is wrong in it</span></h3>
+  <h3>Files with errors <span class="hint">error locations per analysis<span class="screen-only"> · click a file to see what is wrong in it</span></span></h3>
   <div class="table-wrap">
   <table class="files">
     <thead><tr><th>File</th><th>Errors by analysis</th><th class="number">Errors</th><th class="number">Warnings</th></tr></thead>
     <tbody data-collapse>
       {% for issues in summary.failing[:max_rows] %}
       <tr>
-        <td class="file"><a href="/reports/{{ key }}/files/{{ issues.index }}">{{ issues.file }}</a></td>
+        <td class="file">{% if export is defined %}{{ issues.file }}{% else %}<a href="/reports/{{ key }}/files/{{ issues.index }}">{{ issues.file }}</a>{% endif %}</td>
         <td><span class="pills">{% for title, count in issues.errors %}<span class="pill hue-{{ hue.of.get(title, 6) }}">{{ title }} <b>{{ count }}</b></span>{% endfor %}</span></td>
         <td class="number">{{ issues.total }}</td>
         <td class="number">{{ issues.warnings or "–" }}</td>

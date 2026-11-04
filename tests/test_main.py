@@ -9,10 +9,10 @@ from dataclasses import replace
 from fastapi.testclient import TestClient
 
 from aaspect.adapters.schema.validator import download_schemas
-from aaspect.config.settings import Settings
+from aaspect.config.settings import Settings, load_settings
 from aaspect.domain.metamodel import MetamodelVersion
 from aaspect.domain.pinned import PinnedFile
-from aaspect.main import build_app, wait_for_schemas
+from aaspect.main import _writers, build_app, wait_for_schemas
 from tests.adapters.files.packages import aasx
 from tests.adapters.schema.samples import sample
 from tests.pinned import cached
@@ -41,6 +41,9 @@ class TestEndToEnd(unittest.TestCase):
                 time.sleep(0.05)
             self.assertIn("Version per file", client.get(str(response.url)).text)
             report = json.loads(client.get(str(response.url) + "/report.json").content)
+            pdf = client.get(str(response.url) + "/report.pdf")
+            self.assertEqual(pdf.headers["content-type"], "application/pdf")
+            self.assertTrue(pdf.content.startswith(b"%PDF-"))
 
         section, *graph_steps = report["sections"]
         self.assertEqual(section["status"], "completed")
@@ -80,6 +83,15 @@ class TestWaitForSchemas(unittest.TestCase):
         self.assertEqual(pauses, [30, 60])
         # A changed file is the operator's to fix; the network may mend itself.
         self.assertEqual([record.levelname for record in logs.records], ["WARNING", "ERROR"])
+
+
+class TestWriters(unittest.TestCase):
+    def test_offers_json_and_pdf(self) -> None:
+        self.assertEqual(list(_writers(Settings())), ["json", "pdf"])
+
+    def test_pdf_can_be_turned_off(self) -> None:
+        settings = load_settings({"AASPECT_PDF_EXPORTS": "0"})
+        self.assertEqual(list(_writers(settings)), ["json"])
 
 
 if __name__ == "__main__":

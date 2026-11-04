@@ -6,15 +6,15 @@ Neo4j graph and checks it against the metamodel constraints.
 
 > **Status:** early stage. All four analyses work: schema check, metamodel constraints,
 > analytics and submodel template conformance, with a web report (a summary of the files
-> with errors first, charts and a page per uploaded file) and a JSON download (see
-> [Running](#running)). Everything marked *planned* below, such as the PDF export, is
-> not built yet.
+> with errors first, charts and a page per uploaded file) and JSON and PDF downloads (see
+> [Running](#running)).
 
 ## Features
 
 Upload a set of AAS files (e.g. 100 AASX, JSON or XML files) in a web UI, start the
 analysis, view the results in the browser and download them as **JSON** or **PDF**.
-*Available: upload, report page, JSON download. Planned: PDF.*
+*Available: upload, report page, JSON and PDF download. The PDF holds the report page,
+not the pages per file.*
 
 ### Compliance
 
@@ -113,8 +113,8 @@ let it be detected per JSON file ("auto"), trying the oldest or the newest versi
 first. XML files always use the version of their namespace. The report page opens at
 once and updates itself as each step finishes. It starts with a summary of the files
 with errors, groups recurring findings by rule and gives every uploaded file a page of
-its own; it can be downloaded as JSON. Reports are kept in memory only and are lost when
-the server stops.
+its own. Once the analysis has finished, it can be downloaded as JSON or PDF. Reports are
+kept in memory only and are lost when the server stops.
 
 At startup the server downloads the official schemas (about 330 KB) and serves nothing
 before they have arrived. While the download fails it logs why and tries again, with
@@ -135,10 +135,10 @@ live in an unnamed volume that each `docker compose down` leaves behind; use
 
 The container runs as an unprivileged user on a read-only file system and is reachable
 from this machine only. `compose.yaml` sets `AASPECT_VALIDATION_WORKERS` to 4 so that
-all workers at their memory limit fit the container's 10 GB; other settings are passed
-the same way, under `environment:`. The container needs outbound HTTPS for the schemas
-(about 330 KB, at startup) and the IDTA submodel templates (about 36 MB, in the
-background), or `AASPECT_DOWNLOAD_URL` pointing at a mirror.
+all workers and a PDF export at their memory limits fit the container's 13 GB; other
+settings are passed the same way, under `environment:`. The container needs outbound
+HTTPS for the schemas (about 330 KB, at startup) and the IDTA submodel templates (about
+36 MB, in the background), or `AASPECT_DOWNLOAD_URL` pointing at a mirror.
 
 ## Configuration
 
@@ -203,6 +203,20 @@ exceeds its limits; the file then gets a "not validated" finding.
 | `AASPECT_WORKER_MEMORY_BYTES` | `2147483648` (2 GB) | Memory of one worker process. |
 | `AASPECT_MAX_VIOLATIONS_PER_DOCUMENT` | `1000` | Violations listed per document and version; a note says when there were more. |
 
+### PDF export
+
+The PDF holds the report page, laid out by WeasyPrint. Each export runs in a process of
+its own, killed when it exceeds its time or memory; a large report takes about half a
+minute and 1.5 GB. Both downloads are offered once the analysis has finished; each is
+made once and kept with the report until it expires, a failed export too. Kept files
+share 256 MB; beyond that the oldest is dropped and made again when next asked for.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `AASPECT_PDF_EXPORTS` | `1` | Exports at the same time; further requests are refused until one finishes. `0` turns the PDF download off. |
+| `AASPECT_PDF_MEMORY_BYTES` | `2147483648` (2 GB) | Memory of one export's process. |
+| `AASPECT_PDF_TIMEOUT_SECONDS` | `60` | Time for one export, from starting its process to the finished file; a report that takes longer gets an error page pointing to the JSON download. |
+
 ### Graph database
 
 The constraint check, analytics and template conformance work on a graph of the corpus:
@@ -259,6 +273,7 @@ src/aaspect/
 │   │                  submodels/ reads element trees for template conformance
 │   ├── templates/     download the IDTA submodel templates listed in manifest.json
 │   ├── report_json/   JSON report download
+│   ├── report_pdf/    PDF report download, laid out by WeasyPrint in its own process
 │   └── web/           FastAPI + Jinja2 UI, templates/ and static/
 ├── config/        Settings from AASPECT_* environment variables
 └── main.py        Composition root: builds the adapters and starts the server

@@ -35,6 +35,11 @@ class Settings:
     analysis_time_limit_seconds: int = 600
     upload_time_limit_seconds: int = 300
     worker_memory_bytes: int = 2048 * _MIB
+    # A large report takes half a minute and over a gigabyte to lay out as PDF; 0 turns
+    # the PDF download off.
+    pdf_exports: int = field(default=1, metadata={"minimum": 0})
+    pdf_timeout_seconds: int = 60
+    pdf_memory_bytes: int = 2048 * _MIB
     # Where third-party files, the official schemas and the IDTA submodel templates, are
     # downloaded from: GitHub's raw file server, or a mirror with the same paths.
     download_url: str = "https://raw.githubusercontent.com"
@@ -58,7 +63,8 @@ def load_settings(environment: Mapping[str, str]) -> Settings:
             number = int(raw)
         except ValueError:
             raise ValueError(f"{_PREFIX}{setting.name.upper()} must be a whole number") from None
-        if number <= 0:
-            raise ValueError(f"{_PREFIX}{setting.name.upper()} must be positive")
+        minimum = setting.metadata.get("minimum", 1)
+        if number < minimum:
+            raise ValueError(f"{_PREFIX}{setting.name.upper()} must be at least {minimum}")
         values[setting.name] = number
     return Settings(**values)

@@ -86,7 +86,9 @@ async def _stalled_upload(app: ASGIApp) -> int:
 class TestRoutes(unittest.TestCase):
     def setUp(self) -> None:
         self.analyze = FakeAnalyze()
-        self.client = TestClient(create_app(self.analyze, JsonReportWriter(), LIMITS, HOSTS))
+        self.client = TestClient(
+            create_app(self.analyze, {"json": JsonReportWriter()}, LIMITS, HOSTS)
+        )
 
     def _upload(self, files: list, version: str = "auto"):
         return self.client.post(
@@ -195,7 +197,7 @@ class TestRoutes(unittest.TestCase):
     def test_the_form_offers_templates_only_where_they_are_checked(self) -> None:
         self.assertIn('name="templates"', self.client.get("/").text)
         without = replace(LIMITS, templates=None)
-        client = TestClient(create_app(self.analyze, JsonReportWriter(), without, HOSTS))
+        client = TestClient(create_app(self.analyze, {"json": JsonReportWriter()}, without, HOSTS))
         self.assertNotIn('name="templates"', client.get("/").text)
         templates = [("templates", ("mine.json", b"{}", "application/json"))]
         client.post("/analyses", files=_files("a.json") + templates, data={"version": "auto"})
@@ -264,7 +266,7 @@ class TestRoutes(unittest.TestCase):
             release.wait(10)
             return full_report()
 
-        client = TestClient(create_app(slow, JsonReportWriter(), LIMITS, HOSTS))
+        client = TestClient(create_app(slow, {"json": JsonReportWriter()}, LIMITS, HOSTS))
         first = threading.Thread(target=lambda: client.post("/analyses", files=_files("a.json")))
         first.start()
         self.assertTrue(started.wait(10))
@@ -291,7 +293,7 @@ class TestRoutes(unittest.TestCase):
     def test_slow_upload_times_out_and_releases_its_slot(self) -> None:
         # TestClient sends a body only once it is complete, so the stall is driven directly.
         limits = replace(LIMITS, upload_time_limit_seconds=0.2)
-        app = create_app(self.analyze, JsonReportWriter(), limits, HOSTS)
+        app = create_app(self.analyze, {"json": JsonReportWriter()}, limits, HOSTS)
         self.assertEqual(asyncio.run(_stalled_upload(app)), 408)
         upload = TestClient(app).post("/analyses", files=_files("a.json"), follow_redirects=False)
         self.assertEqual(upload.status_code, 303)

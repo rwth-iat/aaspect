@@ -1,4 +1,5 @@
-"""The polling decision in static/report.js, run with Node when it is installed."""
+"""The polling in static/report.js and the printing in static/print.js, run with Node when
+it is installed."""
 
 import json
 import shutil
@@ -6,13 +7,14 @@ import subprocess
 import unittest
 from importlib.resources import files
 
-SCRIPT = files("aaspect.adapters.web").joinpath("static", "report.js")
+STATIC = files("aaspect.adapters.web").joinpath("static")
+SCRIPT = STATIC.joinpath("report.js")
 NODE = shutil.which("node")
 
 
-def _run(expression: str) -> object:
+def _run(expression: str, script: object = SCRIPT) -> object:
     program = (
-        f"const m = require({json.dumps(str(SCRIPT))});"
+        f"const m = require({json.dumps(str(script))});"
         f" Promise.resolve({expression}).then((v) => console.log(JSON.stringify(v)));"
     )
     result = subprocess.run(
@@ -55,6 +57,28 @@ class TestReadFolded(unittest.TestCase):
     def test_folded_sections_are_read_back(self) -> None:
         storage = """{ getItem: () => '["schema"]' }"""
         self.assertEqual(_run(f"[...m.readFolded({storage}, 'key')]"), ["schema"])
+
+
+_PRINT = """
+(() => {
+  const listeners = {};
+  const win = { addEventListener: (name, f) => { listeners[name] = f; } };
+  const folded = { open: false }, open = { open: true };
+  const root = { querySelectorAll: () => [folded] };
+  m.openForPrint(root, win);
+  listeners.beforeprint();
+  const during = [folded.open, open.open];
+  listeners.afterprint();
+  return { during, after: [folded.open, open.open] };
+})()
+"""
+
+
+@unittest.skipUnless(NODE, "Node.js is not installed")
+class TestOpenForPrint(unittest.TestCase):
+    def test_opens_folded_parts_for_print_and_folds_them_again(self) -> None:
+        result = _run(_PRINT, STATIC.joinpath("print.js"))
+        self.assertEqual(result, {"during": [True, True], "after": [False, True]})
 
 
 if __name__ == "__main__":

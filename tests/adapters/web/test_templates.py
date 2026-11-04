@@ -20,7 +20,7 @@ LIMITS = WebLimits(
 
 def _pages() -> Pages:
     directory = str(files("aaspect.adapters.web").joinpath("templates"))
-    return Pages(template_environment(directory), LIMITS)
+    return Pages(template_environment(directory, ("json", "pdf")), LIMITS)
 
 
 def _html(name: str, **context: Any) -> str:
@@ -44,6 +44,8 @@ class TestTemplates(unittest.TestCase):
     def test_every_page_offers_the_theme_switch(self) -> None:
         html = _html("upload.html", versions=[("auto", "auto")])
         self.assertIn('<script src="/static/theme.js"></script>', html)
+        self.assertIn('href="/static/print.css" media="print"', html)
+        self.assertIn('<script src="/static/print.js" defer></script>', html)
         self.assertIn('id="theme-switch"', html)
         self.assertIn("Analysis of Asset Administration Shell corpora", html)
 
@@ -62,7 +64,8 @@ class TestTemplates(unittest.TestCase):
             self.assertIn(expected, html)
         self.assertIn("50 more rows in the JSON download.", html)
         self.assertIn("5 more locations in the JSON download.", html)
-        self.assertIn('href="/reports/k/report.json"', html)
+        self.assertIn('href="/reports/k/report.json">Download JSON', html)
+        self.assertIn('href="/reports/k/report.pdf">Download PDF', html)
         # Number and label may sit in separate elements, depending on the design.
         self.assertRegex(html, r"\b2\b[^0-9]{0,80}uploaded files")
         self.assertIn("25 locations", html)

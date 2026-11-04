@@ -1,5 +1,5 @@
 /* Light by default, dark when the system asks for it; the switch in the app bar sets
-   data-theme on <html> to override the system either way. */
+   data-theme on <html> to override the system either way. Paper is always light. */
 :root {
   --text: #1b2430;
   --muted: #5d6b7a;
@@ -24,7 +24,7 @@
   --shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --text: #e6e9ef;
     --muted: #8b95a7;
@@ -50,29 +50,31 @@
     color-scheme: dark;
   }
 }
-:root[data-theme="dark"] {
-  --text: #e6e9ef;
-  --muted: #8b95a7;
-  --border: #2a3242;
-  --background: #0f141c;
-  --panel: #161d29;
-  --raised: #1d2636;
-  --accent: #38bdf8;
-  --on-accent: #04212f;
-  --code: #c4d4ff;
-  --error: #f87171;
-  --warning: #fbbf24;
-  --info: #60a5fa;
-  --ok: #34d399;
-  --error-soft: rgba(248, 113, 113, 0.15);
-  --warning-soft: rgba(251, 191, 36, 0.15);
-  --info-soft: rgba(96, 165, 250, 0.15);
-  --ok-soft: rgba(52, 211, 153, 0.15);
-  --ring-fail: rgba(248, 113, 113, 0.45);
-  --ring-pass: rgba(52, 211, 153, 0.45);
-  --ring-pending: rgba(56, 189, 248, 0.45);
-  --shadow: none;
-  color-scheme: dark;
+@media screen {
+  :root[data-theme="dark"] {
+    --text: #e6e9ef;
+    --muted: #8b95a7;
+    --border: #2a3242;
+    --background: #0f141c;
+    --panel: #161d29;
+    --raised: #1d2636;
+    --accent: #38bdf8;
+    --on-accent: #04212f;
+    --code: #c4d4ff;
+    --error: #f87171;
+    --warning: #fbbf24;
+    --info: #60a5fa;
+    --ok: #34d399;
+    --error-soft: rgba(248, 113, 113, 0.15);
+    --warning-soft: rgba(251, 191, 36, 0.15);
+    --info-soft: rgba(96, 165, 250, 0.15);
+    --ok-soft: rgba(52, 211, 153, 0.15);
+    --ring-fail: rgba(248, 113, 113, 0.45);
+    --ring-pass: rgba(52, 211, 153, 0.45);
+    --ring-pending: rgba(56, 189, 248, 0.45);
+    --shadow: none;
+    color-scheme: dark;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -95,7 +97,7 @@ button.theme-switch {
   padding: 0.25rem 0.6rem; font-size: 0.82rem; font-weight: 500;
 }
 button.theme-switch:hover { color: var(--text); }
-@media (max-width: 40rem) { .tagline { display: none; } }
+@media screen and (max-width: 40rem) { .tagline { display: none; } }
 
 main.single { max-width: 60rem; margin: 0 auto; padding: 2rem 1.5rem; }
 main.split {
@@ -149,7 +151,10 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .dot.status-failed { background: var(--error); }
 .dot.status-running { background: var(--accent); }
 .download { display: block; text-align: center; padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
-@media (max-width: 52rem) {
+.download + .download { margin-top: 0.5rem; }
+.print-only { display: none; }
+.download.disabled { color: var(--muted); border-color: var(--border); cursor: not-allowed; }
+@media screen and (max-width: 52rem) {
   main.split, main.dashboard { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
 }
@@ -241,14 +246,16 @@ table.files td.file { overflow-wrap: anywhere; }
 /* One colour per analysis, set by its position in the report. */
 .hue-1 { --hue: #2563eb; } .hue-2 { --hue: #7c3aed; } .hue-3 { --hue: #0d9488; }
 .hue-4 { --hue: #c2410c; } .hue-5 { --hue: #db2777; } .hue-6 { --hue: #475569; }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hue-1 { --hue: #60a5fa; } :root:not([data-theme="light"]) .hue-2 { --hue: #a78bfa; }
   :root:not([data-theme="light"]) .hue-3 { --hue: #2dd4bf; } :root:not([data-theme="light"]) .hue-4 { --hue: #fb923c; }
   :root:not([data-theme="light"]) .hue-5 { --hue: #f472b6; } :root:not([data-theme="light"]) .hue-6 { --hue: #94a3b8; }
 }
-:root[data-theme="dark"] .hue-1 { --hue: #60a5fa; } :root[data-theme="dark"] .hue-2 { --hue: #a78bfa; }
-:root[data-theme="dark"] .hue-3 { --hue: #2dd4bf; } :root[data-theme="dark"] .hue-4 { --hue: #fb923c; }
-:root[data-theme="dark"] .hue-5 { --hue: #f472b6; } :root[data-theme="dark"] .hue-6 { --hue: #94a3b8; }
+@media screen {
+  :root[data-theme="dark"] .hue-1 { --hue: #60a5fa; } :root[data-theme="dark"] .hue-2 { --hue: #a78bfa; }
+  :root[data-theme="dark"] .hue-3 { --hue: #2dd4bf; } :root[data-theme="dark"] .hue-4 { --hue: #fb923c; }
+  :root[data-theme="dark"] .hue-5 { --hue: #f472b6; } :root[data-theme="dark"] .hue-6 { --hue: #94a3b8; }
+}
 [class*="hue-"] { --hue-soft: color-mix(in srgb, var(--hue) 14%, transparent); }
 .score[class*="hue-"] { border-top: 3px solid var(--hue); }
 .score[class*="hue-"] .score-title { color: var(--hue); }
@@ -292,7 +299,7 @@ meter::-moz-meter-bar { background: var(--accent); border-radius: 999px; }
 .locations { max-height: 16rem; overflow-y: auto; }
 .locations table { font-size: 0.78rem; }
 
-@media (max-width: 52rem) {
+@media screen and (max-width: 52rem) {
   .verdict { flex-direction: column; align-items: flex-start; }
   .group > summary { grid-template-columns: auto minmax(0, 1fr); }
   .bars li { grid-template-columns: minmax(0, 1fr) 6rem; }
