@@ -23,6 +23,11 @@ class TestLoadSettings(unittest.TestCase):
         with self.assertRaises(ValueError):
             load_settings({"AASPECT_PDF_EXPORTS": "-1"})
 
+    def test_postgres_password_is_read_but_not_shown(self) -> None:
+        settings = load_settings({"AASPECT_POSTGRES_PASSWORD": "s3cret-pw"})
+        self.assertEqual(settings.postgres_password, "s3cret-pw")
+        self.assertNotIn("s3cret-pw", repr(settings))
+
     def test_invalid_numbers(self) -> None:
         for raw in ("ten", "1.5", "0", "-3", ""):
             with self.subTest(raw=raw), self.assertRaises(ValueError):

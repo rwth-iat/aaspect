@@ -228,6 +228,11 @@ plugin (see `compose.yaml`), and drops it afterward.
 | `AASPECT_NEO4J_URI` | `bolt://127.0.0.1:7687` | Address of the Neo4j server. |
 | `AASPECT_NEO4J_USER` | `neo4j` | User AASpect logs in as. It creates and drops databases, so it needs administration rights. |
 | `AASPECT_NEO4J_PASSWORD` | none | Password of that user. Never shown in logs or error messages. Without it, the graph import and every step after it show as "not configured". |
+| `AASPECT_POSTGRES_HOST` | `127.0.0.1` | Address of the PostgreSQL server. Read, but not used yet. |
+| `AASPECT_POSTGRES_PORT` | `5432` | Its port. |
+| `AASPECT_POSTGRES_DATABASE` | `aaspect` | Database the analyses keep their schemas in. |
+| `AASPECT_POSTGRES_USER` | `aaspect` | User AASpect logs in as. It creates and drops one schema per analysis, so it needs the `CREATE` right on that database. |
+| `AASPECT_POSTGRES_PASSWORD` | none | Password of that user. Never shown in logs or error messages. |
 
 ### Exposing the server
 
@@ -308,6 +313,14 @@ DozerDB container with its port published:
 ```bash
 AASPECT_TEST_NEO4J_URI=bolt://127.0.0.1:7687 AASPECT_TEST_NEO4J_PASSWORD=... \
   uv run python -m unittest tests.adapters.neo4aas.test_graph
+```
+
+The PostgreSQL store is tested the same way, against any server the given user may create
+schemas on (port and user default to `5432` and `postgres`):
+
+```bash
+AASPECT_TEST_POSTGRES_HOST=127.0.0.1 AASPECT_TEST_POSTGRES_PASSWORD=... \
+  uv run python -m unittest tests.adapters.postgres.test_store
 ```
 
 CI runs these checks on every push to `main` and on pull requests.

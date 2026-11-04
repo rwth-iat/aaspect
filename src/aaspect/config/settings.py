@@ -47,6 +47,12 @@ class Settings:
     neo4j_user: str = "neo4j"
     # Kept out of repr so that logging or printing the settings cannot leak it.
     neo4j_password: str = field(default="", repr=False)
+    postgres_host: str = "127.0.0.1"
+    postgres_port: int = 5432
+    postgres_database: str = "aaspect"
+    # Needs the right to create schemas in the database; each analysis gets one.
+    postgres_user: str = "aaspect"
+    postgres_password: str = field(default="", repr=False)
 
 
 def load_settings(environment: Mapping[str, str]) -> Settings:
