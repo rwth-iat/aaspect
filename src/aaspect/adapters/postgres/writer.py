@@ -7,15 +7,23 @@ Identifiable already stored) stays neo4aas's own, so the graph matches the Neo4j
 """
 
 import contextlib
+import dataclasses
 import json
 from collections.abc import Iterable, Sequence
 from typing import Any, LiteralString
 
 import psycopg
-from neo4aas.core.client import AASNeo4JClient
+from neo4aas.core.client import AAS_NEO4J_MODEL_CONFIG, AASNeo4JClient
 from psycopg import sql
 
 from aaspect.adapters.postgres import schema
+from aaspect.adapters.postgres.errors import content_fault
+from aaspect.domain.id_collisions import Environment
+
+# Without the uniqueness constraint, so that collision variants can share their id once
+# it is restored. Repeats are still merged by id during the import.
+_MODEL_CONFIG = dataclasses.replace(AAS_NEO4J_MODEL_CONFIG, enforce_unique_ids=False)
+_IDENTIFIABLE_LISTS = ("assetAdministrationShells", "submodels", "conceptDescriptions")
 
 
 class ContentRefused(ValueError):
@@ -23,13 +31,34 @@ class ContentRefused(ValueError):
 
 
 class GraphWriter(AASNeo4JClient):
-    def __init__(self, connection: psycopg.Connection, name: str, model_config: Any) -> None:
-        super().__init__("", "", model_config=model_config, auto_optimize=False)
+    def __init__(self, connection: psycopg.Connection, name: str) -> None:
+        super().__init__("", "", model_config=_MODEL_CONFIG, auto_optimize=False)
         self._connection = connection
         self._schema = sql.Identifier(schema.checked(name))
 
     def _sql(self, template: LiteralString) -> sql.Composed:
         return sql.SQL(template).format(s=self._schema)
+
+    def upload(self, environments: Sequence[Environment]) -> None:
+        """Store the environments in one transaction. Raises `ValueError`, having stored
+        none of them, if their content cannot be stored."""
+        # neo4aas reads only the three Identifiable lists, so joining them is the same as
+        # uploading each environment. One call is one transaction.
+        merged = {key: _entries(environments, key) for key in _IDENTIFIABLE_LISTS}
+        _id_shorts_as_text(merged)
+        try:
+            self.upload_json(merged)
+        except ContentRefused:
+            raise
+        except Exception as error:
+            reason = content_fault(error)
+            if reason:
+                raise ValueError(reason) from error
+            if isinstance(error, psycopg.Error):
+                raise
+            # neo4aas trusts the structure it is given; schema-invalid content fails with
+            # whatever error the first unexpected value causes.
+            raise ValueError(f"content cannot be stored: {type(error).__name__}") from error
 
     def session(self, **_: Any) -> Any:
         # neo4aas opens a session around `_write_graph`; the write needs none.
@@ -165,3 +194,30 @@ def _canonical(value: Any) -> str:
 def _text(value: Any) -> str:
     """The value as `props->>field` gives it back."""
     return value if isinstance(value, str) else _canonical(value)
+
+
+def _id_shorts_as_text(environment: Environment) -> None:
+    """The checks compare idShorts with text, and fail on anything else. The schema check
+    reports the wrong type; as text, the value is still checked against the pattern. Done
+    at upload, after the id scan, so that `1` and `"1"` still count as different content."""
+    # Iterative: uploaded documents can nest deeper than Python's recursion limit.
+    pending: list[Any] = [environment]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, dict):
+            id_short = item.get("idShort")
+            if id_short is not None and not isinstance(id_short, str):
+                item["idShort"] = json.dumps(id_short, ensure_ascii=False)
+            pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+
+
+def _entries(environments: Sequence[Environment], key: str) -> list:
+    joined = []
+    for environment in environments:
+        entries = environment.get(key, [])
+        if not isinstance(entries, list):
+            raise ValueError(f"content cannot be stored: {key} is not a list")
+        joined.extend(entries)
+    return joined

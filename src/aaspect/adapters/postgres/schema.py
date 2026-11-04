@@ -23,6 +23,20 @@ CREATE INDEX ON {s}.nodes USING hash ((props->>'id'));
 CREATE INDEX ON {s}.nodes USING hash ((props->>'hash'));
 CREATE INDEX ON {s}.edges (start_id, type);
 CREATE INDEX ON {s}.edges (end_id, type);
+
+-- An uploaded file can put any JSON value where text, a list or a number belongs, and
+-- neo4aas stores keys it does not know. The queries only use a value of the right type.
+CREATE FUNCTION {s}.text_of(value jsonb, prefix int) RETURNS text
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    RETURN CASE WHEN jsonb_typeof(value) = 'string' THEN left(value #>> '{{}}', prefix) END;
+CREATE FUNCTION {s}.first_key(props jsonb) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    RETURN CASE WHEN jsonb_typeof(props->'keys_value') = 'array'
+                THEN props->'keys_value'->0 END;
+CREATE FUNCTION {s}.whole_number(value jsonb) RETURNS bigint
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    RETURN CASE WHEN jsonb_typeof(value) = 'number' AND value::text ~ '^-?[0-9]{{1,18}}$'
+                THEN value::text::bigint END;
 """
 
 

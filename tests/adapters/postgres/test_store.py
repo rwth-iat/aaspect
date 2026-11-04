@@ -113,6 +113,31 @@ class TestPostgresStore(unittest.TestCase):
         self.assertIn("time limit", str(raised.exception))
         self.assertEqual(self._schemas(), before)
 
+    def test_a_step_past_the_time_limit_says_so_inside_the_graph(self) -> None:
+        # Steps catch their own failures, so the reason must be set before the graph
+        # closes.
+        with (
+            mock.patch.object(store_module, "_GRACE_SECONDS", 0),
+            self.store.open(1) as graph,
+        ):
+            slow = lambda: graph._connection.execute("SELECT pg_sleep(60)")  # noqa: E731
+            with (
+                mock.patch.object(graph._statistics, "sizes", slow),
+                self.assertRaises(ShownError) as raised,
+            ):
+                graph.sizes()
+        self.assertIn("time limit", str(raised.exception))
+
+    def test_a_failing_query_inside_the_graph_gives_the_plain_reason(self) -> None:
+        with self.store.open() as graph:
+            broken = lambda: graph._connection.execute("NOT SQL")  # noqa: E731
+            with (
+                mock.patch.object(graph._statistics, "sizes", broken),
+                self.assertRaises(ShownError) as raised,
+            ):
+                graph.sizes()
+        self.assertEqual(str(raised.exception), store_module._FAILED)
+
     def test_leftovers_are_dropped(self) -> None:
         leftover = schema.new_name()
         with self.store._connect("aaspect-test") as connection:

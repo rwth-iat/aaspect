@@ -1,27 +1,25 @@
-import dataclasses
-import json
-from collections.abc import Callable, Sequence
-from typing import Any, LiteralString
+from collections.abc import Callable, Generator, Sequence
+from contextlib import contextmanager
+from typing import LiteralString
 
 import psycopg
-from neo4aas.core.client import AAS_NEO4J_MODEL_CONFIG
 from neo4aas.core.utils import irdi_base
 from psycopg import sql
 
 from aaspect.adapters.postgres import schema
-from aaspect.adapters.postgres.errors import content_fault
-from aaspect.adapters.postgres.writer import ContentRefused, GraphWriter
+from aaspect.adapters.postgres.analytics.statistics import PostgresStatistics
+from aaspect.adapters.postgres.submodels import trees
+from aaspect.adapters.postgres.writer import GraphWriter
+from aaspect.domain.analytics.figures import AttributeUse, CorpusSizes, Measure, Tally
 from aaspect.domain.id_collisions import Environment, Occurrence, Rename
 from aaspect.domain.report import ShownError
-
-# Without the uniqueness constraint, so that collision variants can share their id once
-# it is restored. Repeats are still merged by id during the import.
-_MODEL_CONFIG = dataclasses.replace(AAS_NEO4J_MODEL_CONFIG, enforce_unique_ids=False)
-_IDENTIFIABLE_LISTS = ("assetAdministrationShells", "submodels", "conceptDescriptions")
+from aaspect.domain.templates.instances import InstanceSubmodel, SubmodelRef
 
 # neo4aas's resolver as one recursive query. A Reference's key chain starts at the
 # Identifiable with id kv[0] and descends one containment edge per further key, matching
 # the child's idShort or the edge's list_index. An ExternalReference follows only kv[0].
+# A key matching several children (repeated idShorts, which AASd-022 reports) leads
+# nowhere: following all of them would let a small file multiply the walk at every key.
 _LINK = """
 WITH RECURSIVE refs AS (
     SELECT id AS r,
@@ -29,8 +27,11 @@ WITH RECURSIVE refs AS (
                 THEN jsonb_build_array(props->'keys_value'->0)
                 ELSE props->'keys_value' END AS kv
     FROM {s}.nodes
-    WHERE labels @> '{{Reference}}' AND jsonb_typeof(props->'keys_value') = 'array'
-      AND jsonb_array_length(props->'keys_value') > 0
+    -- CASE, not AND: SQL does not promise to test the type before taking the length, and
+    -- an uploaded file can give any Reference keys that are text instead of a list.
+    WHERE labels @> '{{Reference}}'
+      AND CASE WHEN jsonb_typeof(props->'keys_value') = 'array'
+               THEN jsonb_array_length(props->'keys_value') > 0 ELSE false END
 ), walk(r, kv, step, node) AS (
     SELECT refs.r, refs.kv, 0, t.id
     FROM refs JOIN {s}.nodes t
@@ -38,12 +39,20 @@ WITH RECURSIVE refs AS (
     UNION ALL
     SELECT w.r, w.kv, w.step + 1, c.id
     FROM walk w
+    CROSS JOIN LATERAL (
+        SELECT w.kv->(w.step + 1) AS id_short,
+               CASE WHEN w.kv->>(w.step + 1) ~ '^-?[0-9]{{1,18}}$'
+                    THEN to_jsonb((w.kv->>(w.step + 1))::bigint) END AS position
+    ) k
     JOIN {s}.edges e ON e.start_id = w.node AND e.type <> 'references'
     JOIN {s}.nodes c ON c.id = e.end_id AND c.labels @> '{{Referable}}'
     WHERE w.step + 1 < jsonb_array_length(w.kv)
-      AND (c.props->'idShort' = w.kv->(w.step + 1)
-           OR (w.kv->>(w.step + 1) ~ '^-?[0-9]{{1,18}}$'
-               AND e.props->'list_index' = to_jsonb((w.kv->>(w.step + 1))::bigint)))
+      AND (c.props->'idShort' = k.id_short OR e.props->'list_index' = k.position)
+      AND NOT EXISTS (
+          SELECT FROM {s}.edges e2
+          JOIN {s}.nodes c2 ON c2.id = e2.end_id AND c2.labels @> '{{Referable}}'
+          WHERE e2.start_id = w.node AND e2.type <> 'references' AND c2.id <> c.id
+            AND (c2.props->'idShort' = k.id_short OR e2.props->'list_index' = k.position))
 )
 INSERT INTO {s}.edges (start_id, end_id, type, props)
 SELECT DISTINCT r, node, 'references', '{{}}'::jsonb
@@ -88,7 +97,8 @@ WHERE node.labels @> '{{Reference}}' AND node.props->>'target_id' = r.temporary
 
 class PostgresGraph:
     """The graph of one analysis, in a schema of its own. `shown` turns a failure of the
-    database into the error the report shows."""
+    database into the error the report shows; errors are translated here, since the steps
+    that query the graph keep their own failures from ending the analysis."""
 
     def __init__(
         self,
@@ -100,29 +110,14 @@ class PostgresGraph:
         self._schema = schema.checked(name)
         self._shown = shown
         self._occurrences: Sequence[Occurrence] = ()
-        self._writer = GraphWriter(connection, name, _MODEL_CONFIG)
+        self._writer = GraphWriter(connection, name)
+        self._statistics = PostgresStatistics(connection, self._schema)
 
     def _sql(self, template: LiteralString) -> sql.Composed:
         return sql.SQL(template).format(s=sql.Identifier(self._schema))
 
     def upload(self, environments: Sequence[Environment]) -> None:
-        # neo4aas reads only the three Identifiable lists, so joining them is the same as
-        # uploading each environment. One call is one transaction.
-        merged = {key: _entries(environments, key) for key in _IDENTIFIABLE_LISTS}
-        _id_shorts_as_text(merged)
-        try:
-            self._writer.upload_json(merged)
-        except ContentRefused:
-            raise
-        except Exception as error:
-            reason = content_fault(error)
-            if reason:
-                raise ValueError(reason) from error
-            if isinstance(error, psycopg.Error):
-                raise
-            # neo4aas trusts the structure it is given; schema-invalid content fails with
-            # whatever error the first unexpected value causes.
-            raise ValueError(f"content cannot be stored: {type(error).__name__}") from error
+        self._writer.upload(environments)
 
     def link_references(self) -> None:
         # Without statistics the planner guesses the freshly loaded tables are tiny.
@@ -158,29 +153,37 @@ class PostgresGraph:
             )
             self._connection.execute(self._sql(_RESTORE_REFERENCES), (temporary, original, bases))
 
+    def sizes(self) -> CorpusSizes:
+        with self._translated():
+            return self._statistics.sizes()
 
-def _id_shorts_as_text(environment: Environment) -> None:
-    """The checks compare idShorts with text, and fail on anything else. The schema check
-    reports the wrong type; as text, the value is still checked against the pattern. Done
-    at upload, after the id scan, so that `1` and `"1"` still count as different content."""
-    # Iterative: uploaded documents can nest deeper than Python's recursion limit.
-    pending: list[Any] = [environment]
-    while pending:
-        item = pending.pop()
-        if isinstance(item, dict):
-            id_short = item.get("idShort")
-            if id_short is not None and not isinstance(id_short, str):
-                item["idShort"] = json.dumps(id_short, ensure_ascii=False)
-            pending.extend(item.values())
-        elif isinstance(item, list):
-            pending.extend(item)
+    def tally(self, measure: Measure) -> Tally[str | None]:
+        with self._translated():
+            return self._statistics.tally(measure)
 
+    def submodel_kinds(self) -> Tally[tuple[str | None, str | None]]:
+        with self._translated():
+            return self._statistics.submodel_kinds()
 
-def _entries(environments: Sequence[Environment], key: str) -> list:
-    joined = []
-    for environment in environments:
-        entries = environment.get(key, [])
-        if not isinstance(entries, list):
-            raise ValueError(f"content cannot be stored: {key} is not a list")
-        joined.extend(entries)
-    return joined
+    def element_types(self) -> Tally[frozenset[str]]:
+        with self._translated():
+            return self._statistics.element_types()
+
+    def attribute_use(self) -> tuple[AttributeUse, ...]:
+        with self._translated():
+            return self._statistics.attribute_use()
+
+    def submodel_refs(self) -> Sequence[SubmodelRef]:
+        with self._translated():
+            return trees.submodel_refs(self._connection, self._schema)
+
+    def submodel_trees(self, nodes: Sequence[str]) -> Sequence[InstanceSubmodel]:
+        with self._translated():
+            return trees.submodel_trees(self._connection, self._schema, nodes)
+
+    @contextmanager
+    def _translated(self) -> Generator[None]:
+        try:
+            yield
+        except psycopg.Error as error:
+            raise self._shown(error) from error

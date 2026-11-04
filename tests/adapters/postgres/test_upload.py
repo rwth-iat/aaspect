@@ -4,33 +4,18 @@ from unittest import mock
 import psycopg
 from psycopg import errors
 
-from aaspect.adapters.postgres.graph import PostgresGraph
-from aaspect.adapters.postgres.writer import ContentRefused
-from aaspect.domain.report import ShownError
+from aaspect.adapters.postgres.writer import ContentRefused, GraphWriter
 
 
-def _offline_graph() -> PostgresGraph:
-    return PostgresGraph(mock.Mock(), "aaspect_offline", lambda error: ShownError(str(error)))
-
-
-class _Recording:
-    def upload_json(self, environment: dict) -> None:
-        self.uploaded = environment
-
-
-class _Raising:
-    def __init__(self, error: Exception) -> None:
-        self.error = error
-
-    def upload_json(self, environment: dict) -> None:
-        raise self.error
+def _offline_writer() -> GraphWriter:
+    return GraphWriter(mock.Mock(), "aaspect_offline")
 
 
 def _upload_with(error: Exception) -> Exception | None:
-    graph = _offline_graph()
-    graph._writer = _Raising(error)  # type: ignore[assignment]
+    writer = _offline_writer()
     try:
-        graph.upload([{}])
+        with mock.patch.object(writer, "upload_json", side_effect=error):
+            writer.upload([{}])
     except Exception as raised:
         return raised
     return None
@@ -39,16 +24,16 @@ def _upload_with(error: Exception) -> Exception | None:
 class TestUpload(unittest.TestCase):
     def test_malformed_content_raises_value_error(self) -> None:
         with self.assertRaises(ValueError):
-            _offline_graph().upload([{"submodels": "not a list"}])
+            _offline_writer().upload([{"submodels": "not a list"}])
 
     def test_id_shorts_that_are_not_text_become_text(self) -> None:
-        graph = _offline_graph()
-        graph._writer = recording = _Recording()  # type: ignore[assignment]
+        writer = _offline_writer()
         submodel = {"id": "urn:x", "idShort": 123, "submodelElements": [{"idShort": ["a"]}]}
 
-        graph.upload([{"submodels": [submodel]}])
+        with mock.patch.object(writer, "upload_json") as upload_json:
+            writer.upload([{"submodels": [submodel]}])
 
-        [stored] = recording.uploaded["submodels"]
+        [stored] = upload_json.call_args.args[0]["submodels"]
         self.assertEqual(stored["idShort"], "123")
         self.assertEqual(stored["submodelElements"][0]["idShort"], '["a"]')
 

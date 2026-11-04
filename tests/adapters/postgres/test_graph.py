@@ -122,7 +122,7 @@ class TestImportIntoPostgres(unittest.TestCase):
         nested = self._count("SELECT count(*) FROM {s}.edges WHERE type = 'referredSemanticId'")
         self.assertEqual(nested, 1)
 
-    def test_references_follow_idshorts_and_list_indexes(self) -> None:
+    def test_references_follow_unique_idshorts_and_list_indexes(self) -> None:
         def property_(id_short: str | None) -> dict:
             element = {"modelType": "Property", "valueType": "xs:string", "value": "v"}
             return element | ({"idShort": id_short} if id_short else {})
@@ -138,6 +138,9 @@ class TestImportIntoPostgres(unittest.TestCase):
                     "value": [property_(None), property_(None)],
                 },
                 {"idShort": "p", **property_("p")},
+                # Repeated idShorts make a key ambiguous; it then leads nowhere.
+                property_("twin") | {"value": "1"},
+                property_("twin") | {"value": "2"},
             ],
         }
 
@@ -152,7 +155,14 @@ class TestImportIntoPostgres(unittest.TestCase):
             "submodelElements": [
                 {"idShort": f"r{i}", "modelType": "ReferenceElement", "value": reference(*keys)}
                 for i, keys in enumerate(
-                    (("urn:sm", "p"), ("urn:sm", "list", "1"), ("urn:sm", "missing"))
+                    (
+                        ("urn:sm", "p"),
+                        ("urn:sm", "list", "1"),
+                        ("urn:sm", "missing"),
+                        ("urn:sm", "twin"),
+                        # Not a number, so no list position: must not break the linking.
+                        ("urn:sm", "list", "first"),
+                    )
                 )
             ],
         }
