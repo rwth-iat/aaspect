@@ -1,12 +1,24 @@
 """Shapes report blocks for reading: repeated rules folded together, links to file pages,
-the file list."""
+the file list, what the report page needs."""
 
 from collections.abc import Iterable
 from dataclasses import dataclass
 
 from aaspect.domain.blocks import Block, Finding, Severity
 from aaspect.domain.per_file import Owners
-from aaspect.domain.summary import FileIssues, Summary
+from aaspect.domain.report import Report
+from aaspect.domain.summary import FileIssues, Summary, summarize
+
+# Pages show this much; the JSON download always has everything.
+MAX_ROWS = 200
+MAX_LOCATIONS = 20
+
+
+def page_context(report: Report) -> dict[str, object]:
+    """Template values the report page needs beyond the report, the same on screen and on
+    paper."""
+    return {"summary": summarize(report), "max_rows": MAX_ROWS, "max_locations": MAX_LOCATIONS}
+
 
 _RANK = {Severity.ERROR: 0, Severity.WARNING: 1, Severity.INFO: 2}
 

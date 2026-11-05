@@ -16,15 +16,12 @@ from aaspect.adapters.web.uploads import (
     UploadRejected,
     read_form,
 )
-from aaspect.adapters.web.views import FileLinks, file_rows
+from aaspect.adapters.web.views import MAX_LOCATIONS, MAX_ROWS, FileLinks, file_rows, page_context
 from aaspect.domain.per_file import file_sections
 from aaspect.domain.report import Report, ShownError, TryAgainLater
 from aaspect.domain.summary import summarize
 from aaspect.ports.report_writer import ReportWriter
 
-# Pages show this much; the JSON download always has everything.
-MAX_ROWS = 200
-MAX_LOCATIONS = 20
 _EXPIRED = "This report does not exist or has expired."
 _NO_FORMAT = "This report is not offered in that format."
 _NOT_READY = "Downloads are offered once the analysis has finished."
@@ -135,13 +132,7 @@ class _Handlers:
         if report is None:
             return self._pages.error(404, _EXPIRED)
         return self._render(
-            report,
-            key,
-            "report.html",
-            summary=summarize(report),
-            state=_state(report),
-            max_rows=MAX_ROWS,
-            max_locations=MAX_LOCATIONS,
+            report, key, "report.html", state=_state(report), **page_context(report)
         )
 
     def list_files(self, key: str, show: str = "all", q: str = "") -> Response:

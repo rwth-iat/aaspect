@@ -4,9 +4,8 @@ from dataclasses import dataclass
 from importlib.resources import files
 
 from aaspect.adapters.web.app import template_environment
-from aaspect.adapters.web.routes import MAX_LOCATIONS, MAX_ROWS
+from aaspect.adapters.web.views import page_context
 from aaspect.domain.report import Report
-from aaspect.domain.summary import summarize
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,11 +29,5 @@ class PrintableReport:
 
     def __call__(self, report: Report) -> str:
         return self._template.render(
-            export=self._export,
-            report=report,
-            summary=summarize(report),
-            key="",
-            state="",
-            max_rows=MAX_ROWS,
-            max_locations=MAX_LOCATIONS,
+            export=self._export, report=report, key="", state="", **page_context(report)
         )
