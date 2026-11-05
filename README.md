@@ -319,17 +319,9 @@ package build):
 uv run python precommit.py
 ```
 
-The import into Neo4j is tested against a real server only when one is given, e.g. a
-DozerDB container with its port published:
-
-```bash
-AASPECT_TEST_NEO4J_URI=bolt://127.0.0.1:7687 AASPECT_TEST_NEO4J_PASSWORD=... \
-  uv run python -m unittest tests.adapters.neo4aas.test_graph
-```
-
-The PostgreSQL store, its constraint checks and queries are tested the same way, against
-any server the given user may create schemas on (port and user default to `5432` and
-`postgres`):
+The PostgreSQL store, its constraint checks and queries are tested against a real server
+only when one is given: any server the given user may create schemas on (port and user
+default to `5432` and `postgres`):
 
 ```bash
 AASPECT_TEST_POSTGRES_HOST=127.0.0.1 AASPECT_TEST_POSTGRES_PASSWORD=... \

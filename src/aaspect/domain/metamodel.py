@@ -25,7 +25,7 @@ class VersionDetails:
     xml_namespace: str
     json_schema: PinnedFile
     xml_schema: PinnedFile
-    # The name neo4aas's constraint checker gives this version's rules.
+    # Which set of constraint rules applies to documents of this version.
     constraint_rules: str
 
 

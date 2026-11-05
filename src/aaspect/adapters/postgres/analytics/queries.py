@@ -1,8 +1,8 @@
 """SQL for the analytics. Every query aggregates in the database and returns few rows.
 
 A value taken from the data is compared on its first `%(prefix)s` characters and becomes
-null where it is not text (`text_of`). Ties are broken in code-point order (`"C"`), as in
-Cypher, not in the language order of the database.
+null where it is not text (`text_of`). Ties are broken in code-point order (`"C"`), not in
+the language order of the database, so the result does not depend on its locale.
 """
 
 from typing import LiteralString
@@ -78,7 +78,7 @@ WHERE asset.labels @> '{{AssetInformation}}'
 """,
 }
 
-# The first semanticId that has a key, as Cypher's head(collect(...)) skips nulls.
+# The first semanticId that has a key; one without keys does not hide a later one.
 _FIRST_SEMANTIC_ID = """
 (SELECT {s}.first_key(reference.props)
  FROM {s}.edges AS edge
