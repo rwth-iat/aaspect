@@ -15,10 +15,12 @@ RUN uv sync --locked --no-dev --no-editable
 
 FROM python:3.12-slim@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159
 # WeasyPrint lays out the PDF report with Pango; DejaVu stands in for the page's
-# system-ui and monospace fonts.
+# system-ui and monospace fonts. Pinned to the upstream release, not the Debian
+# revision: security updates still apply, a new release fails the build.
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
-        libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core \
+        'libpango-1.0-0=1.56.3-*' 'libpangoft2-1.0-0=1.56.3-*' \
+        'libharfbuzz-subset0=10.2.0-*' 'fonts-dejavu-core=2.37-*' \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --system --uid 10001 --no-create-home aaspect
 COPY --from=build /app/.venv /app/.venv
