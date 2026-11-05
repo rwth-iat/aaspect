@@ -33,6 +33,9 @@ CREATE FUNCTION {s}.first_key(props jsonb) RETURNS jsonb
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     RETURN CASE WHEN jsonb_typeof(props->'keys_value') = 'array'
                 THEN props->'keys_value'->0 END;
+CREATE FUNCTION {s}.list_of(value jsonb) RETURNS jsonb
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    RETURN CASE WHEN jsonb_typeof(value) = 'array' THEN value ELSE '[]'::jsonb END;
 CREATE FUNCTION {s}.whole_number(value jsonb) RETURNS bigint
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     RETURN CASE WHEN jsonb_typeof(value) = 'number' AND value::text ~ '^-?[0-9]{{1,18}}$'

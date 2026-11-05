@@ -8,10 +8,13 @@ from psycopg import sql
 
 from aaspect.adapters.postgres import schema
 from aaspect.adapters.postgres.analytics.statistics import PostgresStatistics
+from aaspect.adapters.postgres.checks.checker import check_constraints
 from aaspect.adapters.postgres.submodels import trees
 from aaspect.adapters.postgres.writer import GraphWriter
 from aaspect.domain.analytics.figures import AttributeUse, CorpusSizes, Measure, Tally
+from aaspect.domain.constraints.violations import ConstraintResult
 from aaspect.domain.id_collisions import Environment, Occurrence, Rename
+from aaspect.domain.metamodel import MetamodelVersion
 from aaspect.domain.report import ShownError
 from aaspect.domain.templates.instances import InstanceSubmodel, SubmodelRef
 
@@ -152,6 +155,14 @@ class PostgresGraph:
                 (temporary, original, bases, [rename.index for rename in renames]),
             )
             self._connection.execute(self._sql(_RESTORE_REFERENCES), (temporary, original, bases))
+
+    def check_constraints(
+        self, version: MetamodelVersion, expired: Callable[[], bool]
+    ) -> ConstraintResult:
+        with self._translated():
+            return check_constraints(
+                self._connection, self._schema, version, self._occurrences, expired
+            )
 
     def sizes(self) -> CorpusSizes:
         with self._translated():
