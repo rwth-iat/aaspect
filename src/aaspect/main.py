@@ -19,9 +19,8 @@ from fastapi import FastAPI
 from aaspect.adapters.download.github import GithubDownload
 from aaspect.adapters.files.aasx import ArchiveLimits
 from aaspect.adapters.files.reader import FileCorpusReader
-from aaspect.adapters.neo4aas.notifications import UnusedSchemaNotifications
 from aaspect.adapters.neo4aas.parser import Neo4aasEnvironmentParser
-from aaspect.adapters.neo4aas.store import DozerDbStore
+from aaspect.adapters.postgres.store import PostgresStore
 from aaspect.adapters.report_json.writer import JsonReportWriter
 from aaspect.adapters.report_pdf.writer import PdfReportWriter
 from aaspect.adapters.schema.isolated import IsolatedSchemaValidator
@@ -58,7 +57,7 @@ def build_app(
     validator = _validator(settings, resources, schemas)
     # One thread per worker process: the threads only wait for their worker.
     pool = resources.enter_context(ThreadPoolExecutor(settings.validation_workers))
-    graph_store = _graph_store(settings, resources)
+    graph_store = _graph_store(settings)
     analyze = AnalyzeCorpus(
         _reader(settings, settings.max_document_bytes),
         validator,
@@ -152,11 +151,17 @@ def wait_for_schemas(
         pause = min(pause * 2, _LAST_PAUSE_SECONDS)
 
 
-def _graph_store(settings: Settings, resources: ExitStack) -> DozerDbStore | None:
-    if not settings.neo4j_password:
+def _graph_store(settings: Settings) -> PostgresStore | None:
+    if not settings.postgres_password:
         return None
-    store = DozerDbStore(settings.neo4j_uri, settings.neo4j_user, settings.neo4j_password)
-    resources.callback(store.close)
+    store = PostgresStore(
+        settings.postgres_host,
+        settings.postgres_port,
+        settings.postgres_database,
+        settings.postgres_user,
+        settings.postgres_password,
+        settings.postgres_sslmode,
+    )
     store.drop_leftovers()
     return store
 
@@ -171,7 +176,7 @@ def _keep_password_from_children() -> None:
     # Schema workers and PDF exports handle uploaded content and run as the same user.
     # Dropping the password stops them inheriting it; marking the server not dumpable
     # stops them reading it from its /proc environ or memory.
-    os.environ.pop("AASPECT_NEO4J_PASSWORD", None)
+    os.environ.pop("AASPECT_POSTGRES_PASSWORD", None)
     if sys.platform == "linux":
         pr_set_dumpable = 4
         if ctypes.CDLL(None, use_errno=True).prctl(pr_set_dumpable, 0, 0, 0, 0) != 0:
@@ -187,7 +192,6 @@ def main() -> None:
     download = GithubDownload(settings.download_url)
     schemas = wait_for_schemas(download)
     logging.getLogger("uvicorn.access").addFilter(MaskReportKeys())
-    logging.getLogger("neo4j.notifications").addFilter(UnusedSchemaNotifications())
     with ExitStack() as resources:
         uvicorn.run(
             build_app(settings, resources, schemas, download),

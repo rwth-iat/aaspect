@@ -43,16 +43,16 @@ class Settings:
     # Where third-party files, the official schemas and the IDTA submodel templates, are
     # downloaded from: GitHub's raw file server, or a mirror with the same paths.
     download_url: str = "https://raw.githubusercontent.com"
-    neo4j_uri: str = "bolt://127.0.0.1:7687"
-    neo4j_user: str = "neo4j"
-    # Kept out of repr so that logging or printing the settings cannot leak it.
-    neo4j_password: str = field(default="", repr=False)
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5432
     postgres_database: str = "aaspect"
     # Needs the right to create schemas in the database; each analysis gets one.
     postgres_user: str = "aaspect"
+    # Kept out of repr so that logging or printing the settings cannot leak it.
     postgres_password: str = field(default="", repr=False)
+    # libpq's sslmode. `prefer` encrypts when the server offers it but does not check whom
+    # it talks to; a server outside this machine or compose network wants `verify-full`.
+    postgres_sslmode: str = "prefer"
 
 
 def load_settings(environment: Mapping[str, str]) -> Settings:

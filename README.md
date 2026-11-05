@@ -1,8 +1,8 @@
 # AASpect
 
 **AASpect** is a tool for analyzing corpora of Asset Administration Shells (AAS).
-It is built on [neo4aas](https://github.com/rwth-iat/neo4aas), which maps AAS data into a
-Neo4j graph and checks it against the metamodel constraints.
+It uses [neo4aas](https://github.com/rwth-iat/neo4aas) to map AAS data into a graph, which
+it keeps in PostgreSQL and checks against the metamodel constraints.
 
 > **Status:** early stage. All four analyses work: schema check, metamodel constraints,
 > analytics and submodel template conformance, with a web report (a summary of the files
@@ -23,9 +23,9 @@ not the pages per file.*
   schemas are IDTA's (CC BY 4.0) and are not shipped: AASpect downloads them at startup
   from [admin-shell-io/aas-specs-metamodel](https://github.com/admin-shell-io/aas-specs-metamodel),
   pinned to one commit per version and checked by size and SHA-256.
-- **Metamodel constraints** *(available)*: import the corpus into Neo4j with neo4aas and
-  evaluate the `AASd-xxx` constraints of the metamodel (IDTA-01001) with its constraint
-  checker. The whole corpus is checked by one version: the one chosen, else the most
+- **Metamodel constraints** *(available)*: import the corpus as a graph and evaluate the
+  `AASd-xxx` constraints of the metamodel (IDTA-01001), ported from neo4aas's constraint
+  checker to SQL. The whole corpus is checked by one version: the one chosen, else the most
   common one; files of other versions are named. Violations are grouped per constraint
   and located by file, object id and element path; an object shared by many files is
   listed once, with its first file and the number of files.
@@ -89,8 +89,8 @@ their first 256 characters.
 
 ### Deployment
 
-- Runs with Docker (`docker compose up`): the aaspect web app and a Neo4j server with
-  APOC and the DozerDB plugin, which gives every analysis a database of its own.
+- Runs with Docker (`docker compose up`): the aaspect web app and a PostgreSQL server,
+  which gives every analysis a schema of its own.
 
 ---
 
@@ -124,14 +124,26 @@ as an error, since it needs the operator.
 ### With Docker
 
 ```bash
-echo "AASPECT_NEO4J_PASSWORD=$(openssl rand -hex 16)" > .env
+echo "AASPECT_POSTGRES_PASSWORD=$(openssl rand -hex 16)" > .env
 docker compose up --build   # then open http://127.0.0.1:8000
 ```
 
-The database password is read from `.env` (at least 8 characters); compose refuses to
-start without it. The database publishes no port; only the web app reaches it. Its files
-live in an unnamed volume that each `docker compose down` leaves behind; use
-`docker compose down -v` to delete them as well.
+The database password is read from `.env`; compose refuses to start without it. The
+database publishes no port; only the web app reaches it. Its files live in the volume
+`postgres-data`, which `docker compose down` keeps. The server sets its password only on
+the first start, so after changing it in `.env`, run `docker compose down -v` to delete
+the volume as well. The database runs as an unprivileged user on a read-only file
+system, with 8 GB of memory, of which 2 GB are shared buffers; with PostgreSQL's
+defaults the analytics are several times slower. On its first start,
+`deploy/postgres/app-role.sh` creates the role `aaspect` that the web app logs in as. It
+may create schemas in the database `aaspect` and nothing more, and each of its server
+processes may hold at most 5 GB of temporary files at a time. The superuser keeps no
+password; for maintenance, use `docker compose exec postgres psql`.
+
+Earlier versions kept the graph in a DozerDB container. When upgrading such a setup,
+replace `AASPECT_NEO4J_PASSWORD` in `.env` with `AASPECT_POSTGRES_PASSWORD`, and start
+with `docker compose up --build --remove-orphans`, so that the old `dozerdb` container is
+removed.
 
 The container runs as an unprivileged user on a read-only file system and is reachable
 from this machine only. `compose.yaml` sets `AASPECT_VALIDATION_WORKERS` to 4 so that
@@ -220,19 +232,18 @@ share 256 MB; beyond that the oldest is dropped and made again when next asked f
 ### Graph database
 
 The constraint check, analytics and template conformance work on a graph of the corpus:
-each analysis imports it into a database of its own on a Neo4j server with the DozerDB
-plugin (see `compose.yaml`), and drops it afterward.
+each analysis imports it into a schema of its own on a PostgreSQL server (see
+`compose.yaml`), and drops it afterward. Schemas left behind by a crash are dropped at
+startup.
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `AASPECT_NEO4J_URI` | `bolt://127.0.0.1:7687` | Address of the Neo4j server. |
-| `AASPECT_NEO4J_USER` | `neo4j` | User AASpect logs in as. It creates and drops databases, so it needs administration rights. |
-| `AASPECT_NEO4J_PASSWORD` | none | Password of that user. Never shown in logs or error messages. Without it, the graph import and every step after it show as "not configured". |
-| `AASPECT_POSTGRES_HOST` | `127.0.0.1` | Address of the PostgreSQL server. Read, but not used yet. |
+| `AASPECT_POSTGRES_HOST` | `127.0.0.1` | Address of the PostgreSQL server. |
 | `AASPECT_POSTGRES_PORT` | `5432` | Its port. |
 | `AASPECT_POSTGRES_DATABASE` | `aaspect` | Database the analyses keep their schemas in. |
 | `AASPECT_POSTGRES_USER` | `aaspect` | User AASpect logs in as. It creates and drops one schema per analysis, so it needs the `CREATE` right on that database. |
-| `AASPECT_POSTGRES_PASSWORD` | none | Password of that user. Never shown in logs or error messages. |
+| `AASPECT_POSTGRES_PASSWORD` | none | Password of that user. Never shown in logs or error messages. Without it, the graph import and every step after it show as "not configured". |
+| `AASPECT_POSTGRES_SSLMODE` | `prefer` | libpq's `sslmode`. `prefer` encrypts if the server offers it but checks no certificate; for a server reached over a network, use `verify-full`, with the CA in `PGSSLROOTCERT`. |
 
 ### Exposing the server
 
@@ -273,9 +284,10 @@ src/aaspect/
 │   ├── download/      download pinned files over HTTPS
 │   ├── schema/        validate with jsonschema-rs and lxml in isolated worker
 │   │                  processes
-│   ├── neo4aas/       convert documents, import them with neo4aas, one database
-│   │                  per analysis on DozerDB; analytics/ holds the counting queries,
-│   │                  submodels/ reads element trees for template conformance
+│   ├── neo4aas/       convert documents for the import with neo4aas
+│   ├── postgres/      one schema per analysis: import the graph, link references;
+│   │                  checks/ holds the constraint rules, analytics/ the counting
+│   │                  queries, submodels/ reads element trees for template conformance
 │   ├── templates/     download the IDTA submodel templates listed in manifest.json
 │   ├── report_json/   JSON report download
 │   ├── report_pdf/    PDF report download, laid out by WeasyPrint in its own process
@@ -315,12 +327,13 @@ AASPECT_TEST_NEO4J_URI=bolt://127.0.0.1:7687 AASPECT_TEST_NEO4J_PASSWORD=... \
   uv run python -m unittest tests.adapters.neo4aas.test_graph
 ```
 
-The PostgreSQL store is tested the same way, against any server the given user may create
-schemas on (port and user default to `5432` and `postgres`):
+The PostgreSQL store, its constraint checks and queries are tested the same way, against
+any server the given user may create schemas on (port and user default to `5432` and
+`postgres`):
 
 ```bash
 AASPECT_TEST_POSTGRES_HOST=127.0.0.1 AASPECT_TEST_POSTGRES_PASSWORD=... \
-  uv run python -m unittest tests.adapters.postgres.test_store
+  uv run python -m unittest discover -s tests/adapters/postgres -t .
 ```
 
 CI runs these checks on every push to `main` and on pull requests.

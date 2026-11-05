@@ -64,6 +64,7 @@ class PostgresStore:
         database: str,
         user: str,
         password: str,
+        sslmode: str = "prefer",
         connect_timeout_seconds: int = 5,
     ) -> None:
         self._conninfo = make_conninfo(
@@ -72,6 +73,7 @@ class PostgresStore:
             dbname=database,
             user=user,
             password=password,
+            sslmode=sslmode,
             connect_timeout=connect_timeout_seconds,
         )
 

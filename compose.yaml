@@ -11,11 +11,10 @@ services:
       # AASPECT_PDF_MEMORY_BYTES (2 GB), /tmp up to 1.1 GB and kept downloads 256 MB: all
       # of them together, plus the server itself, fit the memory limit below.
       AASPECT_VALIDATION_WORKERS: "4"
-      AASPECT_NEO4J_URI: bolt://dozerdb:7687
-      AASPECT_NEO4J_USER: neo4j
-      AASPECT_NEO4J_PASSWORD: ${AASPECT_NEO4J_PASSWORD:?set AASPECT_NEO4J_PASSWORD in .env}
+      AASPECT_POSTGRES_HOST: postgres
+      AASPECT_POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
     depends_on:
-      dozerdb:
+      postgres:
         condition: service_healthy
     mem_limit: 13g
     pids_limit: 256
@@ -30,38 +29,63 @@ services:
       - no-new-privileges:true
     restart: unless-stopped
 
-  dozerdb:
-    build: deploy/dozerdb
-    image: aaspect-dozerdb
+  postgres:
+    image: postgres:18.6-trixie@sha256:bd5dfa494a5a259704365813dbfa5fa6b3e69be7348d43b547f540c730478583
     # No published ports: only the aaspect service reaches the database, over the
-    # compose network. No named volume either: every analysis drops its database when
-    # done, so nothing needs to outlive the container.
+    # compose network. Every analysis keeps its graph in a schema of its own and drops it
+    # when done, so only the server's own files stay in the volume. They also keep the
+    # role and password from the first start: after changing the password, remove them
+    # with `docker compose down -v`.
     environment:
-      NEO4J_AUTH: neo4j/${AASPECT_NEO4J_PASSWORD:?set AASPECT_NEO4J_PASSWORD in .env}
-      # Shared by all analyses running at once; heap plus page cache stay below
-      # mem_limit to leave room for the JVM's own memory.
-      NEO4J_server_memory_heap_initial__size: 4g
-      NEO4J_server_memory_heap_max__size: 4g
-      NEO4J_server_memory_pagecache_size: 2g
-      # One analysis must not stall or starve the others: a query running longer, or one
-      # transaction needing more, fails that analysis's step instead. 300 real files
-      # (125 MB) written as a single transaction fit in 1g; batches are capped at 32 MB.
-      NEO4J_db_transaction_timeout: 300s
-      NEO4J_db_memory_transaction_max: 1g
-      NEO4J_db_memory_transaction_total_max: 3g
+      POSTGRES_DB: aaspect
+      # The image needs a superuser password to set up the server; app-role.sh removes
+      # it again and creates the role AASpect logs in as.
+      POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
+      AASPECT_POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
+    # Shared by all analyses running at once. The image's defaults (128 MB of shared
+    # buffers, 4 MB per sort) made the analytics almost four times slower on 4,600 files.
+    # Three analyses of that size at once peaked at 5 GB.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=5GB
+      - -c
+      - work_mem=128MB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - max_wal_size=4GB
+      # A query whose client is gone ends at the next check, not when it finishes.
+      - -c
+      - client_connection_check_interval=10s
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./deploy/postgres/app-role.sh:/docker-entrypoint-initdb.d/app-role.sh:ro
     mem_limit: 8g
-    # Started as the image's neo4j user, so its entrypoint needs no root rights to switch
-    # to it; a break-out from the database then has neither root nor any capability.
-    user: "7474:7474"
+    # Parallel queries hand their hash tables over in shared memory; Docker's default of
+    # 64 MB is too small for them.
+    shm_size: 1g
+    # Started as the image's postgres user, so its entrypoint needs no root rights to
+    # switch to it; a break-out from the database then has neither root nor any capability.
+    user: postgres
+    read_only: true
+    tmpfs:
+      - /var/run/postgresql
+      - /tmp
     cap_drop:
       - ALL
     pids_limit: 1024
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:7474 || exit 1"]
+      test: ["CMD", "pg_isready", "-U", "aaspect", "-d", "aaspect"]
       interval: 10s
       timeout: 5s
-      start_period: 60s
+      start_period: 30s
       retries: 6
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+
+volumes:
+  postgres-data:

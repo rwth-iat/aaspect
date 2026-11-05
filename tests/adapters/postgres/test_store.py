@@ -155,6 +155,11 @@ class TestPostgresStore(unittest.TestCase):
         with self.store.open():
             self.assertNotIn(leftover, self._schemas())
 
+    def test_a_server_without_tls_is_refused_when_tls_is_required(self) -> None:
+        strict = PostgresStore(_HOST or "", _PORT, _DATABASE, _USER, _PASSWORD, "require")
+        with self.assertRaises(ShownError), strict.open():
+            pass
+
     def test_the_schema_of_a_running_analysis_is_no_leftover(self) -> None:
         other = PostgresStore(_HOST or "", _PORT, _DATABASE, _USER, _PASSWORD)
         with self.store.open() as graph:
