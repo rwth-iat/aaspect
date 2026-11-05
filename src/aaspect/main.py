@@ -168,6 +168,9 @@ def _templates(download: Download) -> IdtaTemplates:
 
 def main() -> None:
     settings = load_settings(os.environ)
+    # Read once; processes started later (schema workers, PDF exports) handle uploaded
+    # content and must not inherit the database password.
+    os.environ.pop("AASPECT_NEO4J_PASSWORD", None)
     # Uvicorn handles stop signals only once it runs; while the schemas are awaited, a
     # container stop would otherwise wait for its kill.
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
