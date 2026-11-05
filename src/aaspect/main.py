@@ -1,5 +1,6 @@
 """Composition root: the only place that constructs adapters and wires them together."""
 
+import ctypes
 import logging
 import os
 import signal
@@ -166,11 +167,20 @@ def _templates(download: Download) -> IdtaTemplates:
     return templates
 
 
+def _keep_password_from_children() -> None:
+    # Schema workers and PDF exports handle uploaded content and run as the same user.
+    # Dropping the password stops them inheriting it; marking the server not dumpable
+    # stops them reading it from its /proc environ or memory.
+    os.environ.pop("AASPECT_NEO4J_PASSWORD", None)
+    if sys.platform == "linux":
+        pr_set_dumpable = 4
+        if ctypes.CDLL(None, use_errno=True).prctl(pr_set_dumpable, 0, 0, 0, 0) != 0:
+            raise OSError(ctypes.get_errno(), "prctl(PR_SET_DUMPABLE) failed")
+
+
 def main() -> None:
     settings = load_settings(os.environ)
-    # Read once; processes started later (schema workers, PDF exports) handle uploaded
-    # content and must not inherit the database password.
-    os.environ.pop("AASPECT_NEO4J_PASSWORD", None)
+    _keep_password_from_children()
     # Uvicorn handles stop signals only once it runs; while the schemas are awaited, a
     # container stop would otherwise wait for its kill.
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
