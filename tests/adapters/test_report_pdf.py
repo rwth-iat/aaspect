@@ -21,6 +21,10 @@ class TestPdfReportWriter(unittest.TestCase):
         pdf = _writer("<h1>Report</h1>").write(_REPORT)
         self.assertTrue(pdf.startswith(b"%PDF-"))
 
+    def test_does_not_name_the_renderer(self) -> None:
+        pdf = _writer("<h1>Report</h1>").write(_REPORT)
+        self.assertNotIn(b"WeasyPrint", pdf)
+
     def test_fetches_nothing(self) -> None:
         # Unreachable or local addresses would hang or leak; a refused fetch is skipped.
         html = (

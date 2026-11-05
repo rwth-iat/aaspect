@@ -12,6 +12,7 @@ import threading
 import time
 from collections.abc import Callable
 from multiprocessing.connection import Connection
+from typing import Any
 
 import weasyprint
 from weasyprint.urls import URLFetcher, URLFetcherResponse
@@ -98,6 +99,12 @@ class _RefuseAll(URLFetcher):
         raise ValueError(f"fetching is disabled: {url[:80]}")
 
 
+def _anonymous(_document: object, pdf: Any) -> None:
+    # WeasyPrint names its exact version as the PDF's producer, telling anyone holding a
+    # report which renderer bugs the server is open to.
+    pdf.info.pop("Producer", None)
+
+
 def _serve(connection: Connection, memory: int, cpu_seconds: int) -> None:
     resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
     # Ends the child even if the server dies without killing it.
@@ -108,5 +115,5 @@ def _serve(connection: Connection, memory: int, cpu_seconds: int) -> None:
         return
     # Any failure ends the process with its traceback in the log; the parent reads it as
     # a closed pipe.
-    pdf = weasyprint.HTML(string=html, url_fetcher=_RefuseAll()).write_pdf()
+    pdf = weasyprint.HTML(string=html, url_fetcher=_RefuseAll()).write_pdf(finisher=_anonymous)
     connection.send_bytes(pdf or b"")
