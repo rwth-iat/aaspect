@@ -198,14 +198,15 @@ button.show-more:hover { border-color: var(--accent); }
 .verdict { display: flex; gap: 1.5rem; align-items: center; }
 .verdict h2 { margin: 0; font-size: 1.5rem; }
 .ring {
-  flex: none; width: 6.5rem; height: 6.5rem; border-radius: 50%; display: grid; place-content: center;
+  flex: none; width: 7.5rem; height: 7.5rem; border-radius: 50%; display: grid; place-content: center;
   text-align: center; border: 0.55rem solid var(--raised);
 }
 .ring-fail { border-color: var(--ring-fail); }
 .ring-pass { border-color: var(--ring-pass); }
 .ring-pending { border-color: var(--ring-pending); }
 .ring-number { font-size: 1.8rem; font-weight: 700; line-height: 1; }
-.ring-of { color: var(--muted); font-size: 0.8rem; }
+/* "without listed errors" takes three lines; they must stay inside the circle. */
+.ring-of { color: var(--muted); font-size: 0.75rem; line-height: 1.2; padding: 0 0.6rem; }
 .ring-fail .ring-number { color: var(--error); }
 .ring-pass .ring-number { color: var(--ok); }
 
