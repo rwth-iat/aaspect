@@ -119,7 +119,7 @@ def _basis_text(outcome: VersionOutcome) -> str:
     if outcome.basis in _FIXED:
         return _BASIS_TEXT[outcome.basis]
     if not outcome.validated:
-        return "auto: the file could not be checked"
+        return "auto: the document could not be checked"
     if outcome.valid:
         return _UNCHECKED_TEXT[outcome.basis]
     return "auto: no version valid, fewest violations"
@@ -136,7 +136,7 @@ def _validity(outcome: VersionOutcome) -> str:
 
 def version_tables(results: Sequence[tuple[str, VersionOutcome]]) -> tuple[Table, Table]:
     """The version distribution across the corpus with how many documents are valid, and
-    the version of each file, the ones that are not valid first."""
+    the version of each document, the ones that are not valid first."""
     counts = Counter((_version_text(outcome), _validity(outcome)) for _, outcome in results)
     unchecked = any(validity == "not validated" for _, validity in counts)
     validities = ("yes", "no", *(("not validated",) if unchecked else ()))
@@ -158,13 +158,13 @@ def version_tables(results: Sequence[tuple[str, VersionOutcome]]) -> tuple[Table
         ),
     )
     ordered = sorted(results, key=lambda result: _VALIDITY.index(_validity(result[1])))
-    per_file = Table(
-        title="Version per file",
-        columns=("File", "Version", "Determined by", "Valid"),
+    per_document = Table(
+        title="Version per document",
+        columns=("Document", "Version", "Determined by", "Valid"),
         rows=tuple(
             (file, _version_text(outcome), _basis_text(outcome), _validity(outcome))
             for file, outcome in ordered
         ),
         file_column=0,
     )
-    return distribution, per_file
+    return distribution, per_document

@@ -39,7 +39,7 @@ class TestEndToEnd(unittest.TestCase):
                 if client.get(f"{response.url}/status").json()["finished"]:
                     break
                 time.sleep(0.05)
-            self.assertIn("Version per file", client.get(str(response.url)).text)
+            self.assertIn("Version per document", client.get(str(response.url)).text)
             report = json.loads(client.get(str(response.url) + "/report.json").content)
             pdf = client.get(str(response.url) + "/report.pdf")
             self.assertEqual(pdf.headers["content-type"], "application/pdf")
@@ -50,7 +50,7 @@ class TestEndToEnd(unittest.TestCase):
         self.assertEqual([step["status"] for step in graph_steps], ["not_configured"] * 4)
         blocks = {block.get("title") or block["rule_id"]: block for block in section["blocks"]}
         self.assertEqual(
-            blocks["Version per file"]["rows"],
+            blocks["Version per document"]["rows"],
             [
                 ["broken.json", "3.2", "auto: no version valid, fewest violations", "no"],
                 [
