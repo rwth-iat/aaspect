@@ -302,6 +302,8 @@ tests/             Mirrors src/aaspect/; tests/test_main.py drives the whole app
 Dockerfile         Image with the installed package only, run as an unprivileged user
 compose.yaml       Local deployment with resource limits
 tools/             Development tools, e.g. writing the template manifest
+docs/decisions/    Architecture decision records
+CLAUDE.md          Working rules for Claude Code; .claude/ holds its hooks and agents
 ```
 
 ---
@@ -332,6 +334,43 @@ AASPECT_TEST_POSTGRES_HOST=127.0.0.1 AASPECT_TEST_POSTGRES_PASSWORD=... \
 ```
 
 CI runs these checks on every push to `main` and on pull requests.
+
+### Decision records
+
+`docs/decisions/` records the architecture decisions and why they were made. Decisions
+marked `provisional` rest on assumptions that are not verified yet.
+
+### Claude Code setup
+
+The repository carries a [Claude Code](https://docs.claude.com/en/docs/claude-code)
+setup, so an AI assistant works by the same rules as everyone else. Nothing in it is
+needed to build, run or test AASpect.
+
+- `CLAUDE.md`: working rules (hard security rules, layering, size budgets, commit
+  messages).
+- `.claude/architecture.json`: the layer rules and size budgets, in one place.
+- `.claude/settings.json`: hooks that format each edited file with ruff, check it
+  against the layer rules (`brick_check.py`), print a project map at session start and
+  run pyright before a session ends.
+- `.claude/agents/`: review agents for logic/architecture and for security.
+- `.claude/commands/` and `.claude/skills/`: `/brick-check`, `/adr`, `/reassess`, and
+  guidance on where code belongs and how to record a decision.
+
+The hooks need plain `python` (3.10 or newer) and use ruff and pyright from `.venv`, so
+run `uv sync --group dev` first. The layer check also works without Claude Code:
+
+```bash
+python .claude/hooks/brick_check.py --all
+```
+
+An optional git hook checks commit messages against the same rules:
+
+```bash
+ln -s ../../.claude/hooks/commit_msg.py .git/hooks/commit-msg
+```
+
+Personal instructions go in `CLAUDE.local.md` and `.claude/settings.local.json`; both
+are ignored by git.
 
 ## License
 
