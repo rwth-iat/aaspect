@@ -14,7 +14,7 @@ from psycopg.types.json import Jsonb
 
 from aaspect.adapters.postgres import schema
 from aaspect.adapters.postgres import store as store_module
-from aaspect.adapters.postgres.errors import content_fault
+from aaspect.adapters.postgres.errors import upload_fault
 from aaspect.adapters.postgres.store import PostgresStore, _Watchdog
 from aaspect.domain.report import ShownError
 
@@ -176,7 +176,7 @@ class TestPostgresStore(unittest.TestCase):
 
     def test_content_the_server_refuses_is_recognised(self) -> None:
         cases: dict[str, tuple[LiteralString, str]] = {
-            "NUL": ("SELECT %s::jsonb", '{"value": "a\\u0000b"}'),
+            "cannot hold": ("SELECT %s::jsonb", '{"value": "a\\u0000b"}'),
             "NaN": ("SELECT %s::jsonb", '{"value": NaN}'),
             "NUL character": ("SELECT %s::text", "a\x00b"),
         }
@@ -185,7 +185,7 @@ class TestPostgresStore(unittest.TestCase):
                 with self.subTest(expected=expected):
                     with self.assertRaises(psycopg.Error) as raised:
                         graph._connection.execute(query, (value,))
-                    self.assertIn(expected, content_fault(raised.exception) or "")
+                    self.assertIn(expected, upload_fault(raised.exception) or "")
 
 
 if __name__ == "__main__":

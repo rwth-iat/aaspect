@@ -3,13 +3,13 @@ import unittest
 import psycopg
 from psycopg import errors
 
-from aaspect.adapters.postgres.errors import content_fault, described
+from aaspect.adapters.postgres.errors import content_fault, described, upload_fault
 
 
 class TestContentFault(unittest.TestCase):
     def test_refusals_caused_by_the_content(self) -> None:
         cases = {
-            "NUL": errors.UntranslatableCharacter(),
+            "character the database cannot hold": errors.UntranslatableCharacter(),
             "larger": errors.ProgramLimitExceeded(),
             "Unicode": _surrogate_error(),
             "NUL character": psycopg.DataError("refused before sending"),
@@ -32,6 +32,16 @@ class TestContentFault(unittest.TestCase):
         ):
             with self.subTest(error=type(error).__name__):
                 self.assertIsNone(content_fault(error))
+
+
+class TestUploadFault(unittest.TestCase):
+    def test_invalid_text_is_the_content_whatever_the_server_language(self) -> None:
+        error = errors.InvalidTextRepresentation("ungültige Eingabesyntax für Typ json")
+        self.assertIn("NaN", upload_fault(error) or "")
+
+    def test_other_errors_are_judged_as_anywhere(self) -> None:
+        self.assertIsNone(upload_fault(errors.SyntaxError()))
+        self.assertIn("larger", upload_fault(errors.ProgramLimitExceeded()) or "")
 
 
 class TestDescribed(unittest.TestCase):

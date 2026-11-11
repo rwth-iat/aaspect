@@ -18,7 +18,7 @@ from neo4aas.core.client import AAS_NEO4J_MODEL_CONFIG, AASNeo4JClient
 from psycopg import sql
 
 from aaspect.adapters.postgres import schema
-from aaspect.adapters.postgres.errors import content_fault
+from aaspect.adapters.postgres.errors import upload_fault
 from aaspect.domain.id_collisions import Environment
 
 # Without the uniqueness constraint, so that collision variants can share their id once
@@ -57,7 +57,7 @@ class GraphWriter(AASNeo4JClient):
         except (ContentRefused, WriteFailed):
             raise
         except Exception as error:
-            reason = content_fault(error)
+            reason = upload_fault(error)
             if reason:
                 raise ValueError(reason) from error
             if isinstance(error, psycopg.Error):
