@@ -321,7 +321,7 @@ uv run python precommit.py
 
 The PostgreSQL store, its constraint checks and queries are tested against a real server
 only when one is given: any server the given user may create schemas on (port and user
-default to `5432` and `postgres`):
+default to `5432` and `postgres`). CI starts one for every run. Locally:
 
 ```bash
 AASPECT_TEST_POSTGRES_HOST=127.0.0.1 AASPECT_TEST_POSTGRES_PASSWORD=... \
