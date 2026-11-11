@@ -105,10 +105,10 @@ class PostgresStore:
         try:
             with self._connect(_ADMIN) as connection:
                 rows = connection.execute(
-                    "SELECT nspname FROM pg_namespace n WHERE starts_with(nspname, %s)"
+                    "SELECT nspname FROM pg_namespace n WHERE nspname ~ %s"
                     " AND NOT EXISTS (SELECT FROM pg_stat_activity a"
                     "                 WHERE a.application_name = n.nspname)",
-                    (schema.PREFIX,),
+                    (schema.NAME_PATTERN,),
                 ).fetchall()
         except Exception:
             # The server may start after AASpect; analyses then fail until it is up.

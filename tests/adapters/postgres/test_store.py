@@ -70,7 +70,7 @@ class TestPostgresStore(unittest.TestCase):
         with self.store._connect("aaspect-test") as connection:
             rows = connection.execute(
                 "SELECT nspname FROM pg_namespace WHERE starts_with(nspname, %s)",
-                (schema.PREFIX,),
+                ("aaspect_",),
             ).fetchall()
         return {name for (name,) in rows}
 
@@ -146,6 +146,18 @@ class TestPostgresStore(unittest.TestCase):
         self.store.drop_leftovers()
 
         self.assertNotIn(leftover, self._schemas())
+
+    def test_a_schema_aaspect_did_not_generate_is_kept(self) -> None:
+        foreign = sql.Identifier("aaspect_kept_by_someone_else")
+        with self.store._connect("aaspect-test") as connection:
+            connection.execute(sql.SQL("CREATE SCHEMA {}").format(foreign))
+        try:
+            self.store.drop_leftovers()
+
+            self.assertIn("aaspect_kept_by_someone_else", self._schemas())
+        finally:
+            with self.store._connect("aaspect-test") as connection:
+                connection.execute(sql.SQL("DROP SCHEMA {}").format(foreign))
 
     def test_each_analysis_drops_leftovers_first(self) -> None:
         leftover = schema.new_name()

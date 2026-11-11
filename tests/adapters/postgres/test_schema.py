@@ -6,7 +6,7 @@ from aaspect.adapters.postgres import schema
 class TestSchemaName(unittest.TestCase):
     def test_generated_names_pass(self) -> None:
         name = schema.new_name()
-        self.assertTrue(name.startswith(schema.PREFIX))
+        self.assertRegex(name, r"\Aaaspect_[0-9a-f]{32}\Z")
         self.assertEqual(schema.checked(name), name)
 
     def test_names_that_are_not_ours_are_refused(self) -> None:
@@ -17,6 +17,11 @@ class TestSchemaName(unittest.TestCase):
             "public",
             "pg_catalog",
             "aaspect_" + "a" * 60,
+            "aaspect_backup",
+            "aaspect_" + "0" * 31,
+            "aaspect_" + "0" * 33,
+            "aaspect_" + "g" * 32,
+            "aaspect_" + "0" * 32 + "\n",
         ):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 schema.checked(name)

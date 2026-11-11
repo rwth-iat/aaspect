@@ -4,11 +4,12 @@ from unittest import mock
 import psycopg
 from psycopg import errors
 
+from aaspect.adapters.postgres import schema
 from aaspect.adapters.postgres.writer import ContentRefused, GraphWriter, WriteFailed
 
 
 def _offline_writer() -> GraphWriter:
-    return GraphWriter(mock.Mock(), "aaspect_offline")
+    return GraphWriter(mock.Mock(), schema.new_name())
 
 
 def _upload_with(error: Exception) -> Exception | None:

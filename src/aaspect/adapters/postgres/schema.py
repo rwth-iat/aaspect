@@ -5,9 +5,11 @@ import uuid
 
 from psycopg import sql
 
-PREFIX = "aaspect_"
-# Lower case, so the name means the same quoted or not; PostgreSQL cuts names at 63 bytes.
-_SCHEMA_NAME = re.compile(r"[a-z][a-z0-9_]{2,62}")
+_PREFIX = "aaspect_"
+# Exactly the names `new_name` makes, in a form both Python and PostgreSQL read the same:
+# the leftover sweep drops what matches, and other schemas may share the prefix.
+NAME_PATTERN = rf"^{_PREFIX}[0-9a-f]{{32}}$"
+_SCHEMA_NAME = re.compile(NAME_PATTERN)
 
 # Hash indexes for id and hash: a btree entry may hold at most 2,704 bytes, and both
 # values come from the uploaded files, so a long id would make the upload fail.
@@ -44,12 +46,12 @@ CREATE FUNCTION {s}.whole_number(value jsonb) RETURNS bigint
 
 
 def new_name() -> str:
-    return checked(PREFIX + uuid.uuid4().hex)
+    return checked(_PREFIX + uuid.uuid4().hex)
 
 
 def checked(name: str) -> str:
     """`name`, if it is one AASpect could have generated; raises `ValueError` otherwise."""
-    if not _SCHEMA_NAME.fullmatch(name) or not name.startswith(PREFIX):
+    if not _SCHEMA_NAME.fullmatch(name):
         raise ValueError(f"not a valid schema name: {name!r}")
     return name
 
