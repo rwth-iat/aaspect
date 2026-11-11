@@ -4,7 +4,7 @@ from functools import partial
 
 from aaspect.domain.corpus import AasDocument, ReadFailure
 from aaspect.domain.environment_size import measure
-from aaspect.domain.id_collisions import Collision, IdScan, Occurrence, RenamePlan
+from aaspect.domain.id_collisions import Collision, IdScan, Occurrence, Rename, RenamePlan
 from aaspect.ports.environment_parser import EnvironmentParser
 from aaspect.ports.graph_store import CorpusGraph
 
@@ -56,7 +56,7 @@ def import_corpus(
     # Documents that could not be uploaded are not in the graph, so they count nowhere.
     failed = {failure.source for failure in failures}
     occurrences = plan.occurrences(excluding=failed)
-    finished = _complete(graph, plan, occurrences, expired)
+    finished = _complete(graph, occurrences, plan.renames(excluding=failed), expired)
     failures.sort(key=lambda failure: failure.source)
     imported = len(ordered) - len(failures)
     collisions = plan.collisions(excluding=failed)
@@ -65,8 +65,8 @@ def import_corpus(
 
 def _complete(
     graph: CorpusGraph,
-    plan: RenamePlan,
     occurrences: tuple[Occurrence, ...],
+    renames: tuple[Rename, ...],
     expired: Callable[[], bool],
 ) -> bool:
     """Link, count and restore, in this order; False if the time limit came first. Each
@@ -74,7 +74,7 @@ def _complete(
     steps = (
         graph.link_references,
         partial(graph.store_occurrences, occurrences),
-        partial(graph.restore_ids, plan.renames),
+        partial(graph.restore_ids, renames),
     )
     for step in steps:
         if expired():

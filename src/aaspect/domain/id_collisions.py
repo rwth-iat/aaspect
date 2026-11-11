@@ -125,9 +125,13 @@ class RenamePlan:
             for rename in [self._temporary.get((identifier, content))]
         )
 
-    @property
-    def renames(self) -> tuple[Rename, ...]:
-        return tuple(self._temporary.values())
+    def renames(self, excluding: Collection[str] = ()) -> tuple[Rename, ...]:
+        """The temporary ids of variants in a document not in `excluding`."""
+        return tuple(
+            rename
+            for (identifier, content), rename in self._temporary.items()
+            if any(label not in excluding for label in self._contents[identifier][content])
+        )
 
     def rewrite(self, environment: Environment) -> None:
         """Give every later collision variant in `environment` its temporary id, and point

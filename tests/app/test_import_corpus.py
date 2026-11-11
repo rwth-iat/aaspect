@@ -117,6 +117,21 @@ class TestFailedDocumentsCountNowhere(unittest.TestCase):
         )
         self.assertEqual(result.collisions, (Collision("x", (("c.json",), ("b.json",))),))
 
+    def test_ids_of_documents_not_imported_are_not_restored(self) -> None:
+        # Restoring them would touch nothing, and their ids may hold values, such as a NUL
+        # byte, that the graph refuses.
+        def unstorable(content: str) -> dict:
+            return {"submodels": [{"id": "x\x00", "idShort": content}], "unstorable": True}
+
+        graph = RecordingGraph()
+        parser = FakeParser(
+            {"a.json": unstorable("A"), "b.json": unstorable("B"), "c.json": _submodels(("y", "C"))}
+        )
+
+        import_corpus([_document(n) for n in ("a.json", "b.json", "c.json")], parser, graph)
+
+        self.assertEqual([renames for call, renames in graph.calls if call == "restore"], [()])
+
 
 if __name__ == "__main__":
     unittest.main()

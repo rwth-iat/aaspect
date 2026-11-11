@@ -34,7 +34,7 @@ class TestPlan(unittest.TestCase):
         plan = _plan_for(
             ("a", _environment(_submodel("x", "A"))), ("b", _environment(_submodel("x", "A")))
         )
-        self.assertEqual((plan.renames, plan.collisions()), ((), ()))
+        self.assertEqual((plan.renames(), plan.collisions()), ((), ()))
 
     def test_later_contents_get_numbered_temporary_ids(self) -> None:
         plan = _plan_for(
@@ -44,20 +44,30 @@ class TestPlan(unittest.TestCase):
             ("d", _environment(_submodel("x", "B"))),
         )
         self.assertEqual(
-            plan.renames, (Rename("x", "x__collision-1", 1), Rename("x", "x__collision-2", 2))
+            plan.renames(), (Rename("x", "x__collision-1", 1), Rename("x", "x__collision-2", 2))
         )
         self.assertEqual(plan.collisions(), (Collision("x", (("a",), ("b", "d"), ("c",))),))
+
+    def test_renames_leave_out_variants_only_in_excluded_documents(self) -> None:
+        plan = _plan_for(
+            ("a", _environment(_submodel("x", "A"))),
+            ("b", _environment(_submodel("x", "B"))),
+            ("c", _environment(_submodel("x", "C"))),
+            ("d", _environment(_submodel("x", "B"))),
+        )
+        self.assertEqual(plan.renames(excluding={"b", "c"}), (Rename("x", "x__collision-1", 1),))
+        self.assertEqual(plan.renames(excluding={"b", "c", "d"}), ())
 
     def test_temporary_id_skips_ids_used_in_the_corpus(self) -> None:
         plan = _plan_for(
             ("a", _environment(_submodel("x", "A"), _submodel("x__collision-1", "Z"))),
             ("b", _environment(_submodel("x", "B"))),
         )
-        self.assertEqual(plan.renames, (Rename("x", "x__collision-2", 2),))
+        self.assertEqual(plan.renames(), (Rename("x", "x__collision-2", 2),))
 
     def test_documents_without_identifiable_lists_are_ignored(self) -> None:
         plan = _plan_for(("a", {"submodels": "not a list"}), ("b", {"submodels": [{"id": 3}]}))
-        self.assertEqual(plan.renames, ())
+        self.assertEqual(plan.renames(), ())
 
     def test_occurrences_count_documents_per_stored_object(self) -> None:
         plan = _plan_for(
