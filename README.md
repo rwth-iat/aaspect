@@ -215,7 +215,7 @@ share 256 MB; beyond that the oldest is dropped and made again when next asked f
 |---|---|---|
 | `AASPECT_PDF_EXPORTS` | `1` | Exports at the same time; further requests are refused until one finishes. `0` turns the PDF download off. |
 | `AASPECT_PDF_MEMORY_BYTES` | `2147483648` (2 GB) | Memory of one export's process. |
-| `AASPECT_PDF_TIMEOUT_SECONDS` | `60` | Time for one export, from starting its process to the finished file; a report that takes longer gets an error page pointing to the JSON download. |
+| `AASPECT_PDF_TIMEOUT_SECONDS` | `60` | CPU time for one export; a report that needs more gets an error page pointing to the JSON download. An export still running 15 s after this time, for example on a busy server, is stopped and may be asked for again. |
 
 ### Graph database
 
