@@ -4,7 +4,7 @@ from unittest import mock
 import psycopg
 from psycopg import errors
 
-from aaspect.adapters.postgres.writer import ContentRefused, GraphWriter
+from aaspect.adapters.postgres.writer import ContentRefused, GraphWriter, WriteFailed
 
 
 def _offline_writer() -> GraphWriter:
@@ -37,6 +37,26 @@ class TestUpload(unittest.TestCase):
         self.assertEqual(stored["idShort"], "123")
         self.assertEqual(stored["submodelElements"][0]["idShort"], '["a"]')
 
+    def test_an_unknown_model_type_refuses_the_whole_content(self) -> None:
+        writer = _offline_writer()
+        unknown = {"idShort": "e", "modelType": "BasicEvent"}
+        submodels = [
+            {"id": "urn:s1", "modelType": "Submodel"},
+            {"id": "urn:s2", "modelType": "Submodel", "submodelElements": [unknown]},
+            {"id": "urn:s3", "modelType": "Submodel"},
+            {"id": "urn:s4", "modelType": "Submodel"},
+        ]
+
+        with (
+            mock.patch.object(writer, "_stored_identifiable_ids", return_value=set()),
+            mock.patch.object(writer, "_write_graph", return_value=0) as write_graph,
+            self.assertRaises(ValueError) as raised,
+        ):
+            writer.upload([{"submodels": submodels}])
+
+        self.assertTrue(str(raised.exception).startswith("content cannot be stored"))
+        write_graph.assert_not_called()
+
     def test_refused_content_is_the_documents_fault(self) -> None:
         for error in (
             errors.UntranslatableCharacter(),
@@ -48,6 +68,19 @@ class TestUpload(unittest.TestCase):
                 raised = _upload_with(error)
                 self.assertIsInstance(raised, ValueError)
                 self.assertTrue(str(raised).startswith("content cannot be stored"))
+
+    def test_a_fault_in_the_write_itself_fails_the_step(self) -> None:
+        writer = _offline_writer()
+
+        def upload_json(_: dict) -> None:
+            writer._write_graph(None, {}, {})
+
+        with (
+            mock.patch.object(writer, "_write_buckets", side_effect=KeyError("uid")),
+            mock.patch.object(writer, "upload_json", side_effect=upload_json),
+            self.assertRaises(WriteFailed),
+        ):
+            writer.upload([{}])
 
     def test_server_trouble_and_broken_queries_fail_the_step(self) -> None:
         for error in (

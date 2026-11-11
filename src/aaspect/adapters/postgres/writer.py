@@ -2,8 +2,9 @@
 
 neo4aas has no public way to get the mapped graph without writing it to Neo4j, so this
 overrides three of its internals: `session`, `_stored_identifiable_ids` and
-`_write_graph`. Everything before the write (mapping, deduplication, skipping an
-Identifiable already stored) stays neo4aas's own, so the graph matches the Neo4j one.
+`_write_graph`, and wraps `_process_dict` so that a mapping fault refuses the content.
+Everything before the write (mapping, deduplication, skipping an Identifiable already
+stored) stays neo4aas's own, so the graph matches the Neo4j one.
 """
 
 import contextlib
@@ -30,6 +31,11 @@ class ContentRefused(ValueError):
     """The content cannot be stored; the message names why without quoting it."""
 
 
+class WriteFailed(RuntimeError):
+    """The write itself broke on content the database would take: a fault of this code,
+    which must fail the step instead of blaming every document."""
+
+
 class GraphWriter(AASNeo4JClient):
     def __init__(self, connection: psycopg.Connection, name: str) -> None:
         super().__init__("", "", model_config=_MODEL_CONFIG, auto_optimize=False)
@@ -48,7 +54,7 @@ class GraphWriter(AASNeo4JClient):
         _id_shorts_as_text(merged)
         try:
             self.upload_json(merged)
-        except ContentRefused:
+        except (ContentRefused, WriteFailed):
             raise
         except Exception as error:
             reason = content_fault(error)
@@ -59,6 +65,14 @@ class GraphWriter(AASNeo4JClient):
             # neo4aas trusts the structure it is given; schema-invalid content fails with
             # whatever error the first unexpected value causes.
             raise ValueError(f"content cannot be stored: {type(error).__name__}") from error
+
+    def _process_dict(self, obj: dict, node_properties: dict | None = None) -> Any:
+        # neo4aas skips the rest of an Identifiable list on a KeyError, such as an unknown
+        # modelType, and stores the part before it as if it were the whole document.
+        try:
+            return super()._process_dict(obj, node_properties)
+        except KeyError as error:
+            raise ContentRefused(f"content cannot be stored: {type(error).__name__}") from error
 
     def session(self, **_: Any) -> Any:
         # neo4aas opens a session around `_write_graph`; the write needs none.
@@ -74,7 +88,14 @@ class GraphWriter(AASNeo4JClient):
         relationships: dict,
         exist_uid_to_internal_id: dict | None = None,
     ) -> int:
-        existing = exist_uid_to_internal_id or {}
+        try:
+            return self._write(grouped_nodes, relationships, exist_uid_to_internal_id or {})
+        except (ContentRefused, psycopg.Error, UnicodeEncodeError):
+            raise
+        except Exception as error:
+            raise WriteFailed(type(error).__name__) from error
+
+    def _write(self, grouped_nodes: dict, relationships: dict, existing: dict) -> int:
         create, by_hash, by_id, create_rels, merge_rels = self._write_buckets(
             grouped_nodes, relationships, existing
         )
