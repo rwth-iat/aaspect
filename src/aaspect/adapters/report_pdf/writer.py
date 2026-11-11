@@ -15,6 +15,7 @@ from multiprocessing.connection import Connection
 from typing import Any
 
 import weasyprint
+from weasyprint.text.fonts import FontConfiguration
 from weasyprint.urls import URLFetcher, URLFetcherResponse
 
 from aaspect.domain.report import Report, ShownError, TryAgainLater
@@ -106,6 +107,10 @@ def _anonymous(_document: object, pdf: Any) -> None:
 
 
 def _serve(connection: Connection, memory: int, cpu_seconds: int) -> None:
+    # Pango starts a thread for each new font map, and GLib aborts the process when that
+    # thread cannot get its stack. Made before the memory limit and the document, the
+    # map's thread always starts.
+    font_config = FontConfiguration()
     resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
     # Ends the child even if the server dies without killing it.
     resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds))
@@ -115,5 +120,7 @@ def _serve(connection: Connection, memory: int, cpu_seconds: int) -> None:
         return
     # Any failure ends the process with its traceback in the log; the parent reads it as
     # a closed pipe.
-    pdf = weasyprint.HTML(string=html, url_fetcher=_RefuseAll()).write_pdf(finisher=_anonymous)
+    pdf = weasyprint.HTML(string=html, url_fetcher=_RefuseAll()).write_pdf(
+        font_config=font_config, finisher=_anonymous
+    )
     connection.send_bytes(pdf or b"")
