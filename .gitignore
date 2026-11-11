@@ -41,3 +41,7 @@ htmlcov/
 
 # Pinned third-party files the tests download
 .cache/
+
+# Personal Claude Code settings
+CLAUDE.local.md
+.claude/settings.local.json

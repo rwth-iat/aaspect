@@ -1,0 +1,87 @@
+{
+  "note": "Single source of truth for the layer rules. Consumed by .claude/hooks/brick_check.py and the /brick-check command. Change limits HERE, nowhere else. Regexes deliberately use [x] character classes instead of backslash escapes so they survive JSON encoding unambiguously.",
+
+  "layers": [
+    {
+      "path": "src/aaspect/domain",
+      "role": "Pure analysis rules: AAS element model as the analysis sees it, semanticId scheme classification, statistics, finding/violation types. No I/O.",
+      "mayImport": ["src/aaspect/domain"],
+      "pure": true
+    },
+    {
+      "path": "src/aaspect/ports",
+      "role": "Protocols only. No implementations, no logic.",
+      "mayImport": ["src/aaspect/domain", "src/aaspect/ports"],
+      "pure": true
+    },
+    {
+      "path": "src/aaspect/app",
+      "role": "Use-cases: run an analysis over a corpus, assemble a report. Orchestrates domain through ports.",
+      "mayImport": ["src/aaspect/domain", "src/aaspect/ports", "src/aaspect/app"]
+    },
+    {
+      "path": "src/aaspect/adapters",
+      "role": "Everything that touches the outside world. One sub-package per external concern (neo4aas parsing, PostgreSQL, schema validation, file reading, templates, report output, web).",
+      "mayImport": ["src/aaspect/domain", "src/aaspect/ports", "src/aaspect/adapters"],
+      "noSiblingAdapters": true
+    },
+    {
+      "path": "src/aaspect/config",
+      "role": "Settings (PostgreSQL connection, upload limits, ...), read and validated once at startup.",
+      "mayImport": ["src/aaspect/domain", "src/aaspect/config"]
+    },
+    {
+      "path": "src/aaspect/main.py",
+      "role": "Composition root. The ONLY module allowed to construct adapters and wire them to use-cases.",
+      "mayImport": ["*"]
+    },
+    {
+      "path": "tests",
+      "role": "Tests may import anything.",
+      "mayImport": ["*"]
+    }
+  ],
+
+  "pureLayerIoModules": [
+    "asyncio", "http", "io", "logging", "os", "pathlib", "shutil", "socket", "sqlite3",
+    "subprocess", "tempfile", "time", "urllib", "zipfile"
+  ],
+  "pureLayerNote": "A pure layer may import the standard library except the I/O modules above, plus its allowed aaspect layers. Any third-party package (psycopg, neo4aas, lxml, ...) is I/O or a technology choice and belongs behind a port.",
+
+  "budgets": {
+    "fileLocSoft": 200,
+    "fileLocHard": 300,
+    "functionLoc": 40,
+    "exportsPerModule": 5,
+    "filesPerDir": 8,
+    "functionLocExemptPaths": ["tests"],
+    "functionLocExemptNote": "The function-length budget detects a sequence of unnamed steps hiding inside one function. A test class groups many small independent cases; splitting it would scatter related tests for no gain. Security rules, layering and file size still apply to tests."
+  },
+
+  "forbidden": [
+    {
+      "id": "query-string-building",
+      "pattern": "(^|[^a-zA-Z0-9_])(run|execute|executemany|execute_query|copy|SQL)[(][ ]*(f[\"']|[\"'][^\"']*[\"'][ ]*([.]format[(]|[%+]))",
+      "severity": "block",
+      "reason": "SQL is never built by string formatting: not the query passed to run/execute/copy, not the text of a psycopg sql.SQL. Identifiers and values from uploaded AAS files would become injection. Pass values as query parameters; compose SQL identifiers with psycopg.sql.Identifier inside sql.SQL(...).format(...)."
+    },
+    {
+      "id": "hardcoded-db-credentials",
+      "pattern": "(auth[ ]*=[ ]*[(]|basic_auth[(])[ ]*[\"'][^\"']*[\"'][ ]*,[ ]*[\"']|(^|[^a-zA-Z0-9_])password[ ]*=[ ]*[\"'][^\"']+[\"']|postgres(ql)?://[^:/@ \"']+:[^@ \"']+@",
+      "severity": "block",
+      "reason": "Database credentials (a password literal, a connection URL with a password) come from config/environment, never from a literal in code."
+    }
+  ],
+
+  "escapeHatch": {
+    "marker": "arch-allow:",
+    "note": "Append `# arch-allow: <written reason>` to the offending line to override a blocking rule. The written reason is required and shows up in review."
+  },
+
+  "scan": {
+    "includeDirs": ["src", "tests"],
+    "extensions": [".py"],
+    "excludeSuffixes": [],
+    "excludeDirs": ["__pycache__", ".venv", "build", "dist", ".ruff_cache"]
+  }
+}
