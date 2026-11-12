@@ -22,6 +22,8 @@ ECLASS = "0173-1#02-AAO677#002"
 IEC_CDD = "0112/2///61987#ABA951#009"
 NAMEPLATE = "https://admin-shell.io/idta/nameplate/3/0/Nameplate"
 OLD_NAMEPLATE = "https://admin-shell.io/zvei/nameplate/1/0/Nameplate"
+# The submodel id of the ZVEI nameplate template, kept by a copy of it: a lint warning.
+OLD_NAMEPLATE_TEMPLATE_ID = "https://admin-shell.io/idta/SubmodelTemplate/DigitalNameplate/1/0"
 Json = dict[str, Any]
 
 
@@ -138,11 +140,17 @@ def operating_data() -> Json:
         },
         prop("Temperature", "xs:float", "40.0", "urn:example:concept:temperature:1:0"),
         prop("Temperature", "xs:float", "41.0", "urn:example:concept:temperature:1:0"),  # AASd-022
-        prop("Running", "xs:boolean", "true", "https://example.com/concepts/running"),
+        prop("Running", "xs:boolean", "true", "https://example.com/concepts/running")
+        | {
+            "qualifiers": [
+                {"type": "Multiplicity", "valueType": "xs:string", "value": "One"},
+                {"type": "SMT/Cardinality", "valueType": "xs:string", "value": "One"},
+            ]
+        },  # lint: a deprecated and a template qualifier
         prop("Speed", "xs:int", "1450", "0173-1#02-AAB385#007")
         | {
             "qualifiers": [
-                {"type": "Unit", "valueType": "xs:string", "value": "1/min"},
+                {"type": "Unit ", "valueType": "xs:string", "value": "1/min"},  # lint
                 {
                     "type": "ExampleRule",
                     "valueType": "xs:string",
@@ -152,6 +160,12 @@ def operating_data() -> Json:
             ]
         },  # AASd-129
         prop("2ndStage", "xs:string", "off"),  # AASd-002 and the schema's idShort pattern
+        prop("Pressure", "xs:double", "2.5", "0173-1#02-AAM227"),  # lint: IRDI without version
+        {
+            "modelType": "ReferenceElement",
+            "idShort": "SpareLink",
+            "value": model(("Submodel", f"{BASE}/sm/operatingdata"), ("Property", "SparePart")),
+        },  # lint: no element SparePart
         prop("Untyped", "xs:string", "x")
         | {"supplementalSemanticIds": [external("urn:example:x")]},  # AASd-118
         mlp(
@@ -256,13 +270,15 @@ def operating_data() -> Json:
 
 def old_nameplate() -> Json:
     """A deprecated template edition: the report names which edition was used."""
-    return submodel(
+    legacy = submodel(
         "LegacyNameplate",
         OLD_NAMEPLATE,
         [
             mlp("ManufacturerName", "0173-1#02-AAO677#002", en="Example Manufacturer"),
         ],
     )
+    legacy["id"] = OLD_NAMEPLATE_TEMPLATE_ID
+    return legacy
 
 
 def concept() -> Json:
@@ -323,10 +339,16 @@ def second_part() -> Json:
     different content, as a second supplier's file of the same product would."""
     changed = old_nameplate()
     changed["submodelElements"][0]["value"] = text(en="Example Manufacturer Ltd")
+    pump_type = shell("DemoPumpType", "Type", [changed])
+    information = pump_type["assetInformation"]
+    information["globalAssetId"] = pump_type["id"]  # lint: the asset is not its shell
+    information["specificAssetIds"][0]["value"] += " "  # lint: trailing whitespace
+    # The ECLASS IRDI of the first part in lower case: a lint warning.
+    lower_case = concept() | {"id": ECLASS.lower(), "idShort": "FlowRateCopy"}
     return {
-        "assetAdministrationShells": [shell("DemoPumpType", "Type", [changed])],
+        "assetAdministrationShells": [pump_type],
         "submodels": [changed],
-        "conceptDescriptions": [concept()],
+        "conceptDescriptions": [concept(), lower_case],
     }
 
 

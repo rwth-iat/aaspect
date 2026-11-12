@@ -15,7 +15,7 @@ The package holds three AAS parts, which the report treats as three documents:
 | Part | Content |
 |---|---|
 | `demo-pump.json` | Shell `DemoPump` (instance) with a Digital Nameplate 3.0, an operating data submodel holding every element type, a deprecated ZVEI nameplate and a concept description |
-| `demo-pump-type.json` | Shell `DemoPumpType` (type), repeating the concept description identically and the ZVEI nameplate's id with other content |
+| `demo-pump-type.json` | Shell `DemoPumpType` (type), repeating the concept description identically, the ZVEI nameplate's id with other content, and the concept description's IRDI in lower case |
 | `broken.json` | Cut off after its first characters |
 
 Two embedded files, `logo.png` (also the thumbnail) and `manual.pdf`, are referenced from
@@ -69,6 +69,22 @@ assetKinds and two specificAssetId names.
 
 The ZVEI nameplate is matched to its deprecated edition, and `OperatingData` has no
 template.
+
+**Lint.** One case of every check:
+
+| Check | Where |
+|---|---|
+| LINT-WS-ID | specificAssetId `SerialNumber` of `DemoPumpType` ends in a space |
+| LINT-WS-TEXT | qualifier type `Unit ` on `Speed` |
+| LINT-ID-FORM | `Pressure`'s semanticId, an IRDI without its version |
+| LINT-ID-TEMPLATE | the ZVEI nameplate keeps its template's submodel id (both parts) |
+| LINT-ID-EXAMPLE | every shell, submodel and asset id: the demo lives on `example.com` |
+| LINT-ID-NEAR | the concept description `0173-1#02-aao677#002` in lower case |
+| LINT-ID-ASSET | `DemoPumpType`'s globalAssetId is its own shell id |
+| LINT-DEP-CATEGORY | `FlowRate` has a category |
+| LINT-DEP-QUALIFIER | `Running` has a `Multiplicity` qualifier |
+| LINT-TPL-QUALIFIER | `Running` has an `SMT/Cardinality` qualifier in an instance |
+| LINT-REF-DANGLING | `SpareLink` names `SparePart`, which `OperatingData` lacks |
 
 ## Not covered by one file
 
