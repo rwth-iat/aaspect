@@ -51,7 +51,7 @@ there is one, never samples or examples. The newest edition of each template is
 a semanticId is found by its submodel id (IDTA ships some that way).
 
 **Lookup.** A submodel's exact semanticId (trimmed) first, then the semanticId without its
-IRDI version. Among templates found, uploaded before current before superseded before
+IRDI version and without whitespace. Among templates found, uploaded before current before superseded before
 deprecated, newest edition first. The report names the template and its tier for every
 result.
 
@@ -62,8 +62,8 @@ shares a semanticId with a template of its own, such as Carbon Footprint, that o
 preferred. Files without a submodel are left out of the manifest.
 
 **Matching inside a submodel.** In passes, each on what is left: a template element's own
-semanticId, ignoring IRDI versions in every part of a composite id and an ECLASS `*01`
-suffix; then, where the template element has no semanticId or siblings share one, the
+semanticId, ignoring IRDI versions in every part of a composite id, an ECLASS `*01`
+suffix and whitespace, which is never part of an id but occurs inside template ids; then, where the template element has no semanticId or siblings share one, the
 exact idShort, then an idShort fitting a placeholder (`{00}`, `__00__`) or numbering
 (`ProductImage01` for `ProductImage`); then alternatives sharing a semanticId by element
 type; last, wildcard elements (idShort containing `arbitrary`, or ids such as
@@ -76,7 +76,8 @@ element of a wildcard's type goes to the wildcard.
 Collections, lists (each item against the template's item) and entity statements are
 compared level by level, up to 64 levels. Errors: missing mandatory element, cardinality,
 element type, value type of Properties and Ranges. Notes: undefined elements, other
-idShort, other semanticId version.
+idShort, other semanticId version. Only an IRDI version counts as another version: an
+`*01` suffix the instance leaves out does not.
 
 **Cardinality.** IDTA's guideline "How to write a SMT" (v1.1, §9.2) defines
 `SMT/Cardinality` (legacy `Multiplicity`) as how many instances of an element "are
@@ -143,6 +144,12 @@ are untrusted.
 - Real corpora show many element matches across IRDI versions with different meaning, or
   many false "unexpected element" notes: then reconsider version-free matching or the
   idShort fallback.
+  *Checked 2026-11-12 on per-vendor-500 (2,626 JSON files):* 88,092 of 94,100 version
+  notes only differed by the `*01` suffix, and 23,860 unexpected-element notes came from
+  whitespace inside template ids (Handover Documentation 1.2's `PreviewFile`, Contact
+  Information). Both fixed; findings fell from 204,649 to 114,080. The matched
+  `PreviewFile`s now give model-type errors, as Handover Documentation 1.2 declares it a
+  collection, like `DigitalFile`.
 - ~~The schema files (ADR 0004) move to runtime download too; both should share one
   download mechanism.~~ Done 2026-10-22: both use one pinned download and
   `AASPECT_DOWNLOAD_URL`.

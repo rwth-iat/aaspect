@@ -183,15 +183,13 @@ def _compare_element(
 def _compare_names(
     element: Element, candidate: Element, path: str, found: list[Deviation], in_list: bool
 ) -> None:
-    if (
-        element.semantic_id is not None
-        and candidate.semantic_id is not None
-        and element.key == candidate.key
-        and element.semantic_id.strip() != candidate.semantic_id.strip()
-    ):
+    if candidate.other_version_of(element):
         found.append(
             Deviation(
-                DeviationKind.SEMANTIC_ID_VERSION, path, element.semantic_id, candidate.semantic_id
+                DeviationKind.SEMANTIC_ID_VERSION,
+                path,
+                element.semantic_id or "",
+                candidate.semantic_id or "",
             )
         )
     if (

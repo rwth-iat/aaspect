@@ -13,6 +13,10 @@ MAX_DEPTH = 64
 # as "*01". Instances often use another version than their template, which is no reason
 # to miss the element.
 _IRDI_VERSION = re.compile(r"#\d+(?=$|/|\*)|\*\d+$")
+_ECLASS_SUFFIX = re.compile(r"\*\d+$")
+# Whitespace is never part of an identifier, yet files carry it around ids and IDTA's
+# Handover Documentation 1.2 template inside one ("0173-1#02-ABI505#001 /0173-1#01-...").
+_WHITESPACE = re.compile(r"\s+")
 # IDTA templates number repeated elements with a placeholder: Document{00}, Marking{00},
 # and in older editions Document__00__.
 _PLACEHOLDER = re.compile(r"\{[^{}]*\}|__\d+__")
@@ -45,13 +49,24 @@ class Element:
     def __post_init__(self) -> None:
         object.__setattr__(self, "key", matching_key(self.semantic_id))
 
+    def other_version_of(self, template: "Element") -> bool:
+        """Whether this element names its template's concept in another IRDI version. An
+        ECLASS suffix such as "*01" is no version: instances usually leave it out."""
+        if self.semantic_id is None or template.semantic_id is None or self.key != template.key:
+            return False
+        return _versioned(self.semantic_id) != _versioned(template.semantic_id)
+
 
 def matching_key(semantic_id: str | None) -> str | None:
-    """The semanticId as elements are matched by: without surrounding whitespace, which
-    JSON files carry and XML files lose on import, and without IRDI versions."""
+    """The semanticId as elements are matched by: without whitespace, which JSON files
+    carry around ids and XML files lose on import, and without IRDI versions."""
     if semantic_id is None:
         return None
-    return _IRDI_VERSION.sub("", semantic_id.strip()) or None
+    return _IRDI_VERSION.sub("", _WHITESPACE.sub("", semantic_id)) or None
+
+
+def _versioned(semantic_id: str) -> str:
+    return _ECLASS_SUFFIX.sub("", _WHITESPACE.sub("", semantic_id))
 
 
 def id_short_matches(template: str | None, instance: str | None) -> bool:
