@@ -113,6 +113,23 @@ def _alternatives(expected: tuple[Element, ...]) -> dict[str, Element]:
     return merged
 
 
+def _list_items(shapes: tuple[Element, ...]) -> Element:
+    """The bounds on how many items a list holds, from the cardinality of its item
+    templates: the cardinality counts instances on their hierarchy level, which for an
+    item is the list. Several item templates are alternatives, counted together whatever
+    their semanticIds: the items of one list share theirs (AASd-114), so requiring each
+    alternative could never be met. An item whose upper bound is 1 (One, ZeroToOne) sets
+    only its lower bound: templates mark list items so where the list holds several, such
+    as the LifeCyclePhases of Carbon Footprint."""
+    if all(shape.cardinality is None for shape in shapes):
+        return Element(None, None, None)
+    bounds = [shape.cardinality or Cardinality(0, None) for shape in shapes]
+    maximums = [bound.maximum for bound in bounds]
+    maximum = None if any(m is None or m == 1 for m in maximums) else sum(m for m in maximums if m)
+    minimum = min(bound.minimum for bound in bounds)
+    return Element(None, None, None, cardinality=Cardinality(minimum, maximum))
+
+
 def _check_count(element: Element, count: int, path: str, found: list[Deviation]) -> None:
     bounds = element.cardinality
     if bounds is None:
@@ -149,13 +166,16 @@ def _compare_element(
         )
     if element.model_type in _LISTS:
         if element.children:
+            items = 0
             for position, item in enumerate(candidate.children):
                 item_path = f"{path}[{position}]"
                 shape = _item_template(element.children, item, work)
                 if shape is None:
                     found.append(_unexpected(item_path, item))
                 else:
+                    items += 1
                     _compare_element(shape, item, item_path, found, work, in_list=True)
+            _check_count(_list_items(element.children), items, f"{path}[]", found)
     elif element.children:
         _compare_level(element.children, candidate.children, path, found, work)
 
