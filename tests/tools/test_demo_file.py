@@ -47,7 +47,8 @@ class TestDemoFile(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 demo.main()
-            self.assertEqual(_entries(_ROOT / "examples" / "demo.aasx"), _entries(generated))
+            committed = _ROOT / "src/aaspect/adapters/web/static/demo.aasx"
+            self.assertEqual(_entries(committed), _entries(generated))
 
     def test_semantic_ids_follow_every_scheme_the_readme_names(self) -> None:
         parts = [demo.first_part(), demo.second_part()]

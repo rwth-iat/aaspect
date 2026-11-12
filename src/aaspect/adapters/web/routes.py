@@ -1,6 +1,7 @@
 import asyncio
 from collections.abc import Mapping
 from dataclasses import dataclass
+from importlib.resources import files
 from urllib.parse import urlencode
 
 import jinja2
@@ -17,9 +18,11 @@ from aaspect.adapters.web.uploads import (
     read_form,
 )
 from aaspect.adapters.web.views import MAX_LOCATIONS, MAX_ROWS, FileLinks, file_rows, page_context
+from aaspect.domain.corpus import Upload
 from aaspect.domain.per_file import file_sections
 from aaspect.domain.report import Report, ShownError, TryAgainLater
 from aaspect.domain.summary import summarize
+from aaspect.domain.version_selection import AutoOrder
 from aaspect.ports.report_writer import ReportWriter
 
 _EXPIRED = "This report does not exist or has expired."
@@ -33,6 +36,7 @@ _BUSY = "AASpect is busy with other analyses. Please try again in a moment."
 # Long enough for the first state of any analysis; reading the uploads comes after it.
 _START_TIMEOUT_SECONDS = 10
 _TOO_SLOW = "The upload took too long to arrive. Please try again."
+_DEMO = "demo.aasx"
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,6 +78,7 @@ def router(
     routes = APIRouter()
     routes.add_api_route("/", handlers.upload_form, methods=["GET"])
     routes.add_api_route("/analyses", handlers.start_analysis, methods=["POST"])
+    routes.add_api_route("/demo", handlers.start_demo, methods=["POST"])
     routes.add_api_route("/reports/{key}", handlers.show_report, methods=["GET"])
     routes.add_api_route("/reports/{key}/files", handlers.list_files, methods=["GET"])
     routes.add_api_route("/reports/{key}/files/{index}", handlers.show_file, methods=["GET"])
@@ -98,6 +103,8 @@ class _Handlers:
         self._upload_seconds = limits.upload_time_limit_seconds
         self._store = ReportStore(limits.max_stored_reports)
         self._analyses = Analyses(analyze, self._store, limits.max_concurrent_analyses)
+        # Served from /static for download too; read once, as every demo run uses it.
+        self._demo = files("aaspect.adapters.web").joinpath("static", _DEMO).read_bytes()
 
     def upload_form(self) -> Response:
         return self._pages.render("upload.html", versions=VERSION_CHOICES)
@@ -124,6 +131,17 @@ class _Handlers:
             # other errors: a slot kept here would be lost until restart.
             if not handed_over:
                 self._analyses.release_slot()
+        await run_in_threadpool(started.wait, _START_TIMEOUT_SECONDS)
+        return RedirectResponse(f"/reports/{key}", status_code=303)
+
+    async def start_demo(self) -> Response:
+        if not self._analyses.reserve_slot():
+            return self._pages.error(503, _BUSY)
+        try:
+            key, started = self._analyses.start([Upload(_DEMO, self._demo)], AutoOrder.OLDEST_FIRST)
+        except BaseException:
+            self._analyses.release_slot()
+            raise
         await run_in_threadpool(started.wait, _START_TIMEOUT_SECONDS)
         return RedirectResponse(f"/reports/{key}", status_code=303)
 

@@ -1,8 +1,9 @@
 # Demo file
 
 `demo.aasx` is one invented AAS package that gives every analysis something to report.
-It names no real manufacturer or product. Upload it on the start page and wait for the
-analysis to finish (a few seconds).
+It names no real manufacturer or product. Run it with **Run the demo** on the start page,
+or download it from there, and wait for the analysis to finish (a few seconds). It ships
+with the app as `src/aaspect/adapters/web/static/demo.aasx`.
 
 It is written by `tools/demo_file.py`; change the script, not the package, and run
 

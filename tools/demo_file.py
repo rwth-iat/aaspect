@@ -1,4 +1,4 @@
-"""Write `examples/demo.aasx`, one package that gives every analysis something to report.
+"""Write the demo AASX, one package that gives every analysis something to report.
 
     python tools/demo_file.py
 
@@ -16,7 +16,8 @@ import zlib
 from pathlib import Path
 from typing import Any
 
-OUTPUT = Path(__file__).resolve().parents[1] / "examples/demo.aasx"
+# Shipped with the web app, which runs it on request and offers it for download.
+OUTPUT = Path(__file__).resolve().parents[1] / "src/aaspect/adapters/web/static/demo.aasx"
 BASE = "https://example.com/demo"
 ECLASS = "0173-1#02-AAO677#002"
 IEC_CDD = "0112/2///61987#ABA951#009"

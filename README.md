@@ -153,7 +153,7 @@ echo "AASPECT_POSTGRES_PASSWORD=$(openssl rand -hex 16)" > .env
 docker compose up --build   # then open http://127.0.0.1:8000
 ```
 
-To try every analysis at once, upload `examples/demo.aasx`; `examples/README.md` lists
+To try every analysis at once, press **Run the demo** on the start page; `examples/README.md` lists
 what its report should show.
 
 The database password is read from `.env`; compose refuses to start without it. The
