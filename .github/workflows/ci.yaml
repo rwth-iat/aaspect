@@ -33,6 +33,22 @@ jobs:
   tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    services:
+      # The same server as compose.yaml, for the tests of the SQL; they skip without it.
+      postgres:
+        image: postgres:18.6-trixie@sha256:bd5dfa494a5a259704365813dbfa5fa6b3e69be7348d43b547f540c730478583
+        env:
+          # Reachable only from this job and gone after it, so no password is needed.
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      AASPECT_TEST_POSTGRES_HOST: 127.0.0.1
     steps:
       - name: Check out repository
         uses: actions/checkout@v5

@@ -1,0 +1,2268 @@
+{
+ "repository": "admin-shell-io/submodel-templates",
+ "commit": "f3790038b6c9c2d7e5ebbb4609997468fadf3e85",
+ "license": "CC-BY-4.0",
+ "files": [
+  {
+   "path": "deprecated/Carbon Footprint/0/9/IDTA_2023-0-9_Template_CarbonFootprint.json",
+   "sha": "a082862842fb2b5d0255a94ea2f542b0e0301db5",
+   "size": 95360,
+   "family": "deprecated/Carbon Footprint",
+   "priority": 0,
+   "version": [
+    0,
+    9
+   ],
+   "tier": "deprecated",
+   "sha256": "aeab2e98efa055d58aa3495ad87a6d87f04a83e1b6c614881bb0e53574327ae1"
+  },
+  {
+   "path": "deprecated/Control Component Instance/1/0/IDTA 02016-1-0 _Template_ControlComponentInstance.json",
+   "sha": "82c72e720f6c334eb7b5ab4f528cb7834bf69270",
+   "size": 47063,
+   "family": "deprecated/Control Component Instance",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "deprecated",
+   "sha256": "f826f534e03ca1f41622a7d6c6e4399921b065e1c33d7d5ce4ecf8ad394aadbc"
+  },
+  {
+   "path": "deprecated/Control Component Type/1/0/IDTA 02015-1-0 _Template_ControlComponentType.json",
+   "sha": "5d098ac9803cb215ad8d7794696cfbd7254b8d52",
+   "size": 48411,
+   "family": "deprecated/Control Component Type",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "deprecated",
+   "sha256": "298f8f8923b8ee8e8f26777822b2977736e03064d2a48e50630ee021f19fd42b"
+  },
+  {
+   "path": "deprecated/Digital nameplate/2/0/IDTA 02006-2-0_Template_Digital Nameplate.json",
+   "sha": "4ec8b0f688791511d033c2f75553fc2979572508",
+   "size": 242962,
+   "family": "deprecated/Digital nameplate",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "deprecated",
+   "sha256": "c02ad784b58560de5c8d5ca4790c2130d9aacd593aa3e3a4ca2cb276f1f58cf4"
+  },
+  {
+   "path": "deprecated/Handover Documentation/1/2/IDTA 02004-1-2_Template_Handover Documentation.json",
+   "sha": "621bc51da143cbd371ee0a6199dc8efdd6eed0e0",
+   "size": 108035,
+   "family": "deprecated/Handover Documentation",
+   "priority": 0,
+   "version": [
+    1,
+    2
+   ],
+   "tier": "deprecated",
+   "sha256": "7a29de3148f9036b11d2069cb2a360ee60e6fe4104f99437893bccb66fe6a14b"
+  },
+  {
+   "path": "deprecated/Technical_Data/1/1/SMT_qualified_Technical_Data_V11.json",
+   "sha": "5aa13523b9ead5fdc09612eaf5b7a21acfa0755f",
+   "size": 50268,
+   "family": "deprecated/Technical_Data",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "deprecated",
+   "sha256": "9eba5e14272c5ff3dc404cbf2a427a533a15e8451a23ca306b1ab447b835577b"
+  },
+  {
+   "path": "deprecated/Technical_Data/1/2/1/IDTA_02003-1-2-1_Template_TechnicalData_forAASMetamodelV3.1.json",
+   "sha": "b5a2becc25d023316d8bffa0e0d982ddb0a0e8f3",
+   "size": 63390,
+   "family": "deprecated/Technical_Data",
+   "priority": 0,
+   "version": [
+    1,
+    2,
+    1
+   ],
+   "tier": "deprecated",
+   "sha256": "d3f0f32b66dac7858f5e25b40625d98aacf5eb74e9bb0d61c5cc704b895c7881"
+  },
+  {
+   "path": "deprecated/Technical_Data/1/2/IDTA_02003-1-2_Template_TechnicalData.json",
+   "sha": "463aef9cbbb42bfcf24f54bf02b54c09e8b4bfc8",
+   "size": 65273,
+   "family": "deprecated/Technical_Data",
+   "priority": 0,
+   "version": [
+    1,
+    2
+   ],
+   "tier": "deprecated",
+   "sha256": "1badabb65513577af84821976ffc5e1056814fa8d4f31260d3869755082ff364"
+  },
+  {
+   "path": "deprecated/ZVEI_Digital_Nameplate/1/0/SMT_qualified_ZVEI_Digital_Nameplate_V10.json",
+   "sha": "d1563fbef1b8101a157d746d92a77bf55786e9a3",
+   "size": 92891,
+   "family": "deprecated/ZVEI_Digital_Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "deprecated",
+   "sha256": "1a330d3356cd9b0532d220a127f105090572ac0899c470ade8ed69d42aeda927"
+  },
+  {
+   "path": "published/Artificial Intelligence Dataset/1/0/1/IDTA 02058-1-0-1_Template_AIDataset_forAASMetamodelV3.1.json",
+   "sha": "9e9bcbab87c34dcd850ecf8d014518051a398ae8",
+   "size": 109028,
+   "family": "published/Artificial Intelligence Dataset",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "e0d0084d0ec96873903bf0ef003b02a6b1f640c3a93907004a6b3c32c9fe96d8"
+  },
+  {
+   "path": "published/Artificial Intelligence Dataset/1/0/2/IDTA 02058-1-0-2_Template_AIDataset_forAASMetamodelV3.1.json",
+   "sha": "7fad522ee5ad0b196a40e9fc10cca35f5b4e4edd",
+   "size": 111535,
+   "family": "published/Artificial Intelligence Dataset",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "82ca2f676effa6f1561888441271e10cf9e838f8f7a38177106074dbb468b4ae"
+  },
+  {
+   "path": "published/Artificial Intelligence Dataset/1/0/IDTA 02058-1-0_Template_AIDataset.json",
+   "sha": "64a73e9fe2e55bb29db6b4858b9aa3b52fade95e",
+   "size": 112387,
+   "family": "published/Artificial Intelligence Dataset",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "cc805a174c4658e54c6c4465f9403327d28806bd61a76f99d20e74590817f286"
+  },
+  {
+   "path": "published/Artificial Intelligence Deployment/1/0/1/IDTA 02059-1-0-1_Template_AIDeployment_forAASMetamodelV3.1.json",
+   "sha": "7fd0a98a289e59ef6e1652acc223b3c05d7ab0d9",
+   "size": 80833,
+   "family": "published/Artificial Intelligence Deployment",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "e78bf3e94d00b7f3ed57a8730a50ca37c3c64bb65fe18804369ff3d6ffe3f9de"
+  },
+  {
+   "path": "published/Artificial Intelligence Deployment/1/0/2/IDTA 02059-1-0-2_Template_AIDeployment_forAASMetamodelV3.1.json",
+   "sha": "9ab4aa05a3cafd6ddee0e4b7ad5a3dd0ade70ff3",
+   "size": 82596,
+   "family": "published/Artificial Intelligence Deployment",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "e9bc3bb9a890dd8ee15c7b2127bf18c7b658d4d6366f24b3b6940a9fb8db0960"
+  },
+  {
+   "path": "published/Artificial Intelligence Deployment/1/0/IDTA 02059-1-0_Template_AIDeployment.json",
+   "sha": "75f8dddd9e59313770d7be3116aa92ab21f41a07",
+   "size": 83477,
+   "family": "published/Artificial Intelligence Deployment",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "ecd0d458c587d4fdc8e77d59fc8fc5324420fbc8a6141fef50ecd09afcb41224"
+  },
+  {
+   "path": "published/Artificial Intelligence Model Nameplate/1/0/1/IDTA 02060-1-0-1_Template_AIModelNameplate_forAASMetamodelV3.1.json",
+   "sha": "05e5a60447e86cec3c6142a5b92919feae4855c8",
+   "size": 105383,
+   "family": "published/Artificial Intelligence Model Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "bf0aab3e1b55362a271f404774b15af8d6cfea6f4605b702c685edb426f02c1e"
+  },
+  {
+   "path": "published/Artificial Intelligence Model Nameplate/1/0/IDTA 02060-1-0_Template_AIModelNameplate.json",
+   "sha": "430dac9ede9d45b7cf319e57a6eadc621e319b4e",
+   "size": 108645,
+   "family": "published/Artificial Intelligence Model Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "821c65b356f8ee4c3178b10ff0f6e774baea7e8e8c3ad1be1b3e1f3a48a0e3fd"
+  },
+  {
+   "path": "published/Asset Interfaces Description/1/0/1/IDTA 02017-1-0-1_Template_Asset Interfaces Description_forAASMetamodelV3.1.json",
+   "sha": "95fcb5de0fb35cd3bd638be82fc5e031ce0ffc92",
+   "size": 501384,
+   "family": "published/Asset Interfaces Description",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "f1fdfe4c253512a8a5169b5acd2774c52890b614a3e24c697934937e5915e0dc"
+  },
+  {
+   "path": "published/Asset Interfaces Description/1/0/IDTA 02017-1-0_Template_Asset Interfaces Description.json",
+   "sha": "ba51ff91c37e1fa8d4cff0aa2132dece60a541a0",
+   "size": 442272,
+   "family": "published/Asset Interfaces Description",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "5b0e7871f27f489bb66aae3f77e6720dc02812598d67c9b62a600345ac8c50d8"
+  },
+  {
+   "path": "published/Asset Interfaces Description/1/1/1/IDTA 02017-1-1-1_Template_Asset Interfaces Description.json",
+   "sha": "aa2769a0010cedd7fc053639f829c16442363cce",
+   "size": 1569717,
+   "family": "published/Asset Interfaces Description",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "fe7c5ac664b8e557203baa554ad0b1426a3acddc56ddc3f6738c7f27c2797ab1"
+  },
+  {
+   "path": "published/Asset Interfaces Description/1/1/IDTA 02017-1-1_Template_Asset Interfaces Description.json",
+   "sha": "7991320c09c48e62aced5c5a725302ce798b5c27",
+   "size": 1569634,
+   "family": "published/Asset Interfaces Description",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "62ff4811904551d4f0b7611c9c0068371f11ec5955e0110bef94f24dce2df4c5"
+  },
+  {
+   "path": "published/Asset Interfaces Description/1/2/IDTA 02017_Template_Asset Interfaces Description.json",
+   "sha": "2b68a48605a044c3a562bd6572c5f7486fbb9c71",
+   "size": 1736622,
+   "family": "published/Asset Interfaces Description",
+   "priority": 0,
+   "version": [
+    1,
+    2
+   ],
+   "tier": "current",
+   "sha256": "8538bb01c75ea92f473480caf57d8df714a582c89723628dfcc654961bec1f55"
+  },
+  {
+   "path": "published/Asset Interfaces Mapping Configuration/1/0/1/IDTA 02027-1-0-1_Template_AIMC_forAASMetamodelV3.1.json",
+   "sha": "6eee1479a4e37423fcbc195882010a22d4f846fc",
+   "size": 11392,
+   "family": "published/Asset Interfaces Mapping Configuration",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "09f065733d5acbb7a035a00d6fd39c708dd4573ecb8cd22a53d1725e691b0ad8"
+  },
+  {
+   "path": "published/Asset Interfaces Mapping Configuration/1/0/IDTA 02027-1-0_Template_AIMC .json",
+   "sha": "f629fb6b7a6eb7816c239a0678325fff23625e3a",
+   "size": 124001,
+   "family": "published/Asset Interfaces Mapping Configuration",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "09f4c57cc066fe7d95040013c20f0412004f07ec3669d8f976dec586e024a1e6"
+  },
+  {
+   "path": "published/Asset Interfaces Mapping Configuration/2/0/IDTA 02027_Template_AIMC_without_examplevalues.json",
+   "sha": "2a64dbde51c5a2e50b583f02da867bffd4a2c430",
+   "size": 49305,
+   "family": "published/Asset Interfaces Mapping Configuration",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "042ad7b7f5ed760f526cec92a42a7589bce92860a3e3eefb86f5a080b92a376d"
+  },
+  {
+   "path": "published/Asset Interfaces Mapping Configuration/2/1/IDTA 02027_Template_AIMC_without_examplevalues.json",
+   "sha": "f3af887b53462852627daa946e3567beb315fd2e",
+   "size": 49146,
+   "family": "published/Asset Interfaces Mapping Configuration",
+   "priority": 0,
+   "version": [
+    2,
+    1
+   ],
+   "tier": "current",
+   "sha256": "45078ddf9fcf11917b1f7076f0dafdf931f3c20137045424c788ba956a4c3702"
+  },
+  {
+   "path": "published/Capability Description/1/0/1/IDTA 02020_Template_Capability_Description.json",
+   "sha": "f04c69d805f04abe3dbea8d20d9c2da10c7d10ff",
+   "size": 149842,
+   "family": "published/Capability Description",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "b8a4a56bb04efefcd5c933d9c76923da5045bacf86ee840a6746a0628f6d6415"
+  },
+  {
+   "path": "published/Capability Description/1/0/IDTA 02020_Template_Capability_Description.json",
+   "sha": "0c4beed8bfb7346026fefa2a3744b6a8bbfcabda",
+   "size": 149905,
+   "family": "published/Capability Description",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "c7de3a10da908159970f8e8541ca0c1e8e1f412ae04e1231c2e242e30da12339"
+  },
+  {
+   "path": "published/Carbon Footprint/1/0/1/IDTA 02023-1-0-1 _Template_CarbonFootprint_forAASMetamodelV3.1.json",
+   "sha": "83a63fef765eedccf45ec1c3b26db9aecc68eca6",
+   "size": 109032,
+   "family": "published/Carbon Footprint",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "d0edb5f39d339408f9f6c0571a6f85f2f4c32ffff4a70af9a2a1c088dab92e4d"
+  },
+  {
+   "path": "published/Carbon Footprint/1/0/2/IDTA 02023-1-0-2 _Template_CarbonFootprint_forAASMetamodelV3.1.json",
+   "sha": "6e3f14f173916d9599de7d29bac04889b309df4f",
+   "size": 109942,
+   "family": "published/Carbon Footprint",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "f368e2e3590e4cc79f346e7339117513e555d44619d1a0bb6a29b9eb30c26ca1"
+  },
+  {
+   "path": "published/Carbon Footprint/1/0/IDTA 02023 _Template_CarbonFootprint.json",
+   "sha": "d9144d792edf74b9c25ab8033a7d446b9ba8139d",
+   "size": 112177,
+   "family": "published/Carbon Footprint",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "a6f19f6e13759e1a9c1930a3d4074ca2d1be68441547ab4c85b1d2afdc52faae"
+  },
+  {
+   "path": "published/Contact Information/1/0/1/IDTA 02002-1-0-1_Template_ContactInformation_forAASMetamodelV3.1.json",
+   "sha": "3336b1166b0a0829403d7e8dfc6906b4bcb544a5",
+   "size": 68877,
+   "family": "published/Contact Information",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "a1f83c668e470f6d0a473300d1ff53e2ee4139d633de8489b14cece056284755"
+  },
+  {
+   "path": "published/Contact Information/1/0/2/IDTA 02002-1-0-2_Template_ContactInformation_forAASMetamodelV3.1.json",
+   "sha": "45b8ed6baee2dff17601ecb34dd32e85c4c8f65c",
+   "size": 68930,
+   "family": "published/Contact Information",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "24b25daf7199b2d01be7e3fca339219096dc44490cb1e16ab09c9b35839cd605"
+  },
+  {
+   "path": "published/Contact Information/1/0/IDTA 02002-1-0_Template_ContactInformation.json",
+   "sha": "d832e72869923e66a4452e1e24cc1e5e7a00b36b",
+   "size": 67559,
+   "family": "published/Contact Information",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "68f5e5c06b5955884c2aa12997bc11f7fbd924d4fb27fe39223761a3fa6b3ac1"
+  },
+  {
+   "path": "published/Control Component Instance/2/0/1/IDTA 02016-2-0-1 _Template_ControlComponentInstance_forAASMetamodelV3.1.json",
+   "sha": "6fb3bb452857b8627b4956c379a6e9727d17c707",
+   "size": 65146,
+   "family": "published/Control Component Instance",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "1c54a6ee282c9401a96a08bd19ecc37fcc62cb768bd16ed5c3fa6b0e164acf07"
+  },
+  {
+   "path": "published/Control Component Instance/2/0/IDTA 02016-2-0 _Template_ControlComponentInstance.json",
+   "sha": "d598a17ac477b4d5e5a26be7af72290c171d102a",
+   "size": 67141,
+   "family": "published/Control Component Instance",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "5e9ec12f0c5b5ebebcc63a2b52ea25082b7dc7cf374ba3b1d98461100c4d35d9"
+  },
+  {
+   "path": "published/Control Component Type/2/0/1/IDTA 02015-2-0-1 _Template_ControlComponentType_forAASMetamodelV3.1.json",
+   "sha": "ec6154b74676d3ab694950c11abd1c4eaef07fe6",
+   "size": 67057,
+   "family": "published/Control Component Type",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "da4d28f439342cf96b44df3734fa9d8d2c7bee80d99ebd7bcc71d3c6c7a89a8b"
+  },
+  {
+   "path": "published/Control Component Type/2/0/2/IDTA 02015-2-0-2 _Template_ControlComponentType_forAASMetamodelV3.1.json",
+   "sha": "ed6733ce5ccacdb1315da5ea3e5f5e3027465a6f",
+   "size": 67056,
+   "family": "published/Control Component Type",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "6739d32be0307259da3b463382b21aaad32c02d6df8018fd5e8ccdd15e6e823b"
+  },
+  {
+   "path": "published/Control Component Type/2/0/IDTA 02015-2-0 _Template_ControlComponentType.json",
+   "sha": "65e299638c1fea90bf5d236c97aab43598e6263e",
+   "size": 69055,
+   "family": "published/Control Component Type",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "080ff0dd51ea386a1e5d5cf56ec27c6546c210e4fb94660a2ba8fd25aefed76d"
+  },
+  {
+   "path": "published/Control Configuration and Parametrization for NC and CNC Machines/1/0/1/IDTA 02053-1-0-1_Template_ControlConfig_forAASMetamodelV3.1.json",
+   "sha": "d3fbbbef96dc0a0883bd92a314d99b7a9ed967ec",
+   "size": 127930,
+   "family": "published/Control Configuration and Parametrization for NC and CNC Machines",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "85e3a856494eca75a46502e7df870763efb746d639c6c8ecea802a003f904041"
+  },
+  {
+   "path": "published/Control Configuration and Parametrization for NC and CNC Machines/1/0/2/IDTA 02053-1-0-2_Template_ControlConfig_forAASMetamodelV3.1.json",
+   "sha": "384b43aebe5be41a377f2210df8ee7660885b9c5",
+   "size": 130123,
+   "family": "published/Control Configuration and Parametrization for NC and CNC Machines",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "2ab1960f52b371fc04542fd97c9d67e6c58b5cf7cf8b1d685689aaa1ca1f8ef7"
+  },
+  {
+   "path": "published/Control Configuration and Parametrization for NC and CNC Machines/1/0/IDTA 02053-1-0_Template_ControlConfig.json",
+   "sha": "f4b13c7dbd2deaeae760b62854319b5697bf2ded",
+   "size": 122271,
+   "family": "published/Control Configuration and Parametrization for NC and CNC Machines",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "71688f51ba1da88769bb913b6d357bd4b901cff38e82c8809ad9aee4a58350ec"
+  },
+  {
+   "path": "published/Creation and Classification of Materials/1/0/1/IDTA 02034-1-0-1 Template_BackendSpecificMaterialInformation_forAASMetamodelV3.1.json",
+   "sha": "f9f8ac76393a1cd7b9fe519ee6e37c06d083ae52",
+   "size": 18390,
+   "family": "published/Creation and Classification of Materials",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "e1c0b33b33a487d590920afc22ea9b6cfba56a63cd61703745f3f7d2cb548db6"
+  },
+  {
+   "path": "published/Creation and Classification of Materials/1/0/IDTA 02034-1-0 Template_BackendSpecificMaterialInformation.json",
+   "sha": "2ef90f0a8bd5f3ec07c10fa26bf7f8b778a50959",
+   "size": 6152,
+   "family": "published/Creation and Classification of Materials",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "09b80823c0c7b7b912e9784a89acf6effe8d95de1b43203e1270e543186c5ae6"
+  },
+  {
+   "path": "published/DEXPI/1/0/1/IDTA 02012-1-0-1_Template_DEXPI.json",
+   "sha": "6af70244558cedd766ba3fad990057944060760b",
+   "size": 414625,
+   "family": "published/DEXPI",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "e81fbca600a25e85d76f895e3a6d7ec97bce42f83e696a4008f2124c5905fc8b"
+  },
+  {
+   "path": "published/DEXPI/1/0/IDTA 02012-1-0_Template_DEXPI.json",
+   "sha": "0d2a277b99665328c5923554f8585bb994141002",
+   "size": 409903,
+   "family": "published/DEXPI",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "861b2107f0bd76e02a6d4dc2ec665a7ebf218dec2d4804978bdb8c0e92394430"
+  },
+  {
+   "path": "published/Data Model for Asset Location/1/0/1/IDTA 02045-1-0-1_Template_DataModelForAssetLocation_forAASMetamodelV3.1.json",
+   "sha": "261a21c17b666907a90f043481eaf9e64508a956",
+   "size": 178170,
+   "family": "published/Data Model for Asset Location",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "824a0f5193d03717f2998b04003fcb3a15251dcc9e38eef3da4c6bcf3bde321f"
+  },
+  {
+   "path": "published/Data Model for Asset Location/1/0/IDTA 02045-1-0_Template_DataModelForAssetLocation.json",
+   "sha": "3c13f48289a2e651bf985a3eb4adb6a36a27b55d",
+   "size": 183201,
+   "family": "published/Data Model for Asset Location",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "f79b909e06682fe723ac535eb7e3401bba0791c7a816bba5b58f68e21be1fd13"
+  },
+  {
+   "path": "published/Data Retention Policies/1/0/1/IDTA 02056-1-0-1_Template_Data Retention Policies_forAASMetamodelV3.1.json",
+   "sha": "114efdcb17f9b06dfa5927d5dc81f675264b9d5f",
+   "size": 73675,
+   "family": "published/Data Retention Policies",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "f6e9d93f92c1a3a68914da095e0096daf7c4413834577dae67f8594b5e434c1a"
+  },
+  {
+   "path": "published/Data Retention Policies/1/0/2/IDTA 02056-1-0-2_Template_Data Retention Policies_forAASMetamodelV3.1.json",
+   "sha": "5342c28ee9b074dfdfee58cf912e269622e34f0e",
+   "size": 73700,
+   "family": "published/Data Retention Policies",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "54a414a1c6488e9905b318ea172816b801b53eeb249a402bd737362f47fcc778"
+  },
+  {
+   "path": "published/Data Retention Policies/1/0/IDTA 02056-1-0_Template_Data Retention Policies.json",
+   "sha": "d51f18e43f8a0191e681bfbdbfb55a1908b39fe0",
+   "size": 71004,
+   "family": "published/Data Retention Policies",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "27681cdbc6fdb91892ac99d27a7e40ae2de2cf3f0534d024d900495240639d00"
+  },
+  {
+   "path": "published/Digital Battery Passport/1_Digital Nameplate/1/0/IDTA 02035-1_DBP-Part-1_Digital Nameplate_without_examplevalues.json",
+   "sha": "91b5edaf78dc19de0ae9830670245112cfac71c4",
+   "size": 73717,
+   "family": "published/Digital Battery Passport/1_Digital Nameplate",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "5b08e7323dceeec9aef4d7978bfd3618ed7b9c31c5f4c2f7d03d5b6b9371a352"
+  },
+  {
+   "path": "published/Digital Battery Passport/1_Digital Nameplate/1/1/IDTA 02035-1_DBP-Part-1_Digital Nameplate_without_examplevalues.json",
+   "sha": "d3ba372c6882f3f28d173b519fe32df87acf62d6",
+   "size": 73940,
+   "family": "published/Digital Battery Passport/1_Digital Nameplate",
+   "priority": 1,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "b1299f2e2f1b96e1c937e0cc6fff20ce1493f338ac59dd47382f503c021f5b8e"
+  },
+  {
+   "path": "published/Digital Battery Passport/2_Handover Documentation/1/0/IDTA 02035-2_DBP-Part-2_HandoverDocumentation_without_examplevalues.json",
+   "sha": "dff54f2527b69edbecd80d1a8594f26dd04216b6",
+   "size": 107570,
+   "family": "published/Digital Battery Passport/2_Handover Documentation",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "4f84d5dce1af9e0371e82ff18abf50b02f86dbd475db4fd7f9ca328ad777e982"
+  },
+  {
+   "path": "published/Digital Battery Passport/2_Handover Documentation/1/1/IDTA 02035-2_DBP-Part-2_HandoverDocumentation_without_examplevalues.json",
+   "sha": "1cd8844ad0c2e503905bdff701642fdba6583c5c",
+   "size": 108507,
+   "family": "published/Digital Battery Passport/2_Handover Documentation",
+   "priority": 1,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "6dac46238d9d3b8607e1a1f91a9a6de2a28c1b21679af47c16eff1322ae14aec"
+  },
+  {
+   "path": "published/Digital Battery Passport/3_Product Carbon Footprint/1/0/IDTA 02035-3_DBP-Part-3_ProductCarbonFootprint_without_examplevalues.json",
+   "sha": "4ba34c8d8acb13bb73991c304eb4d520474b3ef4",
+   "size": 56261,
+   "family": "published/Digital Battery Passport/3_Product Carbon Footprint",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "d8e11f4500ca3158ebf3dc8f12c890543f0b86ed90810d9c2b8091445831b7fc"
+  },
+  {
+   "path": "published/Digital Battery Passport/3_Product Carbon Footprint/1/1/IDTA 02035-3_DBP-Part-3_ProductCarbonFootprint_without_examplevalues.json",
+   "sha": "a6445818243f71b280ec718a97641ad951184504",
+   "size": 56612,
+   "family": "published/Digital Battery Passport/3_Product Carbon Footprint",
+   "priority": 1,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "4d949c6cc62d7026f96bb30d3c5c4f9a46451012a81e9022b7d50f44bf54a3e3"
+  },
+  {
+   "path": "published/Digital Battery Passport/4_Technical Data/1/0/1/IDTA 02035-4_DBP-Part-4_TechnicalData_without_examplevalues.json",
+   "sha": "f448da7de6abdf7f0dab6e4856ef2fc9bea91bd2",
+   "size": 143231,
+   "family": "published/Digital Battery Passport/4_Technical Data",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "c4d74650e9266c17b24b712d8dfec9dc68a86421b0e018d675da3df5fc04f63b"
+  },
+  {
+   "path": "published/Digital Battery Passport/4_Technical Data/1/0/2/IDTA 02035-4_DBP-Part-4_TechnicalData_without_examplevalues.json",
+   "sha": "cdc22b244f5591e7a7a7770cbad7b71217ee4ff1",
+   "size": 145081,
+   "family": "published/Digital Battery Passport/4_Technical Data",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "c4229561302bd17d09702f9514e636b4d5a8c7d5d19e9643aad07af87c6ff43f"
+  },
+  {
+   "path": "published/Digital Battery Passport/4_Technical Data/1/0/IDTA 02035-4_DBP-Part-4_TechnicalData_without_examplevalues.json",
+   "sha": "3538584d1d6e447cb6896d62752b49cd1e0cadff",
+   "size": 158785,
+   "family": "published/Digital Battery Passport/4_Technical Data",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "890ac72c63620ea4746e6f4b68a243a5ffc3f45f091eb847f9bdd7cb41215f06"
+  },
+  {
+   "path": "published/Digital Battery Passport/5_Product Condition/1/0/1/IDTA 02035-5_DBP-Part-5_ProductCondition_without_examplevalues.json",
+   "sha": "3769c46ff4d9a615b3b3ea48faa0689624cfc1ad",
+   "size": 130414,
+   "family": "published/Digital Battery Passport/5_Product Condition",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "e6946a57eb2c780319e03e770f49a65580bac0d34a2b2d10b584f6a0c846a52b"
+  },
+  {
+   "path": "published/Digital Battery Passport/5_Product Condition/1/0/2/IDTA 02035-5_DBP-Part-5_ProductCondition_V1.0.2.json",
+   "sha": "249f32c67a0055c89799553a4a42861253b8957f",
+   "size": 138271,
+   "family": "published/Digital Battery Passport/5_Product Condition",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "fc3c81609ca4f923b77ca14d21c8dcf5202e385c94b5090b65148fcec870ab75"
+  },
+  {
+   "path": "published/Digital Battery Passport/5_Product Condition/1/0/IDTA 02035-5_DBP-Part-5_ProductCondition_without_examplevalues.json",
+   "sha": "9b25b996e95d9e40a431f0d817797c3cd243040d",
+   "size": 127943,
+   "family": "published/Digital Battery Passport/5_Product Condition",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "44489743ae32a43b43928e8e03b096312e7fe64bedfc75ad89f10883f39b0387"
+  },
+  {
+   "path": "published/Digital Battery Passport/6_Material Composition/1/0/1/IDTA 02035-6_DBP-Part-6_MaterialComposition_without_examplevalues.json",
+   "sha": "d9184515aa064ca0351569f46d7fb2b317dfb1af",
+   "size": 74470,
+   "family": "published/Digital Battery Passport/6_Material Composition",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "83c9d46e753e5689870cf84b6570ae7d2ebb1dd7f85ad1244442f2d6debcc1b6"
+  },
+  {
+   "path": "published/Digital Battery Passport/6_Material Composition/1/0/IDTA 02035-6_DBP-Part-6_MaterialComposition_without_examplevalues.json",
+   "sha": "a28c3fb1a327cc0b2cffb612458d36d42ef39b07",
+   "size": 68280,
+   "family": "published/Digital Battery Passport/6_Material Composition",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "96fb836723d0fe52b99604127c33607305d87f46a20ac4541db6609a05005c3e"
+  },
+  {
+   "path": "published/Digital Battery Passport/7_Circularity/1/0/1/IDTA 02035-7_DBP-Part-7_Circularity_without_examplevalues.json",
+   "sha": "50fcc0026c1b3a6adbe2ebc227ec78b846c11dac",
+   "size": 112151,
+   "family": "published/Digital Battery Passport/7_Circularity",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "49e4697d8ed42f5156115ef76889c2d6b52a34630e0fc1d0279df66a1264da09"
+  },
+  {
+   "path": "published/Digital Battery Passport/7_Circularity/1/0/2/IDTA 02035-7_DBP-Part-7_Circularity_without_examplevalues.json",
+   "sha": "33b2ef79925fdd494fadd0b7ecdec36899db3f98",
+   "size": 111639,
+   "family": "published/Digital Battery Passport/7_Circularity",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "fa1ad2a5fb12dd435b9ec72a17702f29f77f8c03ab9f8cef33db6fbb06d2c155"
+  },
+  {
+   "path": "published/Digital Battery Passport/7_Circularity/1/0/IDTA 02035-7_DBP-Part-7_Circularity_without_examplevalues.json",
+   "sha": "a22af6e1aa97d5a7110bb09be65a0bf87b0e44b9",
+   "size": 111889,
+   "family": "published/Digital Battery Passport/7_Circularity",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "70b1b860e28b089c30329d11816512162d07252eab30e7a7f91cedc7e9a0d472"
+  },
+  {
+   "path": "published/Digital Product Passport/Digital Product Passport Part-1/1/0/0/IDTA 02099-1_Template Digital Product Passport - Part 1.json",
+   "sha": "125ae9b90f3ac6b02b82e8b3d7add023bb009c79",
+   "size": 50842,
+   "family": "published/Digital Product Passport/Digital Product Passport Part-1",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "541cfd526ead764b6209eed96bf991d65c8e286a45be5ca3a6513e1a66ea5721"
+  },
+  {
+   "path": "published/Digital Product Passport/Digital Product Passport Part-1/1/0/1/IDTA 02099-1_Template Digital Product Passport - Part 1.json",
+   "sha": "125ae9b90f3ac6b02b82e8b3d7add023bb009c79",
+   "size": 50842,
+   "family": "published/Digital Product Passport/Digital Product Passport Part-1",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "541cfd526ead764b6209eed96bf991d65c8e286a45be5ca3a6513e1a66ea5721"
+  },
+  {
+   "path": "published/Digital Product Passport/Digital Product Passport Part-1/1/0/2/IDTA 02099-1_Template Digital Product Passport - Part 1.json",
+   "sha": "b3dd7e42bd681296e00b8571ab3745da4e1c2770",
+   "size": 50663,
+   "family": "published/Digital Product Passport/Digital Product Passport Part-1",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "45d3f5ee78f628941816f4f6e30221f535a91c318114f41143328881c887eb85"
+  },
+  {
+   "path": "published/Digital Quality Documents/Part 1 Core Elements/1/0/IDTA 02065-1_Template_DigitalQualityDocuments-part-1.json",
+   "sha": "66a55aeecfbc8b20a0ec0258ebd3bf186f6a067a",
+   "size": 154536,
+   "family": "published/Digital Quality Documents/Part 1 Core Elements",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "b542dd848d9bf3a4c5e572d9d5ce6dab5e45901655c69af7f4ac978cefbced74"
+  },
+  {
+   "path": "published/Digital Quality Documents/Part 1 Core Elements/1/1/IDTA 02065-1_Template_DigitalQualityDocuments-part-1.json",
+   "sha": "7176a800db3ce95fb6215a1cbfaee06324972616",
+   "size": 149444,
+   "family": "published/Digital Quality Documents/Part 1 Core Elements",
+   "priority": 1,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "2ed404e5d8ccbb2f9005b8ede8b818e4e26473a6aad67bb9c46e75d5d590a968"
+  },
+  {
+   "path": "published/Digital nameplate/3/0/1/IDTA 02006-3-0-1_Template_Digital Nameplate.json",
+   "sha": "2e52e04c71ac4bfa63f85873f9bcd1c0520f75ab",
+   "size": 84687,
+   "family": "published/Digital nameplate",
+   "priority": 0,
+   "version": [
+    3,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "c2358c18c1d908f943aba76575aec19bb010454d78389ca6bd43f0e5dbae025c"
+  },
+  {
+   "path": "published/Digital nameplate/3/0/2/IDTA 02006-3-0-2_Template_Digital Nameplate.json",
+   "sha": "171577ccfd30081e0de76f59b6261e0bf71f43c8",
+   "size": 83210,
+   "family": "published/Digital nameplate",
+   "priority": 0,
+   "version": [
+    3,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "89b127f715e0de36a2df399ca27e0b3fb926f3cb8a271b24e54ca4c87e535ab5"
+  },
+  {
+   "path": "published/Digital nameplate/3/0/IDTA 02006-3-0_Template_Digital Nameplate.json",
+   "sha": "15f0397eb6466a6afa61aeef92e01d284064828f",
+   "size": 84780,
+   "family": "published/Digital nameplate",
+   "priority": 0,
+   "version": [
+    3,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "3ef1ba9dbe711794037501ae364a0124e79eba7aa0a3b18276cb650d8644c576"
+  },
+  {
+   "path": "published/Energy Flexibility Data Model/1/0/IDTA 02076_Template_EnergyFlexibilityDataModel.json",
+   "sha": "3313a9840a9131238f61cd37e230b46ebe4e2b1a",
+   "size": 612535,
+   "family": "published/Energy Flexibility Data Model",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "318b039268e4c11ed39c01888de7f218dcfba51c5d5f027cfa3e5484b7caefd9"
+  },
+  {
+   "path": "published/Energy Flexibility Data Model/1/1/IDTA 02076_Template_EnergyFlexibilityDataModel.json",
+   "sha": "b30598381da541333aa4adf5c817167aac88ba45",
+   "size": 611122,
+   "family": "published/Energy Flexibility Data Model",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "5bcfc8af735046eaf1a241de10e7d9d1641738cecdeea8039c6f45121f818340"
+  },
+  {
+   "path": "published/Factory Automation Data for Plant Planning/1/0/IDTA 02075_Template_FactoryAutomationDataForPlantPlanning.json",
+   "sha": "6f36376a2c491f93d68ca484862b1d57f3991259",
+   "size": 184723,
+   "family": "published/Factory Automation Data for Plant Planning",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "be97278c8b6f110f49d799042d6b243f42b4997dd479951c43f761cb98bdad9c"
+  },
+  {
+   "path": "published/Factory Automation Data for Plant Planning/1/1/IDTA 02075_Template_FactoryAutomationDataForPlantPlanning.json",
+   "sha": "8dae2020751a291a96700b45be253eafc373c28d",
+   "size": 183885,
+   "family": "published/Factory Automation Data for Plant Planning",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "0d7b796b2786f6e8c5182fa513b7da392a8b4174271c74b49674bb4403fb01de"
+  },
+  {
+   "path": "published/Fire Protection on Railway Vehicles/1/0/IDTA 02102_Template Fire Protection on Railway Vehicles.json",
+   "sha": "2537393c9933a04a7853e6475483663f82e0817c",
+   "size": 129733,
+   "family": "published/Fire Protection on Railway Vehicles",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "34e0d040e3acd29cc10a3469b47d55d019723f6d210068ca7e3cd86391554fe1"
+  },
+  {
+   "path": "published/Functional Safety/1/0/1/IDTA 02014-1-0-1_Template_FunctionalSafety_forAASMetamodelV3.1.json",
+   "sha": "8db37389363aeb54739c635d3271c0a6e0e6babf",
+   "size": 86574,
+   "family": "published/Functional Safety",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "6bb5fc42ea17e4c55f93b88341b118defe407b20bf068abd933d66bc673664d6"
+  },
+  {
+   "path": "published/Functional Safety/1/0/2/IDTA 02014-1-0-2_Template_FunctionalSafety_forAASMetamodelV3.1.json",
+   "sha": "a7dbebe7900848e0555a6c57c552b83a615d2e99",
+   "size": 86605,
+   "family": "published/Functional Safety",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "c87d3dc3786172989439a2f6207572fe1442da75d46e45e70e819d74066af10e"
+  },
+  {
+   "path": "published/Functional Safety/1/0/IDTA 02014-1-0_Template_FunctionalSafety.json",
+   "sha": "7fda059f56da864cd30bd3ea6511185f8bb230c8",
+   "size": 88739,
+   "family": "published/Functional Safety",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "d73faf36fa2b8f971f2a07866a6f7d781cf1fa4912c3db148dfec2f60f249e59"
+  },
+  {
+   "path": "published/Handover Documentation/2/0/1/IDTA 02004-2-0-1_Template_HandoverDocumentation__forAASMetamodelV3.1.json",
+   "sha": "c3de176096f10210bf0b7ed35d9231becf22021c",
+   "size": 154259,
+   "family": "published/Handover Documentation",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "068ba24e4427facd9169dfc8163de46c4805b663cbd061dedd20dba669604689"
+  },
+  {
+   "path": "published/Handover Documentation/2/0/2/IDTA 02004-2-0-2_Template_HandoverDocumentation__forAASMetamodelV3.1.json",
+   "sha": "d91f322ea72944c53ed522a80f1266caa4314643",
+   "size": 156404,
+   "family": "published/Handover Documentation",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "e49961488c83d6aa3fcc31953aa39e8c77c101011edd7f4775dc0c58c804ccd3"
+  },
+  {
+   "path": "published/Handover Documentation/2/0/IDTA 02004-2-0_Template_HandoverDocumentation.json",
+   "sha": "685b9551d6eda7b3b2e9f3065d891848b8b15142",
+   "size": 158467,
+   "family": "published/Handover Documentation",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "1be559fbf04c964743c0308fd4227aa11a562aa6152959e2c9f23d55013f5d94"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/1/1/1/IDTA 02011-1-1-1_Template_HSEBoM_forAASMetamodelV3.1.json",
+   "sha": "07113beafddf00064d8609ec55fa4e0cd5d6a045",
+   "size": 33945,
+   "family": "published/Hierarchical Structures enabling Bills of Material",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "a0f7e772983c430ba8bf9d7b062015d7ff4f90e5551fec1e5a2617d8993de1de"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/1/1/2/IDTA 02011-1-1-2_Template_HSEBoM_forAASMetamodelV3.1.json",
+   "sha": "2a4c42bd80f213f03de6c477cbd6e55462c41c54",
+   "size": 33911,
+   "family": "published/Hierarchical Structures enabling Bills of Material",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    2
+   ],
+   "tier": "current",
+   "sha256": "7f30bf971341849eb54c7b98d96b0ea7da39258f8c7f61288a10410192fcd3b1"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/1/1/IDTA 02011-1-1_Template_HSEBoM.json",
+   "sha": "ce9540a38e1232ee3cdd38e7e2939304ea5ed786",
+   "size": 23599,
+   "family": "published/Hierarchical Structures enabling Bills of Material",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "09714e675af3e921bf333dccbd40017478047e336671521cea520bcdb8c0e30d"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346/1/0/1/IDTA 02011-1-1-1 _Template_BoM_ExtensionbasedonIEC81346_forAASMetamodelV3.1.json",
+   "sha": "baf79b7e45f0a4848d5d1ed8a418e4052dd19224",
+   "size": 62449,
+   "family": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "86a3f6733518c2da401971fc1726d0e815d152ab0a819de236abded15762106e"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346/1/0/2/IDTA 02011-1-1-2 _Template_BoM_ExtensionbasedonIEC81346_forAASMetamodelV3.1.json",
+   "sha": "e02df3ec2a6adb7efc071b75c62b811f83ca5bf0",
+   "size": 62280,
+   "family": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "de46e0c26ac44520ef6e87a18570d27c2ef95128b4cbdbbfb621ec45871ccc72"
+  },
+  {
+   "path": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346/1/0/IDTA 02011-1_Template_BoM_ExtensionbasedonIEC81346.json",
+   "sha": "baf79b7e45f0a4848d5d1ed8a418e4052dd19224",
+   "size": 62449,
+   "family": "published/Hierarchical Structures enabling Bills of Material/Extension based on IEC 81346",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "86a3f6733518c2da401971fc1726d0e815d152ab0a819de236abded15762106e"
+  },
+  {
+   "path": "published/Inspection Documents of Steel Products/1/0/1/IDTA 02032-1-0-1_Template Inspection Documents of Steel Products_forAASMetamodelV3.1.json",
+   "sha": "f6e6cbc92da3b43c7bec4207e25e65a537d17fc4",
+   "size": 307588,
+   "family": "published/Inspection Documents of Steel Products",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "6a915cb8682a82fe6dd71466e4fce2c1ae33ae98611c6443c901917ee451dde4"
+  },
+  {
+   "path": "published/Inspection Documents of Steel Products/1/0/IDTA 02032-1-0_Template Inspection Documents of Steel Products.json",
+   "sha": "7fcde9da1e2d5e86d321032f47d3c90664836a01",
+   "size": 307406,
+   "family": "published/Inspection Documents of Steel Products",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "3f716763a44d170a7999136cfbe792a6e8eea7fa73b58eea97150c96ac433407"
+  },
+  {
+   "path": "published/Intelligent Information  for Use/1/0/1/IDTA 02063-1-0-1_Template__IntelligentInformationForUse_forAASMetamodelV3.1.json",
+   "sha": "766d0a642517b3f679b478ec24d62e5cfcd28e3d",
+   "size": 536659,
+   "family": "published/Intelligent Information  for Use",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "995f7812b935becc507785644f2c9d90a9db675a644760e90c174b30cf225145"
+  },
+  {
+   "path": "published/Intelligent Information  for Use/1/0/2/IDTA 02063-1-0-2_Template__IntelligentInformationForUse_forAASMetamodelV3.1.json",
+   "sha": "576306283369027f436280d611428fe662a2e4c0",
+   "size": 545424,
+   "family": "published/Intelligent Information  for Use",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "cb46e9aaacb1192043c70095eb65578878d046b52e771b3bf6704703b04716cb"
+  },
+  {
+   "path": "published/Intelligent Information  for Use/1/0/IDTA 02063-1-0_Template__IntelligentInformationForUse.json",
+   "sha": "1929364221eebc66708cfa842eb731a26e91b3e3",
+   "size": 553150,
+   "family": "published/Intelligent Information  for Use",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "ccbb9aba0ed4f5545c14e01e7a5813171b156b9ff78ef4e5a2bfb5f9b526ddd0"
+  },
+  {
+   "path": "published/MTP/1/0/1/IDTA_02001-1-0-1_Submodel_MTPv1.0-rc2-with-documentation1_en_forAASMetamodelV3.1.json",
+   "sha": "eff2a740179a3da46af6da8a18ab7e587f8cffb3",
+   "size": 270236,
+   "family": "published/MTP",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "137964d4da328ed204822d129c81d2da1f1f6cd9a3f569725638a8da0be22fa5"
+  },
+  {
+   "path": "published/MTP/1/0/2/IDTA_02001-1-0-2_Submodel_MTPv1.0-rc2-with-documentation1_en_forAASMetamodelV3.1.json",
+   "sha": "67b386c36696410f7d420879a40ffe1c9d3333d7",
+   "size": 270249,
+   "family": "published/MTP",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "77fa810fe113998dbfd370c121dc66bddec4f38f231474142b2d19b7889ed29b"
+  },
+  {
+   "path": "published/MTP/1/0/IDTA 02001-1-0_Subomdel_MTPv1.0-rc2-with-documentation.json",
+   "sha": "8052775526ebbc7511c242a71022235bfec007b1",
+   "size": 273856,
+   "family": "published/MTP",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "2d36c9ee8711224e2ff5b003a5b4c9413ab2dd6b36aa43fd40897e90dc6ce742"
+  },
+  {
+   "path": "published/Maintenance Instructions/1/0/1/IDTA_02018-1-0-1_Template_MaintenanceInstructions.json",
+   "sha": "5393ba8ad17b844419011cbd451ab5b20a32c93d",
+   "size": 301853,
+   "family": "published/Maintenance Instructions",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "a99f09afa85342ae5704e661681802bc006e6599cca1bd3daf7d77206f286519"
+  },
+  {
+   "path": "published/Maintenance Instructions/1/0/IDTA_02018_Template_MaintenanceInstructions.json",
+   "sha": "52d31c795606b979327da69764eeccc5e6fc9de3",
+   "size": 296625,
+   "family": "published/Maintenance Instructions",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "8b2bc9644126b40f8f365009a43f5ce9866e3ff30755232000cb145b0a2f472b"
+  },
+  {
+   "path": "published/Material Data for Plastic Waste/1/0/IDTA_02080_Template_Material Data for Plastic Waste.json",
+   "sha": "34d525508ec7848b467efcdd813a62c110bf65dd",
+   "size": 215787,
+   "family": "published/Material Data for Plastic Waste",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "cb872acba1280799e8fa96b6634d2d2399527d69cd506a890532c1b00254186f"
+  },
+  {
+   "path": "published/Material Data for Plastic Waste/1/1/IDTA_02080_Template_Material Data for Plastic Waste.json",
+   "sha": "53eb645f872d2425784f58c79ba8fbdd25c251af",
+   "size": 215946,
+   "family": "published/Material Data for Plastic Waste",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "6d814fdd7c35a365e38a345c8bb82b8b48c29650b13fd47e8ae1320eabe1f40b"
+  },
+  {
+   "path": "published/OPC UA Server Datasheet/1/0/IDTA 02009-1-0-Template-OPCUA-Server Datasheet.json",
+   "sha": "3b53baed50de16f005cb8aa22d895dc179cd9a01",
+   "size": 102052,
+   "family": "published/OPC UA Server Datasheet",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "1159bad04c07c9013cd42818874ec96bb6ee8bb4e04557b1ce8dee020159956a"
+  },
+  {
+   "path": "published/OPC UA Server Datasheet/1/1/IDTA 02009-1-0-Template-OPCUA-Server Datasheet.json",
+   "sha": "0435dbbe1aa2c39e227fad5233a4b55c57262d83",
+   "size": 103927,
+   "family": "published/OPC UA Server Datasheet",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "43149bb4e0a01eae2a511ea1ceb60c4c5481ea999e5989c624687ac96b4224b2"
+  },
+  {
+   "path": "published/Plant Asset Management Specification Sheet/1/0/1/IDTA 02019-1-0-1_Template_PlantAssetManagement.json",
+   "sha": "27e7ec80722d56e460239f5afcaf7f2b9e2d6474",
+   "size": 323405,
+   "family": "published/Plant Asset Management Specification Sheet",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "091cac475ff03caa05800da80332c2b5404e8ca427a0f44d089ae274a10ed629"
+  },
+  {
+   "path": "published/Plant Asset Management Specification Sheet/1/0/2/IDTA 02019-1-0-2_Template_PlantAssetManagement.json",
+   "sha": "efbc6260835066da47a1ebf2d57c346c338f84e2",
+   "size": 323120,
+   "family": "published/Plant Asset Management Specification Sheet",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "7bb6422f8c3d04619a836e518599ce8e88b1c06751f84b28db4f673001071a66"
+  },
+  {
+   "path": "published/Plant Asset Management Specification Sheet/1/0/IDTA 02019-1-0-1_Template_PlantAssetManagement_forAASMetamodelV3.1.json",
+   "sha": "27e7ec80722d56e460239f5afcaf7f2b9e2d6474",
+   "size": 323405,
+   "family": "published/Plant Asset Management Specification Sheet",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "091cac475ff03caa05800da80332c2b5404e8ca427a0f44d089ae274a10ed629"
+  },
+  {
+   "path": "published/Plastic and Rubber Moulds/Part 1 Identification/1/0/IDTA 02038-1_Template_Plastic and Rubber Moulds-Identification_forAASMetamodelV3.1.json",
+   "sha": "4c10f93befd86f9e5ecb391b0e117cd13d49496e",
+   "size": 91803,
+   "family": "published/Plastic and Rubber Moulds/Part 1 Identification",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "0da3fbcf27bf67704e37d5ef3b6b03aaaf2a60f5a754c96bde9416f8915e09d6"
+  },
+  {
+   "path": "published/Plastic and Rubber Moulds/Part 1 Identification/1/1/IDTA 02038-1_Template_Plastic and Rubber Moulds-Identification_forAASMetamodelV3.1.json",
+   "sha": "76686339b085fc8d959745b0aa16aecdda9660f6",
+   "size": 94042,
+   "family": "published/Plastic and Rubber Moulds/Part 1 Identification",
+   "priority": 1,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "c5aadf35564dcf4083e658ec4834597ae64fc6ebcc31d2222164946d782b87ca"
+  },
+  {
+   "path": "published/Predictive Maintenance/1/0/IDTA 02048_Template_PredictiveMaintenance_forAASMetamodelV3.1.json",
+   "sha": "b768917a6c97223756f52ace398d017fbe53ae14",
+   "size": 117169,
+   "family": "published/Predictive Maintenance",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "c0bc22bd9989ef0f4c8248ff08f3e03cf8e8676a476975c3b8d56771dae5b48b"
+  },
+  {
+   "path": "published/Process Parameters Instance/1/0/IDTA 02031-2_Template_ProcessParameters_Instance_forAASMetamodelV3.1.json",
+   "sha": "be7376544303725fa7a55d0f2efd6dd0d65d3cd9",
+   "size": 70160,
+   "family": "published/Process Parameters Instance",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "e46162e3802f65ccd087ee0c7cd7374b00d39e8a7ee627c7a0fad3f3626437a7"
+  },
+  {
+   "path": "published/Process Parameters Type/1/0/IDTA 02031-1_Template_ProcessParameters_Type_forAASMetamodelV3.1.json",
+   "sha": "20919beaf929a6d4829b77c69d23c6d54bbd66a9",
+   "size": 28186,
+   "family": "published/Process Parameters Type",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "ac2ea31403b8eb1c477803c0b8b55b83ddec02895e4741e12ec1b779ce113415"
+  },
+  {
+   "path": "published/Process Variables for Manufacturing Key Performance Indicators/1/0/IDTA 02066_Template_PVM.json",
+   "sha": "5825335a6f59e629337271f1e27c47fe04daa94c",
+   "size": 148383,
+   "family": "published/Process Variables for Manufacturing Key Performance Indicators",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "dac17470ce913640aecd57ec25c87e040308b278b4863975718c5ee976b9e69c"
+  },
+  {
+   "path": "published/Product Change Notifications/1/0/IDTA_02036_Template_ProductChangeNotifications.json",
+   "sha": "99de4642f5f8dfcf7cb20524754ef0ed74b0f235",
+   "size": 237650,
+   "family": "published/Product Change Notifications",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "056ad879535dd318b682b7740df1633016b76c0079d2867cad2552d6d7cb1b13"
+  },
+  {
+   "path": "published/Product Change Notifications/1/1/IDTA_02036_Template_ProductChangeNotifications.json",
+   "sha": "fcf52ca36b470679ec71e84e21422f024ca1c379",
+   "size": 232694,
+   "family": "published/Product Change Notifications",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "6f17e2c652a9d2a3056a0e5391530db38881c3e5420903efa73b234a784fc543"
+  },
+  {
+   "path": "published/Production Calendar/1/0/IDTA 02067_Template_ProductionCalendar_forAASMetamodelV3.1.json",
+   "sha": "7eac95dff96248c8546c24733806e32310a05ecc",
+   "size": 25581,
+   "family": "published/Production Calendar",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "2c28b57a849f47e9ccbced4c3b76e8c8829c9c6498c96e1b5deec15b5482d826"
+  },
+  {
+   "path": "published/Production Calendar/1/1/IDTA 02067_Template_ProductionCalendar_forAASMetamodelV3.1.json",
+   "sha": "7eac95dff96248c8546c24733806e32310a05ecc",
+   "size": 25581,
+   "family": "published/Production Calendar",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "2c28b57a849f47e9ccbced4c3b76e8c8829c9c6498c96e1b5deec15b5482d826"
+  },
+  {
+   "path": "published/Provision of 3D Models/1/0/1/IDTA 02026-1-0-1_Template_ProvisionOf3DModels_forAASMetamodelV3.1.json",
+   "sha": "403688525535af0787f910b88823dea13da171ae",
+   "size": 250118,
+   "family": "published/Provision of 3D Models",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "894aad180e90ed5c6ba02b284eaf94aabe5404f4a49f967de941a1226b960259"
+  },
+  {
+   "path": "published/Provision of 3D Models/1/0/2/IDTA 02026-1-0-2_Template_ProvisionOf3DModels_forAASMetamodelV3.1.json",
+   "sha": "605af444d316684db9de810600600baba03a7078",
+   "size": 250235,
+   "family": "published/Provision of 3D Models",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "7af668bc49098dcbc49617536baa32062df58625c064c92d71d5e2a663348d3e"
+  },
+  {
+   "path": "published/Provision of 3D Models/1/0/IDTA02026-1-0_Template_ProvisionOf3DModels.json",
+   "sha": "8d63435a1c4553b3ff37c24f41b056ad85b61a27",
+   "size": 256634,
+   "family": "published/Provision of 3D Models",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "fbfa6c5c839fbf5f73c64c34f53df8a9cb902d5d3710101da55f2337440bfdf0"
+  },
+  {
+   "path": "published/Provision of Company Data/1/0/1/IDTA 02068_Template_Provision Of Company Data_forAASMetamodelV3.1.json",
+   "sha": "21003e788da4a18b8662c65b54dfa82ba52f57bc",
+   "size": 250441,
+   "family": "published/Provision of Company Data",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "42e9ff2d87e65af7ba21dffe772997b60c0f1aa9968c5e36b262e6726339e0a9"
+  },
+  {
+   "path": "published/Provision of Company Data/1/0/IDTA 02068_Template_Provision Of Company Data_forAASMetamodelV3.1.json",
+   "sha": "3f0696d9a46aa9ade91d041757e8a83dc72d6056",
+   "size": 250750,
+   "family": "published/Provision of Company Data",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "85058d64bf998c66c2a8602c0a8fd1623dc77411ca891a320b8ceb4fca562f81"
+  },
+  {
+   "path": "published/Provision of Simulation Models/1/0/1/IDTA 02005-1-0-1_Template_ProvisionOfSimulationModels_forAASMetamodelV3.1.json",
+   "sha": "c2bac89aa27c6a08fbe08e9afd6ed509393afadc",
+   "size": 215489,
+   "family": "published/Provision of Simulation Models",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "ed160e57bcb0b521d531ebef935fc80e0f18c4bfe918d3d165c98a872d7a981d"
+  },
+  {
+   "path": "published/Provision of Simulation Models/1/0/IDTA 02005-1-0_Template_ProvisionOfSimulationModels.json",
+   "sha": "83f851e5fba72ac1bf0796b0d671460bab103524",
+   "size": 397855,
+   "family": "published/Provision of Simulation Models",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "c42960045af73ae57d6077831abee4e7cf8f3c48d7b41ccd545e36e024cb24db"
+  },
+  {
+   "path": "published/Provision of Simulation Models/1/1/IDTA 02005_Template_ProvisionOfSimulationModel.json",
+   "sha": "418da862d43a877fa67a932b0fc693d90ec685fb",
+   "size": 274839,
+   "family": "published/Provision of Simulation Models",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "812e83e938ef42dc340aeea6afd0e2fa34331753fbb6c33c827c35ee84e50edb"
+  },
+  {
+   "path": "published/Provision of Simulation Models/1/2/IDTA 02005_Template_ProvisionOfSimulationModel.json",
+   "sha": "3a37967b1ec925ff917dcfd17cd7ebbbe784470b",
+   "size": 278516,
+   "family": "published/Provision of Simulation Models",
+   "priority": 0,
+   "version": [
+    1,
+    2
+   ],
+   "tier": "current",
+   "sha256": "b2ed4cb82d17e69a6a3be14fa05df41fce7eb54846e9e7300d4d9f03835cb49f"
+  },
+  {
+   "path": "published/Purchase Order/1/0/1/IDTA-02050-1-0-1_Template_PurchaseOrder_forAASMetamodelV3.1.json",
+   "sha": "b3c605cc90fe53224c75ee799d78282f62a59abc",
+   "size": 2102893,
+   "family": "published/Purchase Order",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "91284b1d71924f30f83fb01657a47140ce556830d99f56048b95d67fd8fbdc0d"
+  },
+  {
+   "path": "published/Purchase Order/1/0/IDTA-02050_Template_PurchaseOrder_forAASMetamodelV3.1.json",
+   "sha": "ea4a2ab7c73bfd2f5ccffd441cd2ff48dc8dc4eb",
+   "size": 2102877,
+   "family": "published/Purchase Order",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "e306a26e5d6d1109e10415362c0eb9d0dcecaf64bc2b808d82603bb272797d79"
+  },
+  {
+   "path": "published/Quality Control for Machining/1/0/IDTA_02049_Template_QualityControlForMachining.json",
+   "sha": "7974a554d00731c20c0394321ad3360a0a516317",
+   "size": 765695,
+   "family": "published/Quality Control for Machining",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "874b13c8bc12928746a3df53b7f989c770fbd3a8aa940d5c93630bdb09ab674c"
+  },
+  {
+   "path": "published/Quality Control for Machining/1/1/IDTA_02049_Template_QualityControlForMachining.json",
+   "sha": "c03e9ef3f889b49b3c2b27fd53678149355198f5",
+   "size": 760400,
+   "family": "published/Quality Control for Machining",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "current",
+   "sha256": "a40d89e73c6962a11da75e3047d23b99b7ac6c025c98fd25b0b8531673f745cc"
+  },
+  {
+   "path": "published/Reliability/1/0/1/IDTA 02013-1-0-1_Template_Reliability_forAASMetamodelV3.1.json",
+   "sha": "0519f33fcb1e6e499c137d1dc9dbde7e16a6762b",
+   "size": 44029,
+   "family": "published/Reliability",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "9a5078d89050fed21d3fe297eda0e0fe840a34b109a340525db9e2b0da706f0c"
+  },
+  {
+   "path": "published/Reliability/1/0/2/IDTA 02013-1-0-2_Template_Reliability_forAASMetamodelV3.1.json",
+   "sha": "5a6795868a322851327ee7d783d0357e5a6303ed",
+   "size": 44044,
+   "family": "published/Reliability",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "3a642458e5fa860239fa4722788f3319564f2c34f7119f46f3784e342edaf21c"
+  },
+  {
+   "path": "published/Reliability/1/0/IDTA 02013-1-0_Template_Reliability.json",
+   "sha": "3348985ae0c64fdacf86c5766a78884bf447d055",
+   "size": 44955,
+   "family": "published/Reliability",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "e49977a89610567f2f450c895d9c035fb5844f4842b60f436e0fbb2f64d17058"
+  },
+  {
+   "path": "published/Safety Instrumented Functions/Part 1 Safety Instrumented Function/1/0/IDTA 02064_Template_SafetyInstrumentedFunction.json",
+   "sha": "6e5a90fd955fce6c2e0522492cf8889e55e348d0",
+   "size": 279602,
+   "family": "published/Safety Instrumented Functions/Part 1 Safety Instrumented Function",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "102e02c10190519d46c53cd34d47774ff89a34d6e7218b6601fdccb8a78e96b9"
+  },
+  {
+   "path": "published/Safety Instrumented Functions/Part 2 Safety Instrumented System/1/0/IDTA 02097_Template_SafetyInstrumentedSystem.json",
+   "sha": "e60743e14833a16987a8cd7f79396cc75ee433f8",
+   "size": 37192,
+   "family": "published/Safety Instrumented Functions/Part 2 Safety Instrumented System",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "2772a8055d2f8efa056ea22d63d9095e076e0bb80d1786090d1a9b580fac622f"
+  },
+  {
+   "path": "published/Safety Instrumented Functions/Part 3 Safety Instrumented System Device/1/0/IDTA 02079_Template_SafetyInstrumentedSystemDevice.json",
+   "sha": "7fb0facf26d77ab7f58c42db00a1cf7962c88cd3",
+   "size": 922413,
+   "family": "published/Safety Instrumented Functions/Part 3 Safety Instrumented System Device",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "ca4d8b42fff0313a25853b0284345faa2f46ad3578f8b95e8cbdab3c7afca9cd"
+  },
+  {
+   "path": "published/Safety Instrumented Functions/Part 4 Equipment Under Control/1/0/IDTA 02096_Template_EquipmentUnderControl.json",
+   "sha": "a23d24e8fda7c2c80f007145f1f3a0667503435c",
+   "size": 48880,
+   "family": "published/Safety Instrumented Functions/Part 4 Equipment Under Control",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "current",
+   "sha256": "9381a3213192fc089e5f5d5b8630d172cd14f7bf4e5352a268a09245bbe2a53c"
+  },
+  {
+   "path": "published/Service Request Notification/1/0/1/IDTA 02010-1-0-1_Template_ServiceRequestNotification_forAASMetamodelV3.1.json",
+   "sha": "ec1faa430d88123c6b719fd63654f38ce5065bc1",
+   "size": 103053,
+   "family": "published/Service Request Notification",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "139226d8fced10f2089bcdd5f79f8a3010459b394842e0bf7f32cf1084b3c876"
+  },
+  {
+   "path": "published/Service Request Notification/1/0/2/IDTA 02010-1-0-2_Template_ServiceRequestNotification_forAASMetamodelV3.1.json",
+   "sha": "b46bf4be09faab3dec8a153358e588eda06819b1",
+   "size": 102068,
+   "family": "published/Service Request Notification",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "a0a7647ae8a46198ca478e9f8d6002b211d86555a1effafbaa33bfef0717fd61"
+  },
+  {
+   "path": "published/Service Request Notification/1/0/IDTA 02010-1-0_Template_ServiceRequestNotification.json",
+   "sha": "42d071e7a2bedefc8ab872ea28e8ffb594870110",
+   "size": 106094,
+   "family": "published/Service Request Notification",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "91d607fd7f06754c9533b9cb92fc7966a308ffb907c5752eb379cc2d7eaca394"
+  },
+  {
+   "path": "published/Sizing of Power Drive Trains/1/0/1/IDTA 02021-1-0-1_Template_Sizing of Power Drive Trains_forAASMetamodelV3.1.json",
+   "sha": "3098b2233d1618ef0964474de6e487a89066996c",
+   "size": 481137,
+   "family": "published/Sizing of Power Drive Trains",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "10f1927521ee96906b8a7f827829baea72458827eed500833e69c570379618dd"
+  },
+  {
+   "path": "published/Sizing of Power Drive Trains/1/0/2/IDTA 02021-1-0-2_Template_Sizing of Power Drive Trains_forAASMetamodelV3.1.json",
+   "sha": "ec5f2cb40050c6eaf1c4eb4478d2132cf7189507",
+   "size": 481328,
+   "family": "published/Sizing of Power Drive Trains",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "6f1257d2181f69f5df27bb10555f10a4e21cfa7e3e9963ba3b22e4811da6f9ac"
+  },
+  {
+   "path": "published/Sizing of Power Drive Trains/1/0/IDTA 02021-1-0_Template_Sizing of Power Drive Trains.json",
+   "sha": "029f0aef7f94be3b5a17975b92482b348f4771c9",
+   "size": 494147,
+   "family": "published/Sizing of Power Drive Trains",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "1c2cd40458771a9638c56a41c848baf67c18f1b60a406ea20dfff67ed5dbc8c6"
+  },
+  {
+   "path": "published/Software Nameplate/1/0/1/IDTA 02007-1-0-1_Template_Software Nameplate_forAASMetamodelV3.1.json",
+   "sha": "6acd1cbe3f3579bb005a7646cfe8a86d8c62b721",
+   "size": 125374,
+   "family": "published/Software Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "a6404e9828305d7717be62203eb6bd3aa7425e4ac60cf031066a7faff75feafc"
+  },
+  {
+   "path": "published/Software Nameplate/1/0/2/IDTA 02007-1-0-2_Template_Software Nameplate_forAASMetamodelV3.1.json",
+   "sha": "df3b0f1f5cf0f601dc124869775b1990a83ad18a",
+   "size": 125444,
+   "family": "published/Software Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "c8e26dcafe637c0740fda9d2e7ee0b5d31ddfe0d077fb159fa36934c39d97b06"
+  },
+  {
+   "path": "published/Software Nameplate/1/0/IDTA 02007-1-0_Template_Software Nameplate.json",
+   "sha": "d22126097600e0b27213700b1dcd22e15821fc1a",
+   "size": 128024,
+   "family": "published/Software Nameplate",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "da77ec4ee1d47d2c784856cca5c56a9c2ad35e5dcda63334bc12e417401b5ad5"
+  },
+  {
+   "path": "published/Technical Data for Automated Guided Vehicles/1/0/1/IDTA 02047-1-0-1 Template_TechnicalDataForAGV_forAASMetamodelV3.1.json",
+   "sha": "c9c01337b318ccbca970efe20f6c15d3ccd2af4d",
+   "size": 310523,
+   "family": "published/Technical Data for Automated Guided Vehicles",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "05549e95291ab5a1b111ee00c2b1c375b2b4a56dd4627c199739313ed6c53995"
+  },
+  {
+   "path": "published/Technical Data for Automated Guided Vehicles/1/0/2/IDTA 02047-1-0-2 Template_TechnicalDataForAGV_forAASMetamodelV3.1.json",
+   "sha": "c1387839ce2a5e0369a4b22248d88123cf58ded3",
+   "size": 311055,
+   "family": "published/Technical Data for Automated Guided Vehicles",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "2691f0216b73bd7085d42dd8fc87b305390aeda4b201422d29cdd7faef2c9529"
+  },
+  {
+   "path": "published/Technical Data for Automated Guided Vehicles/1/0/IDTA 02047-1-0 Template_TechnicalDataForAGV.json",
+   "sha": "ae82e310a8bb9df0d90d477ff03302fb32ce2302",
+   "size": 318901,
+   "family": "published/Technical Data for Automated Guided Vehicles",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "af913cb00e2ff0519f6b54b9c22c22a4bab2c93470ecc64ecfb5adf566e16ceb"
+  },
+  {
+   "path": "published/Technical_Data/2/0/1/IDTA 02003_2-0-1_Template_TechnicalData_forAASMetamodelV3.1.json",
+   "sha": "54d2e6a0a4332511e7255ca11e8efa36dc1a413d",
+   "size": 157908,
+   "family": "published/Technical_Data",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "97aac6192b2657e4a03a2204ecd167494252129b03e58838453e3f1d0abefb6a"
+  },
+  {
+   "path": "published/Technical_Data/2/0/2/IDTA 02003_2-0-2_Template_TechnicalData_forAASMetamodelV3.1.json",
+   "sha": "80d1b6784310f05c61fe88d6bc4bc5d383faf1fd",
+   "size": 153885,
+   "family": "published/Technical_Data",
+   "priority": 0,
+   "version": [
+    2,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "3d8ddfc719c774216adc61f0c6f608ab2ede81b4d6b9a042491b1e8deabb8659"
+  },
+  {
+   "path": "published/Technical_Data/2/0/IDTA 02003_Template_TechnicalData.json",
+   "sha": "55bb91b51cc28f269cabf68f3542f4a8084e959b",
+   "size": 157877,
+   "family": "published/Technical_Data",
+   "priority": 0,
+   "version": [
+    2,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "3cfcf9cf4db82108995795dad095265d8d20cb80c837c576deb8ecca9e3386a6"
+  },
+  {
+   "path": "published/Time Series Data/1/1/1/IDTA 02008-1-1-1_Template_TimeSeriesData_forAASMetamodelV3.1.json",
+   "sha": "cf134ba9e5fe4434b8d87291e5209c5f9a8b34c5",
+   "size": 84026,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "168145bb4c80f174121350144d1559bd77b83c39b403ef2af94cb246c144328d"
+  },
+  {
+   "path": "published/Time Series Data/1/1/1/IDTA 02008-1-1-1_Template_withOperations_TimeSeriesData_forAASMetamodelV3.1.json",
+   "sha": "71296c70d64d2e2c691601ca700c5fb76ed09b4b",
+   "size": 97504,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "307aa12d7e90e5e62a6e24440022b103103f6980e2271de07dc17af796aa0c2d"
+  },
+  {
+   "path": "published/Time Series Data/1/1/2/IDTA 02008-1-1-2_Template_TimeSeriesData_forAASMetamodelV3.1.json",
+   "sha": "95a0e9c83f08de15bff8e936d08989efadc14a00",
+   "size": 86673,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    2
+   ],
+   "tier": "current",
+   "sha256": "3c31ce3ed3f465ed89a76708b8d92f1213463863a735a7cb45255c6c337d757c"
+  },
+  {
+   "path": "published/Time Series Data/1/1/2/IDTA 02008-1-1-2_Template_withOperations_TimeSeriesData_forAASMetamodelV3.1.json",
+   "sha": "59cc2d44ca0568ff56c4db17b2b207e90cc8411c",
+   "size": 100279,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1,
+    2
+   ],
+   "tier": "current",
+   "sha256": "7d37648b7a6e5f1d702aa7574d19a3b121ae5ee38ae261e800ead367f2014db2"
+  },
+  {
+   "path": "published/Time Series Data/1/1/IDTA 02008-1-1_Template_TimeSeriesData.json",
+   "sha": "dd4328b5705f137cef7a63afae76ce62bd11a273",
+   "size": 86597,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "e6f93d1c122b4566642d4d25cb5eedb0c4a71e35755350e4f061508e71b8ed67"
+  },
+  {
+   "path": "published/Time Series Data/1/1/IDTA 02008-1-1_Template_withOperations_TimeSeriesData.json",
+   "sha": "3e4aa090969360b86adee0d725bb8740d389af6b",
+   "size": 100203,
+   "family": "published/Time Series Data",
+   "priority": 0,
+   "version": [
+    1,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "f07f17c16227ba90c74dfee7b382b598bc2fb66c1e9f5b1321bf19331d5da1bb"
+  },
+  {
+   "path": "published/Wireless Communication/1/0/1/IDTA 02022-1-0-1_Template_Wireless Communication_forAASMetamodelV3.1.json",
+   "sha": "b6844ba51282dcb6e0d97787a0c214e7c8476b24",
+   "size": 203570,
+   "family": "published/Wireless Communication",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "superseded",
+   "sha256": "ca3bc3869e316e00f2c9392daebdb6c3b0e475db71a11c45f46b09ba9f5d1642"
+  },
+  {
+   "path": "published/Wireless Communication/1/0/2/IDTA 02022-1-0-2_Template_Wireless Communication_forAASMetamodelV3.1.json",
+   "sha": "f7d3e2adc667bb8f31b680e1614331fbcf5fbdbc",
+   "size": 203474,
+   "family": "published/Wireless Communication",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    2
+   ],
+   "tier": "current",
+   "sha256": "c6a08afe75d29196323aabece2343c60a6c66ebec8c680cdb163f3c24fcccacf"
+  },
+  {
+   "path": "published/Wireless Communication/1/0/IDTA 02022-1-0_Template_Wireless Communication.json",
+   "sha": "6fa665967907be8ab2bb231e1733c1010d37a9dd",
+   "size": 116041,
+   "family": "published/Wireless Communication",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "a6bdaad1335e543a7da796857ade40acc8f422dcb8e71667ca8c95f524abf0b3"
+  },
+  {
+   "path": "published/Worskstation Worker Matching Data/1/0/1/IDTA 02046-1-0-1_Template_WWMD_forAASMetamodelV3.1.json",
+   "sha": "a2dfdb757d110aff01539bddd2573c556e63e73e",
+   "size": 170059,
+   "family": "published/Worskstation Worker Matching Data",
+   "priority": 0,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "21e218cc6bc5ea1babc0e697286b662f33353adf8a807e8a6d2e14cfa6d018b9"
+  },
+  {
+   "path": "published/Worskstation Worker Matching Data/1/0/IDTA 02046-1-0_Template_WWMD.json",
+   "sha": "cf3d2d6058da44b84261eef42e270b9c59d5dbe2",
+   "size": 174761,
+   "family": "published/Worskstation Worker Matching Data",
+   "priority": 0,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "70d41095982530e850013f73ba0a69dd4f868447f7c1c24c096df6f84cd123b1"
+  },
+  {
+   "path": "published/sensor4.0/Part 1 Measurement Value/1/0/1/IDTA 02029-1-0-1_Template_Sensor4.0_MeasurementValue.json",
+   "sha": "afae9405ab6fe94ee7aa40d2920286a1d9d10b27",
+   "size": 41528,
+   "family": "published/sensor4.0/Part 1 Measurement Value",
+   "priority": 1,
+   "version": [
+    1,
+    0,
+    1
+   ],
+   "tier": "current",
+   "sha256": "7bba93a87aefe63ee871db2c78f2e043b23f519f96b2fbf0c694d57d4753ec6d"
+  },
+  {
+   "path": "published/sensor4.0/Part 1 Measurement Value/1/0/IDTA 02029-1_Template_Sensor4.0_MeasurementValue.json",
+   "sha": "b0d032b91c95c4c8dbd4d444e219152af4a4820d",
+   "size": 41127,
+   "family": "published/sensor4.0/Part 1 Measurement Value",
+   "priority": 1,
+   "version": [
+    1,
+    0
+   ],
+   "tier": "superseded",
+   "sha256": "220ffda86dcef09d92c9d7984481ea31444aa35071e42f355a4d6eebbb0b9500"
+  }
+ ]
+}

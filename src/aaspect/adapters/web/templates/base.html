@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AASpect{% endblock %}</title>
+  {% if export is defined %}
+  {# A document on its own, for the PDF: our own stylesheets inline, no scripts. #}
+  <style>{{ export.stylesheet | safe }}</style>
+  {% else %}
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/print.css" media="print">
+  <script src="/static/theme.js"></script>
+  <script src="/static/print.js" defer></script>
+  {% block head %}{% endblock %}
+  {% endif %}
+</head>
+<body>
+  {% if export is not defined %}
+  <header class="appbar">
+    <a class="brand" href="/">AASpect</a>
+    <span class="tagline">Analysis of Asset Administration Shell corpora</span>
+    <nav class="appnav">
+      <a href="/">New analysis</a>
+      <button type="button" id="theme-switch" class="theme-switch" hidden>Dark mode</button>
+    </nav>
+  </header>
+  {% endif %}
+  <main class="{% block layout %}single{% endblock %}">
+{% block content %}{% endblock %}
+  </main>
+</body>
+</html>

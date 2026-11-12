@@ -1,0 +1,46 @@
+/* The report on paper: the browser's print and the PDF download both use it. One column,
+   no navigation, light colours; report.js opens folded parts for the browser's print. */
+@page {
+  size: A4;
+  margin: 15mm 12mm 18mm;
+  @bottom-right { content: counter(page) " / " counter(pages); font-size: 8pt; color: #5d6b7a; }
+}
+html { font-size: 9pt; }
+body { background: #ffffff; }
+.appbar, .sidebar, .show-more, .top-jump, .screen-only, .running, noscript { display: none !important; }
+/* The PDF renderer lays out a grid that spans pages in time growing with the square of
+   its rows (four 200-row bar charts: 35 s), so every long container stacks as blocks. */
+main.dashboard { display: block; min-height: 0; }
+.content, .blocks, .bars, .filled, .scoreboard { display: block; padding: 0; }
+.content > * + * { margin-top: 1rem; }
+.bars li + li { margin-top: 0.3rem; }
+/* A scroll box on paper would cut its rows off. */
+.locations { max-height: none; overflow: visible; }
+.panel { box-shadow: none; }
+tr, li { break-inside: avoid; }
+h2, h3, summary { break-after: avoid; }
+/* Rows a browser folded behind "Show all" print anyway. */
+tr.extra { display: table-row !important; }
+li.extra { display: list-item !important; }
+.top-message { display: none; }
+.print-only { display: block; }
+/* A scroll box on paper cuts off the columns past its edge; wrap them instead. */
+.table-wrap { overflow: visible; }
+th, td { white-space: normal; overflow-wrap: break-word; }
+/* Fixed layout: sizing columns by their content made a real 345-page report take 155 s
+   instead of 24 s. Numbers get a narrow column, text shares the rest. */
+table { table-layout: fixed; width: 100%; }
+th.number { width: 7.5rem; }
+table.matrix th.number, table.matrix td.number { width: auto; }
+/* Names cut short on screen keep their hover title; paper has none, and names that differ
+   only at the end (template versions) must stay apart. */
+.bar-name, table.matrix td.name, .group-message {
+  white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; max-width: none;
+}
+span.meter { display: block; height: 0.55rem; border-radius: 999px; overflow: hidden; background: var(--border); }
+.meter-fill { display: block; height: 100%; background: var(--accent); }
+span.meter.conformance { background: var(--error-soft); }
+span.meter.conformance .meter-fill { background: var(--ok); }
+div.stack { display: flex; height: 1.1rem; }
+div.stack > span { display: block; }
+.score-counts { grid-column: 1 / span 3; }
