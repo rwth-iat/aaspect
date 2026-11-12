@@ -24,6 +24,9 @@ class TestUniqueNames(unittest.TestCase):
     def test_colons_cannot_imitate_a_package_part(self) -> None:
         self.assertEqual(unique_names(["p.aasx:/aasx/a.xml"]), ["p.aasx_/aasx/a.xml"])
 
+    def test_hidden_characters_are_written_out(self) -> None:
+        self.assertEqual(unique_names(["evil\u202enosj.json"]), ["evil<U+202E>nosj.json"])
+
     def test_long_names_keep_their_end(self) -> None:
         [name] = unique_names(["folder/" * 50 + "file.json"])
         self.assertEqual(len(name), 200)

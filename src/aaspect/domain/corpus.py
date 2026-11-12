@@ -1,9 +1,22 @@
 """The uploaded files, and the AAS documents read from them."""
 
+import unicodedata
 from dataclasses import dataclass, field
 from enum import StrEnum
 
 from aaspect.domain.metamodel import MetamodelVersion
+
+# Controls, format characters (bidi overrides, zero-width), lone surrogates and line or
+# paragraph separators: they could hide or reorder a name, or fail to encode.
+_HIDDEN = frozenset(("Cc", "Cf", "Cs", "Zl", "Zp"))
+
+
+def shown_name(name: str) -> str:
+    """A file or part name from an upload as labels show it: characters that do not show
+    written out as code points, as the analytics write them."""
+    if name.isascii() and name.isprintable():
+        return name
+    return "".join(f"<U+{ord(c):04X}>" if unicodedata.category(c) in _HIDDEN else c for c in name)
 
 
 class DocumentFormat(StrEnum):
@@ -37,7 +50,7 @@ class AasDocument:
 
     @property
     def label(self) -> str:
-        return self.source if self.part is None else f"{self.source}:{self.part}"
+        return self.source if self.part is None else f"{self.source}:{shown_name(self.part)}"
 
 
 @dataclass(frozen=True, slots=True)
