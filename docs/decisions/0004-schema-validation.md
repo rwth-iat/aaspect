@@ -157,7 +157,8 @@ add up several graphs) and one checker run per version filtered to each file's v
 ## Revisit when
 
 - ~~A real corpus has been validated. The benchmark above used synthetic documents only.~~
-  Done 2026-10-07 on 11 non-public vendor corpora plus IDTA templates: 244,113 files,
+  Done 2026-10-07 on nine non-public manufacturer corpora plus IDTA's V3.0 and V3.1
+  examples (the corpora behind the benchmark sets of ADR 0008): 244,113 files,
   111.6 GB, 0 crashes, 33.6 min of single-core work (median 2 ms per file, p99 36 ms),
   peak memory 116 MB. The modelType dispatch changed none of 551,190 valid/invalid
   verdicts. 2,000 JSON files: 10.8 s isolated with 1 worker, 2.2 s with 8.
