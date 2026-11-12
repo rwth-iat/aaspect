@@ -1,0 +1,206 @@
+{# How each block reads: one-row tables as figures, shares as bars, long tables in full. #}
+
+{% macro table(block, max_rows) %}
+{% set kind = block | chart_kind %}
+<div class="block block-{{ kind }}">
+<h3>{{ block.title }}</h3>
+{% if kind == "empty" %}
+<p class="empty">No rows.</p>
+{% elif kind == "figures" %}
+<dl class="figures">
+  {% for column in block.columns %}
+  <div class="figure"><dt>{{ column }}</dt><dd>{{ block.rows[0][loop.index0] | number }}</dd></div>
+  {% endfor %}
+</dl>
+{% elif kind == "tiles" %}
+<dl class="figures">
+  {% for row in block.rows %}
+  <div class="figure"><dt>{{ row[0] }}{{ help(row[0]) }}</dt><dd>{{ row[1] | number }}</dd></div>
+  {% endfor %}
+</dl>
+{% elif kind == "scoreboard" %}
+{{ scoreboard(block) }}
+{% elif kind == "matrix" %}
+{{ matrix(block) }}
+{% elif kind == "stack" %}
+{{ stack(block) }}
+{% elif kind == "filled" %}
+{{ filled(block) }}
+{% elif kind == "bars" %}
+{{ bars(block.rows[:max_rows], block.columns) }}
+{{ truncated(block.rows, max_rows) }}
+{% else %}
+{{ rows(block.columns, block.rows[:max_rows], block.file_column) }}
+{{ truncated(block.rows, max_rows) }}
+{% endif %}
+</div>
+{% endmacro %}
+
+{# Shares of a few parts as one bar; segments take their colour from their position. #}
+{% macro stack(block) %}
+{% set at = namespace(x=0) %}
+{% if export is defined %}
+<div class="stack" role="img" aria-label="{{ block.title }}">
+  {% for row in block.rows %}<span class="seg-{{ loop.index }}" style="width: {{ [[row[-1] | float, 100] | min, 0] | max }}%"></span>{% endfor %}
+</div>
+{% else %}
+<svg class="stack" viewBox="0 0 100 6" preserveAspectRatio="none" role="img" aria-label="{{ block.title }}">
+  {% for row in block.rows %}
+  <rect class="seg-{{ loop.index }}" x="{{ at.x }}" y="0" width="{{ row[-1] }}" height="6"><title>{{ row[0] }}: {{ row[-1] }} %</title></rect>
+  {% set at.x = at.x + row[-1] %}
+  {% endfor %}
+</svg>
+{% endif %}
+<ul class="legend">
+  {% for row in block.rows %}
+  <li><span class="swatch seg-{{ loop.index }}" aria-hidden="true"></span><span class="bar-label"><span class="bar-name" title="{{ row[0] }}">{{ row[0] }}</span>{% for cell in row[1:-2] %}<span class="tag">{{ cell }}</span>{% endfor %}</span><span class="bar-value">{{ row[-2] | number }} <span class="bar-meta">{{ row[-1] }} %</span></span></li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
+{# Conformant against failing submodels per template, with its source and counts as tags. #}
+{% macro scoreboard(block) %}
+{% set c = block.columns %}
+{% set total, good = block.number_columns()[:2] %}
+<ul class="scoreboard" data-collapse>
+  {% for row in block.rows %}
+  <li>
+    <span class="bar-label"><span class="bar-name" title="{{ row[0] }}">{{ row[0] }}</span>{% for cell in row[1:] if cell is string %}<span class="tag">{{ cell }}</span>{% endfor %}</span>
+    {{ meter(row[good], row[total] or 1, row[good] ~ " of " ~ row[total] ~ " conformant", "conformance", row[total]) }}
+    <span class="bar-value">{{ row[good] | number }} <span class="bar-meta">of {{ row[total] | number }}</span></span>
+    {% set counts = namespace(parts=[]) %}
+    {% for i in range(c | length) if i not in (total, good) and row[i] is number %}{% set counts.parts = counts.parts + [(c[i], row[i])] %}{% endfor %}
+    <span class="score-counts">{% for column, value in counts.parts %}{{ column | lower }} <b>{{ value | number }}</b>{{ " · " if not loop.last }}{% endfor %}</span>
+  </li>
+  {% endfor %}
+</ul>
+<p class="hint"><span class="key-good" aria-hidden="true"></span> conformant <span class="key-bad" aria-hidden="true"></span> with errors</p>
+{% endmacro %}
+
+{# Whole-number counts as heat: one step per order of magnitude, so a few hundred and a few thousand still tell apart. #}
+{% macro matrix(block) %}
+<div class="table-wrap">
+<table class="matrix">
+  <thead><tr>{% for column in block.columns %}<th{% if not loop.first %} class="number"{% endif %}>{{ column }}</th>{% endfor %}</tr></thead>
+  <tbody data-collapse>
+    {% for row in block.rows %}
+    <tr><td class="name" title="{{ row[0] }}">{{ row[0] }}</td>{% for cell in row[1:] %}<td class="number heat-{{ 0 if not cell else (1 if cell < 10 else (2 if cell < 100 else (3 if cell < 1000 else 4))) }}">{{ (cell | number) if cell else "" }}</td>{% endfor %}</tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endmacro %}
+
+{# Coverage, grouped by the first column; the last three are filled, of and the share. #}
+{% macro filled(block) %}
+<div class="filled">
+  {% for object, rows in block.rows | groupby("0") %}
+  <div class="filled-group">
+    <h4>{{ object }}</h4>
+    <ul class="bars">
+      {% for row in rows %}
+      <li>
+        <span class="bar-label">{{ row[1:-3] | join(" · ") }}</span>
+        {{ meter(row[-1], 100, row[-1] ~ " %") }}
+        <span class="bar-value">{{ row[-3] | number }} <span class="bar-meta">of {{ row[-2] | number }}</span></span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# Only the column the analysis names as holding files links to file pages: other cells
+   come from uploaded content and may merely look like a file name. #}
+{% macro rows(columns, shown, file_column=none) %}
+<div class="table-wrap">
+<table>
+  <thead><tr>{% for column in columns %}<th{% if shown and shown[0][loop.index0] is number %} class="number"{% endif %}>{{ column }}</th>{% endfor %}</tr></thead>
+  <tbody data-collapse>
+    {% for row in shown %}
+    <tr>{% for cell in row %}<td{% if cell is number %} class="number"{% endif %}>{% if loop.index0 == file_column %}{{ file_link(cell) }}{% else %}{{ cell | number }}{% endif %}{{ help(cell) }}</td>{% endfor %}</tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endmacro %}
+
+{# The last column is the share; the one before it the count; any between label and count describe the label. #}
+{% macro bars(shown, columns) %}
+{# Scaled to the largest share, so a long tail of small shares still tells apart. #}
+{% set top = shown | map("last") | max %}
+<ul class="bars" data-collapse>
+  {% for row in shown %}
+  <li>
+    <span class="bar-label"><span class="bar-name" title="{{ row[0] }}">{{ row[0] }}</span>{% for cell in row[1:-2] %}<span class="tag">{{ cell }}</span>{% endfor %}</span>
+    {{ meter(row[-1], top or 1, row[-1] ~ " %") }}
+    <span class="bar-value">{{ row[-2] | number }} <span class="bar-meta">{{ row[-1] }} %</span></span>
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
+{% macro truncated(all, max_rows) %}
+{% if all | length > max_rows %}
+<p class="more">{{ all | length - max_rows }} more rows in the JSON download.</p>
+{% endif %}
+{% endmacro %}
+
+{% macro group(group, max_rows, max_locations) %}
+{% set single = group.findings | length == 1 %}
+<details class="group severity-{{ group.severity.value }}">
+  <summary>
+    <span class="sev">{{ group.severity.value }}</span>
+    <code>{{ group.rule_id }}</code>
+    <span class="group-message">{{ "" if single else "e.g. " }}{{ group.findings[0].message }}</span>
+    <span class="count">{% if not single %}{{ group.findings | length }} findings · {% endif %}{{ group.places }} location{{ "s" if group.places != 1 }}</span>
+  </summary>
+  {# A "?" inside the summary would also fold the group, so the explanation shows on opening. #}
+  {% set explanation = group.rule_id | explain %}
+  {% if explanation %}<p class="explanation"><b>{{ group.rule_id }}:</b> {{ explanation }}</p>{% endif %}
+  {% if single %}
+  {{ finding_body(group.findings[0], max_locations) }}
+  {% else %}
+  {% for finding in group.findings[:max_rows] %}
+  <details class="finding">
+    <summary><span class="group-message">{{ finding.message }}</span><span class="count">{{ finding.locations | length }} location{{ "s" if finding.locations | length != 1 }}</span></summary>
+    {{ finding_body(finding, max_locations) }}
+  </details>
+  {% endfor %}
+  {% if group.findings | length > max_rows %}
+  <p class="more">{{ group.findings | length - max_rows }} more findings in the JSON download.</p>
+  {% endif %}
+  {% endif %}
+</details>
+{% endmacro %}
+
+{% macro finding_body(finding, max_locations) %}
+<p class="message">{{ finding.message }}</p>
+{% if finding.locations %}
+<div class="table-wrap locations">
+<table>
+  <thead><tr><th>File</th><th>Identifiable</th><th>Element</th></tr></thead>
+  <tbody>
+    {% for location in finding.locations[:max_locations] %}
+    <tr><td>{{ file_link(location.file) if location.file else "–" }}</td><td>{{ location.identifiable_id or "–" }}</td><td><code>{{ location.element_path or "–" }}</code></td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if finding.locations | length > max_locations %}
+<p class="more">{{ finding.locations | length - max_locations }} more locations in the JSON download.</p>
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{# A "?" beside a metamodel constraint id that shows what the constraint asks for on hover
+   or keyboard focus. #}
+{% macro help(cell) %}{% set text = cell | explain %}{% if text %}<span class="help" tabindex="0" aria-label="What {{ cell }} means: {{ text }}">?<span class="help-text" role="tooltip">{{ text }}</span></span>{% endif %}{% endmacro %}
+
+{# A value naming an upload links to that file's page; anything else shows as it is. #}
+{% macro file_link(value) %}{% set index = links.index(value) if links is defined else none %}{% if index is not none %}<a class="file-link" href="/reports/{{ key }}/files/{{ index }}">{{ value }}</a>{% else %}{{ value | number }}{% endif %}{% endmacro %}
+
+{# The PDF renderer draws neither a <meter> fill nor page styles inside an <svg>, so the
+   export draws bars as boxes; an inline style is fine there, as no browser loads it. #}
+{% macro meter(value, max, label, class="", low=none) %}{% if export is defined %}<span class="meter {{ class }}" role="img" aria-label="{{ label }}"><span class="meter-fill" style="width: {{ [[100 * value / max, 100] | min, 0] | max | float }}%"></span></span>{% else %}<meter{% if class %} class="{{ class }}"{% endif %} min="0" max="{{ max }}"{% if low is not none %} low="{{ low }}"{% endif %} value="{{ value }}" title="{{ label }}"></meter>{% endif %}{% endmacro %}

@@ -1,0 +1,91 @@
+services:
+  aaspect:
+    build: .
+    image: aaspect
+    ports:
+      # Loopback only: reachable from this machine. Exposing it further is a deliberate
+      # change, together with AASPECT_ALLOWED_HOSTS.
+      - "127.0.0.1:8000:8000"
+    environment:
+      # Each worker may use up to AASPECT_WORKER_MEMORY_BYTES (2 GB), one PDF export up to
+      # AASPECT_PDF_MEMORY_BYTES (2 GB), /tmp up to 1.1 GB and kept downloads 256 MB: all
+      # of them together, plus the server itself, fit the memory limit below.
+      AASPECT_VALIDATION_WORKERS: "4"
+      AASPECT_POSTGRES_HOST: postgres
+      AASPECT_POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: 13g
+    pids_limit: 256
+    read_only: true
+    tmpfs:
+      # Large uploads are spooled to /tmp while the form is parsed; the upload limit is
+      # 512 MB, and two analyses may run at once.
+      - /tmp:size=1100m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18.6-trixie@sha256:bd5dfa494a5a259704365813dbfa5fa6b3e69be7348d43b547f540c730478583
+    # No published ports: only the aaspect service reaches the database, over the
+    # compose network. Every analysis keeps its graph in a schema of its own and drops it
+    # when done, so only the server's own files stay in the volume. They also keep the
+    # role and password from the first start: after changing the password, remove them
+    # with `docker compose down -v`.
+    environment:
+      POSTGRES_DB: aaspect
+      # The image needs a superuser password to set up the server; app-role.sh removes
+      # it again and creates the role AASpect logs in as.
+      POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
+      AASPECT_POSTGRES_PASSWORD: ${AASPECT_POSTGRES_PASSWORD:?set AASPECT_POSTGRES_PASSWORD in .env}
+    # Shared by all analyses running at once. The image's defaults (128 MB of shared
+    # buffers, 4 MB per sort) made the analytics almost four times slower on 4,600 files.
+    # Three analyses of that size at once peaked at 5 GB.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=5GB
+      - -c
+      - work_mem=128MB
+      - -c
+      - maintenance_work_mem=1GB
+      - -c
+      - max_wal_size=4GB
+      # A query whose client is gone ends at the next check, not when it finishes.
+      - -c
+      - client_connection_check_interval=10s
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./deploy/postgres/app-role.sh:/docker-entrypoint-initdb.d/app-role.sh:ro
+    mem_limit: 8g
+    # Parallel queries hand their hash tables over in shared memory; Docker's default of
+    # 64 MB is too small for them.
+    shm_size: 1g
+    # Started as the image's postgres user, so its entrypoint needs no root rights to
+    # switch to it; a break-out from the database then has neither root nor any capability.
+    user: postgres
+    read_only: true
+    tmpfs:
+      - /var/run/postgresql
+      - /tmp
+    cap_drop:
+      - ALL
+    pids_limit: 1024
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "aaspect", "-d", "aaspect"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

@@ -1,0 +1,18 @@
+<p class="sidebar-title">Files</p>
+<ul>
+  <li><a href="/reports/{{ key }}/files"><span class="dot" aria-hidden="true"></span>All files<span class="count-badge">{{ report.files | length }}</span></a></li>
+  {# Counts change while analyses run, so the split by outcome waits for the last one. #}
+  {% if report.finished %}
+  <li><a class="sub" href="/reports/{{ key }}/files?show=errors"><span class="dot status-failed" aria-hidden="true"></span>With errors<span class="count-badge">{{ summary.failing | length }}</span></a></li>
+  <li><a class="sub" href="/reports/{{ key }}/files?show=clean"><span class="dot status-completed" aria-hidden="true"></span>Without errors<span class="count-badge">{{ summary.passing }}</span></a></li>
+  {% endif %}
+</ul>
+{# A plain GET form: the browser suggests names from the list, the server finds the file. #}
+<form class="goto" method="get" action="/reports/{{ key }}/goto">
+  <label for="goto-name">Go to file</label>
+  <div class="goto-row">
+    <input id="goto-name" name="name" list="goto-files" placeholder="Part of a file name" autocomplete="off" maxlength="300">
+    <button type="submit" aria-label="Open the file">Open</button>
+  </div>
+  <datalist id="goto-files">{% for file in report.files %}<option value="{{ file }}"></option>{% endfor %}</datalist>
+</form>

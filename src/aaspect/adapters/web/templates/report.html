@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Report – AASpect{% endblock %}
+{% block head %}<script src="/static/report.js" defer></script>
+<script src="/static/tables.js" defer></script>{% endblock %}
+{% block layout %}dashboard{% endblock %}
+{% block content %}
+{% import "blocks.html" as blocks with context %}
+{% if export is not defined %}
+<aside class="sidebar">
+  <p class="sidebar-title">Report</p>
+  <ul>
+    <li><a href="#summary"><span class="dot status-completed" aria-hidden="true"></span>Summary</a></li>
+    {% for section in report.sections %}
+    <li><a class="hue-{{ loop.index0 % 6 + 1 }}" href="#section-{{ section.key }}"><span class="dot status-{{ section.status.value }}" aria-hidden="true"></span>{{ section.title }}{% set errors = section.blocks | select("finding") | selectattr("severity.value", "equalto", "error") | list | length %}{% if errors %}<span class="badge" title="{{ errors }} error finding{{ "s" if errors != 1 }}">{{ errors }}</span>{% endif %}</a></li>
+    {% endfor %}
+  </ul>
+  {% include "nav_files.html" %}
+  {% for extension in downloads %}
+  {% if report.finished %}
+  <a class="download" href="/reports/{{ key }}/report.{{ extension }}">Download {{ extension | upper }}</a>
+  {% else %}
+  {# Not a link: nothing to click until the report stops changing. #}
+  <span class="download disabled" aria-disabled="true" title="Offered once the analysis has finished">Download {{ extension | upper }}</span>
+  {% endif %}
+  {% endfor %}
+</aside>
+{% endif %}
+
+<div id="report" class="content" data-key="{{ key }}" data-state="{{ state }}" data-finished="{{ "true" if report.finished else "false" }}">
+<header class="report-head">
+  <h1>Report</h1>
+  {% set uploaded = report.files | length %}
+  <p class="meta">{{ uploaded }} uploaded file{{ "s" if uploaded != 1 }} · {{ report.sections | selectattr("status.value", "equalto", "completed") | list | length }}/{{ report.sections | length }} steps completed{% set off = report.sections | selectattr("status.value", "equalto", "not_configured") | list | length %}{% if off %} · {{ off }} not configured{% endif %} · AASpect {{ report.aaspect_version }}</p>
+</header>
+{% if not report.finished %}
+<p class="hint print-only">The analysis had not finished when this was printed.</p>
+{% endif %}
+{% if not report.finished and export is not defined %}
+<p class="running">● The analysis is still running. This page updates when a step finishes.</p>
+<noscript><p class="hint">Without JavaScript, reload the page to see progress.</p></noscript>
+{% endif %}
+
+{% include "summary.html" %}
+
+{% for section in report.sections %}
+<section class="panel section hue-{{ loop.index0 % 6 + 1 }}" id="section-{{ section.key }}">
+<details open data-section="{{ section.key }}">
+  <summary><h2>{{ section.title }}</h2><span class="status status-{{ section.status.value }}">{{ section.status.value | replace("_", " ") }}</span></summary>
+  {% if section.reason %}<p class="reason">{{ section.reason }}</p>{% endif %}
+  <div class="blocks">
+  {% for block in section.blocks if block is table %}
+  {{ blocks.table(block, max_rows) }}
+  {% endfor %}
+  </div>
+  {% set groups = section.blocks | finding_groups %}
+  {% if groups %}
+  <h3>Findings <span class="hint">{{ groups | length }} rule{{ "s" if groups | length != 1 }}<span class="screen-only">, click to open</span></span></h3>
+  {% for group in groups %}
+  {{ blocks.group(group, max_rows, max_locations) }}
+  {% endfor %}
+  {% endif %}
+</details>
+</section>
+{% endfor %}
+</div>
+{% endblock %}
