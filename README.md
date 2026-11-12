@@ -4,8 +4,8 @@
 It uses [neo4aas](https://github.com/rwth-iat/neo4aas) to map AAS data into a graph, which
 it keeps in PostgreSQL and checks against the metamodel constraints.
 
-> **Status:** early stage. All four analyses work: schema check, metamodel constraints,
-> analytics and submodel template conformance, with a web report (a summary of the files
+> **Status:** early stage. All five analyses work: schema check, metamodel constraints,
+> analytics, submodel template conformance and lint, with a web report (a summary of the files
 > with errors first, charts and a page per uploaded file) and JSON and PDF downloads (see
 > [Running](#running)).
 
@@ -86,6 +86,31 @@ their first 256 characters.
   Unreadable or oversized ones are listed. While the IDTA templates are not available,
   the uploaded ones are used alone, with a warning. A submodel whose comparison would
   take too long is named, not checked.
+
+### Lint *(available)*
+
+Problems the schema and the metamodel allow, but that make ids fail to match or keep
+leftovers every reader has to support. Each finding names its file and idShort path, and
+quotes the value it is about; a problem repeated in many files is listed once.
+
+- **Errors:** leading or trailing whitespace, or an invisible character, in an id, a
+  reference key or a specificAssetId value (`LINT-WS-ID`); a reference into a submodel of its own file that
+  names an element the submodel lacks (`LINT-REF-DANGLING`). References to other files
+  are not judged.
+- **Warnings:** an id with whitespace inside, or one that looks like an IRI, IRDI (also
+  one without its version), URN or UUID but lacks its form (`LINT-ID-FORM`); a submodel keeping its template's id
+  (`LINT-ID-TEMPLATE`); ids on hosts reserved for examples (`LINT-ID-EXAMPLE`); ids
+  differing only in case or a trailing slash (`LINT-ID-NEAR`); a globalAssetId equal to
+  its shell's id (`LINT-ID-ASSET`); the old cardinality qualifiers `Cardinality` and `Multiplicity`
+  (`LINT-DEP-QUALIFIER`); template qualifiers (`SMT/…`) outside templates, unless of kind
+  `TemplateQualifier`, which the metamodel constraints report
+  (`LINT-TPL-QUALIFIER`); surrounding whitespace in qualifier types and specificAssetId
+  names (`LINT-WS-TEXT`).
+- **Info:** the deprecated attribute `category` (`LINT-DEP-CATEGORY`).
+
+The checks follow Miny et al., *Automatic Quality Assessment of Asset Administration
+Shell Submodel Templates*, as far as they apply to instance files; checks that only make
+sense on templates are left out. Id collisions stay with the graph import.
 
 ### Deployment
 
@@ -273,7 +298,8 @@ src/aaspect/
 ├── domain/        Analysis rules and result types: report sections, findings, tables,
 │                  version selection, grouping of violations, identifier classification
 │                  and analytics tables, template matching and conformance rules, the
-│                  report summary and its narrowing to one file. Pure Python, no I/O. metamodel.py holds everything that differs between
+│                  lint rules, the report summary and its narrowing to one file. Pure
+│                  Python, no I/O. metamodel.py holds everything that differs between
 │                  metamodel versions: names, XML namespaces, pinned schemas, the
 │                  constraint checker's rule set, and what each constraint means.
 ├── ports/         Interfaces the use-cases depend on: read uploads, validate a
@@ -281,7 +307,7 @@ src/aaspect/
 │                  in it, download a pinned file.
 ├── app/           Use-cases: analyze a corpus, run the schema check, import a corpus
 │                  into a graph database, check its constraints and templates,
-│                  describe it.
+│                  lint it, describe it.
 ├── adapters/      Implementations of the ports, one package per outside concern:
 │   ├── files/         read JSON, XML and AASX uploads in memory, within limits
 │   ├── download/      download pinned files over HTTPS
