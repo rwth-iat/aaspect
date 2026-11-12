@@ -4,13 +4,19 @@ from typing import Any
 
 from aaspect.domain.templates.elements import MAX_DEPTH, Cardinality, Element
 
-# Qualifier types IDTA has used for cardinality across template generations, lower case.
-_CARDINALITY_TYPES = frozenset({"smt/cardinality", "cardinality", "multiplicity"})
+# Last segment of the qualifier types IDTA has used for cardinality, lower case:
+# SMT/Cardinality, Cardinality, Multiplicity, and SMT/SMT/Cardinality in Control
+# Component Type.
+_CARDINALITY_TYPES = frozenset({"cardinality", "multiplicity"})
+# Lower case: templates also write ZerotoOne, and some values carry trailing spaces.
+# TwoToMany and Three occur in Capability Description and Provision of 3D Models.
 _CARDINALITIES = {
-    "One": Cardinality(1, 1),
-    "ZeroToOne": Cardinality(0, 1),
-    "OneToMany": Cardinality(1, None),
-    "ZeroToMany": Cardinality(0, None),
+    "one": Cardinality(1, 1),
+    "zerotoone": Cardinality(0, 1),
+    "onetomany": Cardinality(1, None),
+    "zerotomany": Cardinality(0, None),
+    "twotomany": Cardinality(2, None),
+    "three": Cardinality(3, 3),
 }
 _WILDCARD_IDS = frozenset(
     {
@@ -113,7 +119,9 @@ def _cardinality(qualifiers: object) -> Cardinality | None:
         if not isinstance(qualifier, dict):
             continue
         kind = qualifier.get("type")
-        if isinstance(kind, str) and kind.lower() in _CARDINALITY_TYPES:
+        if isinstance(kind, str) and kind.rsplit("/", 1)[-1].strip().lower() in _CARDINALITY_TYPES:
             value = qualifier.get("value")
-            return _CARDINALITIES.get(value) if isinstance(value, str) else None
+            bounds = _CARDINALITIES.get(value.strip().lower()) if isinstance(value, str) else None
+            if bounds is not None:
+                return bounds
     return None
