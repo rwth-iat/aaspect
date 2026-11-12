@@ -78,6 +78,20 @@ compared level by level, up to 64 levels. Errors: missing mandatory element, car
 element type, value type of Properties and Ranges. Notes: undefined elements, other
 idShort, other semanticId version.
 
+**Cardinality.** IDTA's guideline "How to write a SMT" (v1.1, §9.2) defines
+`SMT/Cardinality` (legacy `Multiplicity`) as how many instances of an element "are
+allowed in the actual collection (hierarchy level of the Submodel)", with the values
+`One`, `ZeroToOne`, `ZeroToMany` and `OneToMany`. The qualifier is read by the last
+segment of its type and its value ignoring case and surrounding spaces, as IDTA's
+templates also write `SMT/SMT/Cardinality`, `ZerotoOne` and `ZeroToOne `; the
+off-guideline values `TwoToMany` and `Three` are read as 2..* and 3..3. For a list item
+the hierarchy level is the list, so the item's cardinality bounds how many items the
+list holds. All item templates of a list are counted together, whatever their
+semanticIds: the items of one list share theirs (AASd-114), so requiring each would never
+be met. An item whose upper bound is 1 (`One`, `ZeroToOne`) sets only its lower bound:
+templates mark lists that hold several items that way (Carbon Footprint's
+`LifeCyclePhases`, Plastic Waste's `MeasuredValues`).
+
 ## Consequences
 
 **Good:** The public instance checks conformance out of the box, without redistributing
@@ -94,9 +108,10 @@ Documentation 1.2 declares `DigitalFile` a collection), and AASpect reports devi
 from them faithfully. Ignoring IRDI versions at element level can match an element to a
 template element whose meaning changed between versions; it is reported as a note.
 
-Template elements without a cardinality qualifier are not counted. The SMT specification
-may define a default (possibly "One"); not verified, and IDTA's own current templates
-leave 379 elements without one.
+Template elements without a cardinality qualifier are not counted: the SMT guideline
+v1.1 defines no default, and IDTA's own current templates leave 379 elements without
+one. Reading an item's upper bound of 1 as none misses a list that really should hold
+one item; the benchmark corpus (2,626 JSON files) has no list where the two readings differ.
 
 Template conformance cannot be turned off on its own: with a graph database the
 templates are always downloaded (once per start; a retry fetches only files that failed),
