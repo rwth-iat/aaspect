@@ -56,6 +56,9 @@ Step 4 leaves several nodes with one id, so it needs neo4aas to skip the
 `identifiable_id` UNIQUE constraint. This becomes a config option in neo4aas, contributed
 upstream. *Amended by ADR 0008:* on PostgreSQL AASpect defines the tables and sets no such
 constraint, and linking and restore are AASpect's own SQL; the restrictions below still hold.
+neo4aas's mapping still needs the option (`enforce_unique_ids=False` in the PostgreSQL
+writer), so AASpect pins the fork of neo4aas that has it until upstream merges it
+(rwth-iat/neo4aas#36).
 
 The report states counts as "distinct contents" and lists, per Identifiable, how many
 files it occurred in. Each collision is listed as a data-quality finding.

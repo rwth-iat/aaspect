@@ -12,8 +12,9 @@ is edited in the browser and nothing changes live while the user clicks around.
 
 All report text can come from uploaded files (idShorts, descriptions, ids, messages that
 quote them). Text that reaches the page unescaped lets a crafted file run script in the
-user's browser (XSS). The schema check finishes in seconds. The Neo4j-based checks will
-take minutes, so the UI must later be able to show progress.
+user's browser (XSS). The schema check finishes in seconds. The graph-based checks (on
+Neo4j then, on PostgreSQL since ADR 0008) take minutes, so the UI must be able to show
+progress.
 
 Interactive exploration (filtering thousands of findings in the browser, linked charts,
 drilling into a file's element tree) may be wanted later, but it is not needed now.
@@ -65,4 +66,5 @@ this one, not a rewrite of it.
 
 - Users regularly need to filter or explore reports that are too large to read as one
   page.
-- The Neo4j-based analyses arrive and polling proves too coarse for progress reporting.
+- Polling proves too coarse for progress reporting. *2026-11-12:* the graph analyses have
+  arrived; the report page polls `/reports/{key}/status` and that suffices so far.

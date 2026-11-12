@@ -1,6 +1,7 @@
-# 0004. Validate against copied official schemas, version detected per file
+# 0004. Validate against pinned official schemas, version detected per file
 
-- **Status:** provisional — pending verification
+- **Status:** accepted (2026-11-12, after validating 244,113 real files; schemas
+  downloaded at runtime since 2026-10-22)
 - **Date:** 2026-10-07
 - **Relates to:** README "Schema check"; ADR 0001, ADR 0003
 

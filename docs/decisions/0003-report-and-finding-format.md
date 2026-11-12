@@ -1,6 +1,6 @@
 # 0003. One generic report shape for every analysis
 
-- **Status:** provisional — pending verification
+- **Status:** accepted (2026-11-12, once every analysis fit the two block kinds)
 - **Date:** 2026-10-07
 - **Relates to:** README "Planned features" (web UI, JSON/PDF download, all analyses); ADR 0001, ADR 0002
 
@@ -22,14 +22,16 @@ The analyses produce two different kinds of result:
 - **Counts**: which submodels, semanticIds, element types and valueTypes occur, and how
   often. Listing 500 semanticIds as 500 "problems" would make no sense.
 
-**Assumption, not verified:** these two kinds cover every planned analysis. This has been
-checked against the README only, not against a working analytics or template-conformance
-implementation.
+**Assumption, verified 2026-11-12:** these two kinds cover every planned analysis. All
+five analyses (schema check, metamodel constraints, analytics, template conformance,
+lint) now report with them and nothing else.
 
 ## Decision
 
-A `Report` holds corpus metadata (uploaded files, AASpect version, the "distinct objects"
-counting rule from ADR 0002, format version) and one **section** per analysis. Each
+A `Report` holds corpus metadata (uploaded files, AASpect version, format version) and
+one **section** per analysis. The "distinct objects" counting rule of ADR 0002 is not
+metadata: each count states it where it appears, in a table title or a finding's
+message, as not every section counts objects. Each
 section has a stable key (e.g. `schema`) for JSON consumers, a title, a status
 (`completed`, `failed` with a reason, or `skipped`) and a list of blocks of exactly two
 kinds:
@@ -131,11 +133,15 @@ list grows without limit. The UI will have to truncate it; the JSON will not.
   *Analytics, 2026-10-22: fits without a change.* Every result is a table (distributions,
   rankings capped at 100 rows, spreads); steps not computed within the time limit or
   failed are warnings. Charts would still have to be inferred from the tables.
+  *Template conformance and lint, 2026-11-12: fit without a change.* Since format
+  version 3 the report states which column holds files and what kind of table it is,
+  so charts are no longer inferred.
 - A real 100-file corpus produces a report whose JSON or UI is impractical to use (size,
   load time, number of locations). Then decide whether to cap or page locations.
 - Findings need grouping. Id collisions give one finding per content, so an id with
   nine contents gives nine findings in a row; grouping them by id was asked for on
   2026-10-14 and deferred. Preferred shape then: an optional `group` label on a finding,
   rendered as one foldable box per group, rather than a third block kind.
-- ADR 0002 is decided. Check that its counting rule and the collision severity match the
-  report metadata.
+- ~~ADR 0002 is decided. Check that its counting rule and the collision severity match the
+  report metadata.~~ Checked 2026-11-12: collisions are warnings, as ADR 0002 asks; the
+  counting rule is stated with each count rather than as metadata (see Decision).

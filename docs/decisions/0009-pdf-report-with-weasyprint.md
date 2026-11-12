@@ -1,6 +1,6 @@
 # 0009. Render the PDF report on the server with WeasyPrint
 
-- **Status:** provisional — pending verification
+- **Status:** accepted (2026-11-12, after exporting a real corpus's report)
 - **Date:** 2026-11-04
 - **Relates to:** README "Features" (JSON/PDF download); ADR 0003, ADR 0005
 
@@ -21,6 +21,11 @@ a small report takes 0.1–0.9 s; four sections with eight full tables and 60 ru
 give 399 pages in 28 s and 1.5 GB of memory. CSS grids that span pages lay out in
 quadratic time: before the print stylesheet stacked them, four 200-row bar charts took
 35 s, and a large report reached 12 GB before it was stopped.
+
+On a real corpus (2026-11-12, per-vendor-100: 1,026 vendor files, 517 MB, every
+analysis run) the export in the compose container took 35 s for 432 pages and 1.4 MB.
+The render process peaked at 1,110 MiB of address space and 963 MiB resident, about
+half of the 2 GiB limit the export runs under.
 
 ## Decision
 
@@ -77,8 +82,6 @@ gets its own markup (bars as boxes instead of `<meter>`), chosen in the template
 | ReportLab, building the PDF from the report types | A second renderer to keep in step with the templates; the PDF would drift from the page. |
 
 ## Revisit when
-
-The cost figures come from synthetic reports; that is what is provisional.
 
 - A real large corpus report is exported and its render time or memory exceeds the limits
   set for the worker.

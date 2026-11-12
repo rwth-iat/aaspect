@@ -1,6 +1,7 @@
 # 0008. Store each analysis in its own PostgreSQL schema and own the checks as SQL
 
-- **Status:** provisional — pending verification
+- **Status:** accepted (2026-11-12, after the concurrent, equivalence and hostile-input
+  checks under Evidence)
 - **Date:** 2026-11-04
 - **Relates to:** README "Metamodel constraints", "Analytics", "Submodel template
   conformance", "Deployment"; supersedes ADR 0006; amends ADR 0001 and ADR 0002
