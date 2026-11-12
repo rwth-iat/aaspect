@@ -50,7 +50,7 @@ requires-dist = [
     { name = "jinja2" },
     { name = "jsonschema-rs", specifier = ">=0.58.6" },
     { name = "lxml" },
-    { name = "neo4aas", url = "https://github.com/thammel/neo4aas/archive/255fd6ab9f2f03a2fba66c0d860cb3f7fa04c2ee.tar.gz" },
+    { name = "neo4aas", url = "https://github.com/thammel/neo4aas/archive/263b467249719b770dfd4c5fb6357b8587040a34.tar.gz" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.6" },
     { name = "python-multipart" },
     { name = "uvicorn" },
@@ -831,11 +831,11 @@ wheels = [
 [[package]]
 name = "neo4aas"
 version = "0.1.0"
-source = { url = "https://github.com/thammel/neo4aas/archive/255fd6ab9f2f03a2fba66c0d860cb3f7fa04c2ee.tar.gz" }
+source = { url = "https://github.com/thammel/neo4aas/archive/263b467249719b770dfd4c5fb6357b8587040a34.tar.gz" }
 dependencies = [
     { name = "neo4j" },
 ]
-sdist = { hash = "sha256:0a34542f684eec9cba658998449389a0671663d0ee4d53edf8eeffdd2ca82341" }
+sdist = { hash = "sha256:3796e4bee3c89661058dce8754426171f4ae527a8920bc66ad87f1d29f821e84" }
 
 [package.metadata]
 requires-dist = [

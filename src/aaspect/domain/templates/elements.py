@@ -58,8 +58,8 @@ class Element:
 
 
 def matching_key(semantic_id: str | None) -> str | None:
-    """The semanticId as elements are matched by: without whitespace, which JSON files
-    carry around ids and XML files lose on import, and without IRDI versions."""
+    """The semanticId as elements are matched by: without whitespace, which files carry
+    around and inside ids, and without IRDI versions."""
     if semantic_id is None:
         return None
     return _IRDI_VERSION.sub("", _WHITESPACE.sub("", semantic_id)) or None

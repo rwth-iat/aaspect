@@ -84,6 +84,6 @@ build-constraint-dependencies = [
 ]
 
 [tool.uv.sources]
-# A fork commit with the changes AASpect needs, until they are merged upstream. An archive,
-# not a git URL, so building the image needs no git.
-neo4aas = { url = "https://github.com/thammel/neo4aas/archive/255fd6ab9f2f03a2fba66c0d860cb3f7fa04c2ee.tar.gz" }
+# A fork commit with the changes AASpect needs (rwth-iat/neo4aas#36, #38), until they are
+# merged upstream. An archive, not a git URL, so building the image needs no git.
+neo4aas = { url = "https://github.com/thammel/neo4aas/archive/263b467249719b770dfd4c5fb6357b8587040a34.tar.gz" }
