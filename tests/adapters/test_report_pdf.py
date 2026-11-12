@@ -57,7 +57,11 @@ class TestPdfReportWriter(unittest.TestCase):
         self.assertKept(_writer(html, timeout_seconds=1), "longer than 1 s")
 
     def test_gives_up_at_its_memory_limit(self) -> None:
-        self.assertKept(_writer("<p>x</p>", memory_bytes=64 * 2**20), "could not be made")
+        # A small page rendered within 64 MB on the CI runner, as the limit only stops
+        # memory the child maps after setting it. A page larger than the limit cannot.
+        limit = 64 * 2**20
+        html = "<p>x</p>" * (limit // 8 + 1)
+        self.assertKept(_writer(html, memory_bytes=limit), "could not be made")
 
     def test_a_wait_past_the_deadline_is_tried_again(self) -> None:
         # Time spent waiting for a busy server is not the report's own cost.
