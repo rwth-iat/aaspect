@@ -1,0 +1,67 @@
+services:
+  aaspect:
+    build: .
+    image: aaspect
+    ports:
+      # Loopback only: reachable from this machine. Exposing it further is a deliberate
+      # change, together with AASPECT_ALLOWED_HOSTS.
+      - "127.0.0.1:8000:8000"
+    environment:
+      # Each worker may use up to AASPECT_WORKER_MEMORY_BYTES (2 GB), one PDF export up to
+      # AASPECT_PDF_MEMORY_BYTES (2 GB), /tmp up to 1.1 GB and kept downloads 256 MB: all
+      # of them together, plus the server itself, fit the memory limit below.
+      AASPECT_VALIDATION_WORKERS: "4"
+      AASPECT_NEO4J_URI: bolt://dozerdb:7687
+      AASPECT_NEO4J_USER: neo4j
+      AASPECT_NEO4J_PASSWORD: ${AASPECT_NEO4J_PASSWORD:?set AASPECT_NEO4J_PASSWORD in .env}
+    depends_on:
+      dozerdb:
+        condition: service_healthy
+    mem_limit: 13g
+    pids_limit: 256
+    read_only: true
+    tmpfs:
+      # Large uploads are spooled to /tmp while the form is parsed; the upload limit is
+      # 512 MB, and two analyses may run at once.
+      - /tmp:size=1100m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  dozerdb:
+    build: deploy/dozerdb
+    image: aaspect-dozerdb
+    # No published ports: only the aaspect service reaches the database, over the
+    # compose network. No named volume either: every analysis drops its database when
+    # done, so nothing needs to outlive the container.
+    environment:
+      NEO4J_AUTH: neo4j/${AASPECT_NEO4J_PASSWORD:?set AASPECT_NEO4J_PASSWORD in .env}
+      # Shared by all analyses running at once; heap plus page cache stay below
+      # mem_limit to leave room for the JVM's own memory.
+      NEO4J_server_memory_heap_initial__size: 4g
+      NEO4J_server_memory_heap_max__size: 4g
+      NEO4J_server_memory_pagecache_size: 2g
+      # One analysis must not stall or starve the others: a query running longer, or one
+      # transaction needing more, fails that analysis's step instead. 300 real files
+      # (125 MB) written as a single transaction fit in 1g; batches are capped at 32 MB.
+      NEO4J_db_transaction_timeout: 300s
+      NEO4J_db_memory_transaction_max: 1g
+      NEO4J_db_memory_transaction_total_max: 3g
+    mem_limit: 8g
+    # Started as the image's neo4j user, so its entrypoint needs no root rights to switch
+    # to it; a break-out from the database then has neither root nor any capability.
+    user: "7474:7474"
+    cap_drop:
+      - ALL
+    pids_limit: 1024
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 6
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped

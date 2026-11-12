@@ -9,14 +9,32 @@ description = "Analysis tool for corpora of Asset Administration Shells, based o
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
-dependencies = []
+dependencies = [
+  "fastapi",
+  "jinja2",
+  "jsonschema-rs>=0.58.6", # Earliest version tested against the official AAS schemas.
+  "lxml",
+  "neo4aas",
+  "python-multipart", # FastAPI needs it to parse file uploads.
+  "uvicorn",
+  "weasyprint>=70.0", # Lays out the report page as PDF; needs the Pango system library.
+]
+
+[project.scripts]
+aaspect = "aaspect.main:main"
 
 [dependency-groups]
 dev = [
   "coverage", # Measures test coverage and enforces minimum coverage in CI.
-  "pyright",  # Static type checker for Python.
-  "ruff",     # Formatter, linter, and import sorter.
+  "httpx2>=2.13.1",        # Required by Starlette's TestClient.
+  "pyright",               # Static type checker for Python.
+  "ruff",                  # Formatter, linter, and import sorter.
+  "types-lxml>=2026.2.16", # Type stubs for lxml, which ships none.
 ]
+
+[tool.hatch.build.targets.sdist]
+# Hatch ignores .git/info/exclude, so locally excluded files would otherwise be packed.
+only-include = ["src", "tests", "README.md", "LICENSE"]
 
 [tool.coverage.run]
 branch = true              # Track branch coverage, not just line coverage.
@@ -43,3 +61,28 @@ select = [
 [tool.pyright]
 include = ["src", "tests"]     # Type-check package and tests.
 typeCheckingMode = "standard"  # Balanced default; stricter than basic, less strict than strict.
+venvPath = "."                 # Resolve imports from the project's .venv, not whichever
+venv = ".venv"                 # python is first on PATH when pyright runs outside uv.
+
+[tool.uv]
+# AASpect itself and neo4aas (see below) are built from source; without a pin, each image
+# build could fetch different versions of the tools that build them.
+build-constraint-dependencies = [
+  # AASpect: hatchling and what it needs; editables only for the development install.
+  "hatchling==1.32.4",
+  "editables==0.6",
+  "pathspec==1.1.1",
+  "pluggy==1.6.0",
+  "tomlkit==0.15.1",
+  "trove-classifiers==2026.9.21.13",
+  # neo4aas
+  "setuptools==84.0.0",
+  "wheel==0.48.0",
+  # both
+  "packaging==26.3",
+]
+
+[tool.uv.sources]
+# A fork commit with the changes AASpect needs, until they are merged upstream. An archive,
+# not a git URL, so building the image needs no git.
+neo4aas = { url = "https://github.com/thammel/neo4aas/archive/255fd6ab9f2f03a2fba66c0d860cb3f7fa04c2ee.tar.gz" }

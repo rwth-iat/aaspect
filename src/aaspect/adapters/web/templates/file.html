@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}File {{ index + 1 }} – AASpect{% endblock %}
+{% block head %}<script src="/static/tables.js" defer></script>{% endblock %}
+{% block layout %}dashboard{% endblock %}
+{% block content %}
+{% import "blocks.html" as blocks with context %}
+{% set ns = namespace(errors={}, total=0) %}
+{% for section in sections %}
+{% set count = section.blocks | select("finding") | selectattr("severity.value", "equalto", "error") | map(attribute="locations") | map("length") | sum %}
+{% set _ = ns.errors.update({section.key: count}) %}{% set ns.total = ns.total + count %}
+{% endfor %}
+<aside class="sidebar">
+  <p class="sidebar-title">This file</p>
+  <ul>
+    {% for section in sections %}
+    <li><a class="hue-{{ loop.index0 % 6 + 1 }}" href="#section-{{ section.key }}"><span class="dot status-{{ section.status.value }}" aria-hidden="true"></span>{{ section.title }}{% if ns.errors[section.key] %}<span class="badge" title="{{ ns.errors[section.key] }} error location{{ "s" if ns.errors[section.key] != 1 }} in this file">{{ ns.errors[section.key] }}</span>{% endif %}</a></li>
+    {% endfor %}
+  </ul>
+  {% include "nav_files.html" %}
+  <a class="download" href="/reports/{{ key }}">Back to the report</a>
+</aside>
+
+<div class="content">
+<header class="report-head file-head">
+  <p class="meta">File {{ index + 1 }} of {{ report.files | length }}
+    {% if index > 0 %}· <a href="/reports/{{ key }}/files/{{ index - 1 }}">previous</a>{% endif %}
+    {% if index + 1 < report.files | length %}· <a href="/reports/{{ key }}/files/{{ index + 1 }}">next</a>{% endif %}</p>
+  <h1 class="file-name">{{ file }}</h1>
+  <p class="meta">{% if ns.total %}{{ ns.total }} error location{{ "s" if ns.total != 1 }}{% elif report.finished and summary.complete %}No errors listed for this file{% else %}No errors listed for this file so far{% endif %}
+    {% if not report.finished %} · the analysis is still running{% elif not summary.complete %} · not every analysis completed{% endif %}</p>
+  {% if summary.unlisted and not ns.total %}<p class="hint">{{ summary.unlisted | join(" and ") }} name{{ "s" if summary.unlisted | length == 1 }} only one file per error, so this file may hold content with errors listed under another file.</p>{% endif %}
+  {% if ns.total %}
+  <p class="pills">{% for section in sections %}{% if ns.errors[section.key] %}<span class="pill hue-{{ loop.index0 % 6 + 1 }}">{{ section.title }} <b>{{ ns.errors[section.key] }}</b></span>{% endif %}{% endfor %}</p>
+  {% endif %}
+</header>
+
+{% for section in sections %}
+<section class="panel section hue-{{ loop.index0 % 6 + 1 }}" id="section-{{ section.key }}">
+  <div class="section-head"><h2>{{ section.title }}</h2><span class="status status-{{ section.status.value }}">{{ section.status.value | replace("_", " ") }}</span></div>
+  {% if section.reason %}<p class="reason">{{ section.reason }}</p>
+  {% elif not section.blocks %}<p class="empty">{{ "Nothing in this file." if section.status.value == "completed" else "Not run yet." }}</p>
+  {% endif %}
+  <div class="blocks">
+  {% for block in section.blocks if block is table %}
+  {{ blocks.table(block, max_rows) }}
+  {% endfor %}
+  </div>
+  {% set groups = section.blocks | finding_groups %}
+  {% if groups %}
+  <h3>Findings <span class="hint">locations in this file only</span></h3>
+  {% for group in groups %}
+  {{ blocks.group(group, max_rows, max_locations) }}
+  {% endfor %}
+  {% endif %}
+</section>
+{% endfor %}
+</div>
+{% endblock %}
