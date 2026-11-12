@@ -17,7 +17,8 @@ no parameter.
 A local benchmark (neo4aas `255fd6a`, 2026-11) loaded the same graph into seven
 databases. Each ran the 29 checks of neo4aas's `validation.py` and three analytic
 queries, one instance at a time. On every set, all seven gave the same violation counts
-and analytic results. Results for per-vendor-500 (4,626 files, 2.1 GB, 4,553 AAS), run
+and analytic results. Results for per-vendor-500 (a benchmark set, see Evidence; 4,626
+files, 2.2 GB, 4,553 AAS), run
 under WSL2 on Windows; native Linux numbers are under Evidence:
 
 | | Upload | All 29 checks | Peak DB memory |
@@ -87,6 +88,13 @@ adapter.
 | One plain Neo4j container per analysis | Needs Docker daemon access from a public app; a full heap per analysis. |
 
 ## Evidence
+
+**Benchmark sets.** `per-vendor-N` holds the first N files, by sorted path, of each of
+eleven corpora: nine non-public corpora of AAS files published by manufacturers, and
+IDTA's public V3.0 and V3.1 examples (86 and 40 files, which cap the larger sets). The
+sets have 110 files (63 MB), 1,026 (517 MB) and 4,626 (2.2 GB), in JSON, XML and AASX.
+They are not public, so the figures here and in later ADRs can be checked against them
+but not reproduced from this repository.
 
 **Single runs on native Linux (2026-11-04, 16 threads / 32 GB, same images and limits as the
 WSL2 runs: database 8 GB / 8 CPUs, worker 4 GB / 4 CPUs), per-vendor-500.** Neo4j and

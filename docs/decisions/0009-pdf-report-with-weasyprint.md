@@ -22,8 +22,9 @@ give 399 pages in 28 s and 1.5 GB of memory. CSS grids that span pages lay out i
 quadratic time: before the print stylesheet stacked them, four 200-row bar charts took
 35 s, and a large report reached 12 GB before it was stopped.
 
-On a real corpus (2026-11-12, per-vendor-100: 1,026 vendor files, 517 MB, every
-analysis run) the export in the compose container took 35 s for 432 pages and 1.4 MB.
+On a real corpus (2026-11-12, the benchmark set per-vendor-100 of ADR 0008: 1,026 files,
+517 MB, every analysis run) the export in the compose container took 35 s for 432 pages
+and 1.4 MB.
 The render process peaked at 1,110 MiB of address space and 963 MiB resident, about
 half of the 2 GiB limit the export runs under.
 

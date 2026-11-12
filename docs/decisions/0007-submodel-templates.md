@@ -112,7 +112,8 @@ template element whose meaning changed between versions; it is reported as a not
 Template elements without a cardinality qualifier are not counted: the SMT guideline
 v1.1 defines no default, and IDTA's own current templates leave 379 elements without
 one. Reading an item's upper bound of 1 as none misses a list that really should hold
-one item; the benchmark corpus (2,626 JSON files) has no list where the two readings differ.
+one item; the JSON files of the benchmark set per-vendor-500 (2,626; ADR 0008, Evidence)
+have no list where the two readings differ.
 
 Template conformance cannot be turned off on its own: with a graph database the
 templates are always downloaded (once per start; a retry fetches only files that failed),

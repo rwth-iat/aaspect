@@ -90,7 +90,8 @@ loads; without templates, the copied-template-id check is skipped and the sectio
 
 ## Evidence
 
-**Cost (2026-11-12, native Linux, one process, in-process timing of the scan pass).**
+**Cost (2026-11-12, native Linux, one process, in-process timing of the scan pass, on the
+benchmark sets of ADR 0008).**
 
 | Set | Files | Parse | Id scan | Lint |
 |---|---|---|---|---|
