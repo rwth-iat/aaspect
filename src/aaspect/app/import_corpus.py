@@ -4,7 +4,14 @@ from functools import partial
 
 from aaspect.domain.corpus import AasDocument, ReadFailure
 from aaspect.domain.environment_size import measure
-from aaspect.domain.id_collisions import Collision, IdScan, Occurrence, Rename, RenamePlan
+from aaspect.domain.id_collisions import (
+    Collision,
+    Environment,
+    IdScan,
+    Occurrence,
+    Rename,
+    RenamePlan,
+)
 from aaspect.ports.environment_parser import EnvironmentParser
 from aaspect.ports.graph_store import CorpusGraph
 
@@ -37,14 +44,16 @@ def import_corpus(
     parser: EnvironmentParser,
     graph: CorpusGraph,
     expired: Callable[[], bool] = lambda: False,
+    observe: Callable[[str, Environment], None] = lambda label, environment: None,
 ) -> ImportResult:
     """Import every convertible document; colliding ids keep their variants apart. Once
     `expired` turns true, the remaining documents are reported as not imported, and the
-    steps that complete the graph are left out."""
+    steps that complete the graph are left out. `observe` sees each document's
+    environment once, in label order; it must neither change it nor raise."""
     ordered = sorted(documents, key=lambda document: document.label)
     scan = IdScan()
     failures: list[ReadFailure] = []
-    importable = _scan(ordered, parser, expired, scan, failures)
+    importable = _scan(ordered, parser, expired, scan, failures, observe)
     plan = scan.plan()
     # Parsed a second time rather than kept: a corpus of 1 GB grows several times over
     # as Python objects, and only one batch needs to be in memory at once.
@@ -89,6 +98,7 @@ def _scan(
     expired: Callable[[], bool],
     scan: IdScan,
     failures: list[ReadFailure],
+    observe: Callable[[str, Environment], None],
 ) -> list[tuple[AasDocument, int]]:
     """The documents to upload, each with its number of objects; the others go to
     `failures`."""
@@ -105,6 +115,7 @@ def _scan(
                 failures.append(ReadFailure(document.label, refusal))
                 continue
             scan.add(document.label, environment)
+            observe(document.label, environment)
         except (ValueError, RecursionError) as error:
             failures.append(ReadFailure(document.label, f"Not imported: {error}"))
         else:

@@ -47,7 +47,7 @@ class TestEndToEnd(unittest.TestCase):
 
         section, *graph_steps = report["sections"]
         self.assertEqual(section["status"], "completed")
-        self.assertEqual([step["status"] for step in graph_steps], ["not_configured"] * 4)
+        self.assertEqual([step["status"] for step in graph_steps], ["not_configured"] * 5)
         blocks = {block.get("title") or block["rule_id"]: block for block in section["blocks"]}
         self.assertEqual(
             blocks["Version per document"]["rows"],

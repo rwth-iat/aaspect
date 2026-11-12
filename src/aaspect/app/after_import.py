@@ -2,7 +2,7 @@
 
 from collections.abc import Callable
 
-from aaspect.app import analytics, constraint_check, template_conformance
+from aaspect.app import analytics, constraint_check, lint, template_conformance
 from aaspect.app.import_corpus import ImportResult
 from aaspect.domain.metamodel import MetamodelVersion
 from aaspect.domain.report import Section
@@ -21,16 +21,21 @@ def after_import(
     expired: Callable[[], bool],
     templates: TemplateSource | None,
     seconds_left: float = 0,
+    corpus_lint: lint.CorpusLint | None = None,
 ) -> list[Step]:
     """(section key, step) pairs, cheapest first: the constraint check can take what is
     left of the time. Template conformance only with a template source; analytics then
     names the templates submodels follow. `seconds_left` of the analysis bound the wait
-    for templates still being downloaded."""
+    for templates still being downloaded. The lint, fed during the import, only reports."""
     steps: list[Step] = []
-    if templates is None:
+    catalogue = (
+        None if templates is None else template_conformance.load_catalogue(templates, seconds_left)
+    )
+    if corpus_lint is not None:
+        steps.append((lint.SECTION_KEY, lambda: corpus_lint.section(catalogue, imported)))
+    if catalogue is None:
         steps.append((analytics.SECTION_KEY, lambda: analytics.analyze(graph, imported, expired)))
     else:
-        catalogue = template_conformance.load_catalogue(templates, seconds_left)
         template_of = (
             (lambda _: None)
             if isinstance(catalogue, Exception)

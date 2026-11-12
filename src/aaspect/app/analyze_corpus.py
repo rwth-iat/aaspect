@@ -7,6 +7,7 @@ from aaspect.app import (
     analytics,
     constraint_check,
     graph_import_section,
+    lint,
     schema_check,
     template_conformance,
 )
@@ -29,12 +30,13 @@ logger = logging.getLogger(__name__)
 type Progress = Callable[[Report], None]
 type Publish = Callable[[str, Section], Report]
 
-_SCHEMA, _GRAPH, _CONSTRAINTS, _ANALYTICS, _TEMPLATES = (
+_SCHEMA, _GRAPH, _CONSTRAINTS, _ANALYTICS, _TEMPLATES, _LINT = (
     schema_check.SECTION_KEY,
     graph_import_section.SECTION_KEY,
     constraint_check.SECTION_KEY,
     analytics.SECTION_KEY,
     template_conformance.SECTION_KEY,
+    lint.SECTION_KEY,
 )
 _TITLES = {
     _SCHEMA: schema_check.SECTION_TITLE,
@@ -42,8 +44,9 @@ _TITLES = {
     _CONSTRAINTS: constraint_check.SECTION_TITLE,
     _ANALYTICS: analytics.SECTION_TITLE,
     _TEMPLATES: template_conformance.SECTION_TITLE,
+    _LINT: lint.SECTION_TITLE,
 }
-_AFTER_IMPORT = (_CONSTRAINTS, _ANALYTICS, _TEMPLATES)
+_AFTER_IMPORT = (_CONSTRAINTS, _ANALYTICS, _TEMPLATES, _LINT)
 
 
 class AnalyzeCorpus:
@@ -153,12 +156,22 @@ class AnalyzeCorpus:
 
         imported = report = None
         done: set[str] = set()
+        corpus_lint = lint.CorpusLint()
         try:
             with self._graph_store.open(seconds_left()) as graph:
-                imported = import_corpus(corpus.documents, self._parser, graph, expired)
+                imported = import_corpus(
+                    corpus.documents, self._parser, graph, expired, corpus_lint.observe
+                )
                 publish(_GRAPH, graph_import_section.import_section(imported))
                 steps = after_import(
-                    graph, imported, choice, versions, expired, templates, seconds_left()
+                    graph,
+                    imported,
+                    choice,
+                    versions,
+                    expired,
+                    templates,
+                    seconds_left(),
+                    corpus_lint,
                 )
                 for key, step in steps:
                     publish(key, _running(key))

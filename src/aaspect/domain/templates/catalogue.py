@@ -69,12 +69,15 @@ class Catalogue:
         # or the same template in another serialization.
         self.duplicates = 0
         self.files = 0
+        # The ids of the template submodels: an instance keeping one copied it.
+        self.submodel_ids: set[str] = set()
         if base is not None:
             self._by_exact = {key: dict(tiers) for key, tiers in base._by_exact.items()}
             self._by_key = {key: dict(tiers) for key, tiers in base._by_key.items()}
             self.problems = list(base.problems)
             self.duplicates = base.duplicates
             self.files = base.files
+            self.submodel_ids = set(base.submodel_ids)
         self.problems.extend(problems)
         # Why the templates a base would have given are missing, if they are.
         self.unavailable = unavailable
@@ -107,6 +110,8 @@ class Catalogue:
         if not templates:
             self.problems.append(CatalogueProblem(template_file.name, "no submodel"))
         for submodel in templates:
+            if isinstance(submodel_id := submodel.get("id"), str):
+                self.submodel_ids.add(submodel_id)
             self._add(template_file, submodel)
 
     def _add(self, template_file: TemplateFile, submodel: dict[str, Any]) -> None:

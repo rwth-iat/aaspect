@@ -204,14 +204,16 @@ class TestAnalyzeCorpus(unittest.TestCase):
         self.assertEqual(
             states,
             [
-                ("waiting", "waiting", "waiting", "waiting", "not_configured"),
-                ("running", "waiting", "waiting", "waiting", "not_configured"),
-                ("completed", "running", "waiting", "waiting", "not_configured"),
-                ("completed", "completed", "waiting", "waiting", "not_configured"),
-                ("completed", "completed", "waiting", "running", "not_configured"),
-                ("completed", "completed", "waiting", "completed", "not_configured"),
-                ("completed", "completed", "running", "completed", "not_configured"),
-                ("completed", "completed", "completed", "completed", "not_configured"),
+                ("waiting", "waiting", "waiting", "waiting", "not_configured", "waiting"),
+                ("running", "waiting", "waiting", "waiting", "not_configured", "waiting"),
+                ("completed", "running", "waiting", "waiting", "not_configured", "waiting"),
+                ("completed", "completed", "waiting", "waiting", "not_configured", "waiting"),
+                ("completed", "completed", "waiting", "waiting", "not_configured", "running"),
+                ("completed", "completed", "waiting", "waiting", "not_configured", "completed"),
+                ("completed", "completed", "waiting", "running", "not_configured", "completed"),
+                ("completed", "completed", "waiting", "completed", "not_configured", "completed"),
+                ("completed", "completed", "running", "completed", "not_configured", "completed"),
+                ("completed", "completed", "completed", "completed", "not_configured", "completed"),
             ],
         )
         self.assertTrue(report.finished)
