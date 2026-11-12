@@ -125,12 +125,15 @@ SELECT DISTINCT edge.start_id, NULL::text FROM {s}.edges edge
 WHERE edge.type = 'supplementalSemanticIds'
   AND NOT EXISTS (SELECT 1 FROM {s}.edges x
                   WHERE x.start_id = edge.start_id AND x.type = 'semanticId')""",
+    # HasKind/kind is optional and defaults to Instance; a Submodel is the HasKind that may
+    # omit it.
     "AASd-119": """
 SELECT DISTINCT parent.id, NULL::text FROM {s}.nodes parent
 JOIN {s}.edges edge ON edge.start_id = parent.id AND edge.type = 'qualifiers'
 JOIN {s}.nodes q ON q.id = edge.end_id AND q.labels @> '{{Qualifier}}'
 WHERE parent.labels @> '{{Qualifiable}}' AND q.props->'kind' = '"TemplateQualifier"'
-  AND parent.props->'kind' IS NOT NULL AND parent.props->'kind' <> '"Template"'""",
+  AND (parent.labels @> '{{Submodel}}' OR parent.props->'kind' IS NOT NULL)
+  AND COALESCE(parent.props->'kind', '"Instance"') <> '"Template"'""",
     "AASd-120": """
 SELECT child.id, NULL::text FROM {s}.nodes sml
 JOIN {s}.edges edge ON edge.start_id = sml.id AND edge.type = 'value'

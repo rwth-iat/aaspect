@@ -122,6 +122,7 @@ CASES: list[tuple[str, MetamodelVersion, dict, int]] = [
     ("AASd-118", _V31, submodel(prop(semanticId=OTHER, supplementalSemanticIds=[GLOBAL])), 0),
     ("AASd-119", _V31, submodel(qualifiers=[qualifier("TemplateQualifier")], kind="Instance"), 1),
     ("AASd-119", _V31, submodel(qualifiers=[qualifier("TemplateQualifier")], **TEMPLATE), 0),
+    ("AASd-119", _V31, submodel(qualifiers=[qualifier("TemplateQualifier")]), 1),
     ("AASd-120", _V30, submodel(sml("l", prop("item"), **LIST_OF_PROPERTIES)), 1),
     ("AASd-120", _V30, submodel(sml("l", prop(None), **LIST_OF_PROPERTIES)), 0),
     ("AASd-121", _V31, submodel(prop(semanticId=ref("ModelReference", "Property"))), 1),
