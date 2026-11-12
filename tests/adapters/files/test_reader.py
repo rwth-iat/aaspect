@@ -66,6 +66,14 @@ class TestFileCorpusReader(unittest.TestCase):
         self.assertEqual(failure.source, "c.json")
         self.assertIn("total size limit", failure.reason)
 
+    def test_a_plain_document_is_capped_like_a_part(self) -> None:
+        oversized = b"{" + b" " * LIMITS.max_part_bytes + b"}"
+        corpus = _reader().read([Upload("big.json", oversized), Upload("ok.json", b"{}")])
+        self.assertEqual([d.source for d in corpus.documents], ["ok.json"])
+        [failure] = corpus.failures
+        self.assertEqual(failure.source, "big.json")
+        self.assertIn("the most one document may have", failure.reason)
+
     def test_long_reasons_are_shortened(self) -> None:
         namespace = "urn:" + "x" * 5000
         corpus = _reader().read([Upload("a.xml", f'<e xmlns="{namespace}"/>'.encode())])

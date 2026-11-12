@@ -13,7 +13,9 @@ class FileCorpusReader:
     `ReadFailure` for that file; the others are still read.
 
     `max_document_bytes` caps all documents of one call together, including the parts
-    unpacked from AASX packages, so one analysis cannot fill the memory.
+    unpacked from AASX packages, so one analysis cannot fill the memory. The limits'
+    `max_part_bytes` caps each document, plain or unpacked: the import parses one document
+    whole, at about seven times its size, before it can refuse it for too many elements.
     """
 
     def __init__(self, limits: ArchiveLimits, max_document_bytes: int) -> None:
@@ -36,6 +38,9 @@ class FileCorpusReader:
 
     def _documents(self, upload: Upload, budget: int) -> list[AasDocument]:
         if sniff(upload.content) is not Kind.ZIP:
+            cap = self._limits.max_part_bytes
+            if len(upload.content) > cap:
+                raise Unreadable(f"Larger than {cap} bytes, the most one document may have")
             if len(upload.content) > budget:
                 raise Unreadable(BUDGET_EXHAUSTED)
             return [document(upload.name, upload.content)]

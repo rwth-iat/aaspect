@@ -220,7 +220,7 @@ unpacks anything to disk.
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `AASPECT_MAX_PART_BYTES` | `104857600` (100 MB) | Unpacked size of one part. Enforced while reading, not taken from the ZIP header. |
+| `AASPECT_MAX_PART_BYTES` | `67108864` (64 MB) | Size of one document: a JSON or XML file, or a part unpacked from an AASX package (enforced while reading, not taken from the ZIP header). The server parses a document at about seven times its size. |
 | `AASPECT_MAX_ARCHIVE_ENTRIES` | `10000` | Files inside one package, including attachments that are never read. |
 | `AASPECT_MAX_COMPRESSION_RATIO` | `200` | Unpacked size divided by packed size of one part. AAS data reaches about 60; ZIP bombs reach thousands. |
 | `AASPECT_MAX_AAS_PARTS` | `100` | AAS parts named by one package. A part named twice is read once. |

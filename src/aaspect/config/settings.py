@@ -20,7 +20,7 @@ class Settings:
     max_files: int = 2000
     max_concurrent_analyses: int = 2
     max_stored_reports: int = 20
-    max_part_bytes: int = 100 * _MIB
+    max_part_bytes: int = 64 * _MIB
     max_archive_entries: int = 10_000
     max_compression_ratio: int = 200
     max_aas_parts: int = 100
